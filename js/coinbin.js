@@ -481,7 +481,9 @@ $(document).ready(function() {
 	/* broadcast a transaction */
 
 	$("#rawSubmitBtn").click(function(){
+		var thisbtn = this;
 		var tx = coinjs.transaction();
+		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
 		tx.broadcast(function(data){
 			$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
 			if($(data).find("result").text()==1){
@@ -491,6 +493,7 @@ $(document).ready(function() {
 				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
 			}
 			$("#rawTransactionStatus").fadeOut().fadeIn();
+			$(thisbtn).val('Submit').attr('disabled',false);
 		}, $("#rawTransaction").val());
 	});
 
