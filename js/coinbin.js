@@ -17,7 +17,7 @@ $(document).ready(function() {
 					var regupchars = (pass.match(/[A-Z]+/g)) ? pass.match(/[A-Z]+/g).length : 1;
 					var regnums = (pass.match(/[0-9]+/g)) ? pass.match(/[0-9]+/g).length : 1;
 					s += ((regnums+regchars)+regupchars)*pass.length+'3571';
-					s += (s+s);
+					s += (s+''+s);
 
 					for(i=0;i<=50;i++){
 						s = Crypto.SHA256(s);
