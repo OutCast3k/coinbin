@@ -405,7 +405,10 @@ $(document).ready(function() {
 		var tx = coinjs.transaction();
 		tx.listUnspent(addr, function(data){
 			if(addr) {
-				$("#inputs .txidRemove, #inputs .txidClear").click();
+				if($("#clearInputsOnLoad").is(":checked")){
+					$("#inputs .txidRemove, #inputs .txidClear").click();
+				}
+
 				$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://www.blockchain.info/address/'+addr+'" target="_blank">'+addr+'</a>');
 
 				$.each($(data).find("unspent").children(), function(i,o){
