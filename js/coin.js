@@ -40,15 +40,26 @@
 
 	/* generate a new random private key */
 	coinjs.newPrivkey = function(){
-		var randArr = new Uint8Array(32);
-		window.crypto.getRandomValues(randArr);
-
-		var privateKeyBytes = [];
-		for (var i = 0; i < randArr.length; ++i){
-			privateKeyBytes[i] = randArr[i];
+		var x = window.location;
+		x += (window.screen.height * window.screen.width * window.screen.colorDepth);
+		x += coinjs.random(64);
+               	x += (window.screen.availHeight * window.screen.availWidth * window.screen.pixelDepth);
+		x += navigator.language;
+		x += window.history.length;
+		x += coinjs.random(64);
+		x += navigator.userAgent;
+		x += 'coinb.in'
+		x += (Crypto.util.randomBytes(64)).join("");
+		x += x.length;
+		var dateObj = new Date();
+		x += dateObj.getTimezoneOffset();
+		x += coinjs.random(64);
+		x += x+''+x;
+		var r = x;
+		for(i=0;i<(x).length;i++){
+			r = Crypto.SHA256(r);
 		}
-
-		return Crypto.util.bytesToHex(privateKeyBytes);
+		return r;
 	}
 
 	/* generate a public key from a private key */
@@ -906,4 +917,15 @@
 		}
 		return count;
 	}
+
+	coinjs.random = function(length) {
+		var r = "";
+		var l = length || 25;
+		var chars = "!$%^&*()_+{}:@~?><|\./;'#][=-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+		for(x=0;x<l;x++) {
+			r += chars.charAt(Math.floor(Math.random() * 62));
+		}
+		return r;
+	}
+
 })();
