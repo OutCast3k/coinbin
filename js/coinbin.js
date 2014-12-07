@@ -7,7 +7,6 @@ $(document).ready(function() {
 		if(email.match(/[\s\w\d]+@[\s\w\d]+/g)){
 			if($("#openPass").val().length>=10){
 				if($("#openPass").val()==$("#openPassConfirm").val()){
-
 					var email = $("#openEmail").val().toLowerCase();
 					var pass = $("#openPass").val();
 					var s = email;
@@ -28,7 +27,10 @@ $(document).ready(function() {
 
 					$("#walletAddress").html(keys.address);
 					$("#walletHistory").attr('href','http://www.blockchain.info/address/'+keys.address);
-					$("#walletQrCode").html('<img src="https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=bitcoin:'+keys.address+'">');
+
+					var qrcode = new QRCode("walletQrCode");
+					qrcode.makeCode("bitcoin:"+keys.address);
+
 					$("#walletKeys .privkey").val(keys.wif);
 					$("#walletKeys .pubkey").val(keys.pubkey);
 
@@ -60,7 +62,10 @@ $(document).ready(function() {
 
 		$("#walletAddress").html("");
 		$("#walletHistory").attr('href','http://www.blockchain.info/address/');
-		$("#walletQrCode").html('<img src="https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=bitcoin:">');
+
+		var qrcode = new QRCode("walletQrCode");
+		qrcode.makeCode("bitcoin:");
+
 		$("#walletKeys .privkey").val("");
 		$("#walletKeys .pubkey").val("");
 
@@ -672,7 +677,8 @@ $(document).ready(function() {
 
 	$(".qrcodeBtn").click(function(){
 		var thisbtn = $(this).parent().parent();
-		$("#qrcode").attr('src','https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=bitcoin:'+$('.address',thisbtn).val());
+		var qrcode = new QRCode("qrcode");
+		qrcode.makeCode("bitcoin:"+keys.address);
 	});
 
 	$('input[title!=""], abbr[title!=""]').tooltip({'placement':'bottom'});
