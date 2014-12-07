@@ -28,6 +28,7 @@ $(document).ready(function() {
 					$("#walletAddress").html(keys.address);
 					$("#walletHistory").attr('href','https://btc.blockr.io/address/info/'+keys.address);
 
+					$("#walletQrCode").html("");
 					var qrcode = new QRCode("walletQrCode");
 					qrcode.makeCode("bitcoin:"+keys.address);
 
@@ -63,6 +64,7 @@ $(document).ready(function() {
 		$("#walletAddress").html("");
 		$("#walletHistory").attr('href','https://btc.blockr.io/address/info/');
 
+		$("#walletQrCode").html("");
 		var qrcode = new QRCode("walletQrCode");
 		qrcode.makeCode("bitcoin:");
 
@@ -676,9 +678,10 @@ $(document).ready(function() {
 	/* page load code */
 
 	$(".qrcodeBtn").click(function(){
+		$("#qrcode").html("");
 		var thisbtn = $(this).parent().parent();
 		var qrcode = new QRCode("qrcode");
-		qrcode.makeCode("bitcoin:"+keys.address);
+		qrcode.makeCode("bitcoin:"+$('.address',thisbtn).val());
 	});
 
 	$('input[title!=""], abbr[title!=""]').tooltip({'placement':'bottom'});
