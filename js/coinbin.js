@@ -26,7 +26,7 @@ $(document).ready(function() {
 					var keys = coinjs.newKeys(s);
 
 					$("#walletAddress").html(keys.address);
-					$("#walletHistory").attr('href','http://www.blockchain.info/address/'+keys.address);
+					$("#walletHistory").attr('href','https://btc.blockr.io/address/info/'+keys.address);
 
 					var qrcode = new QRCode("walletQrCode");
 					qrcode.makeCode("bitcoin:"+keys.address);
@@ -61,7 +61,7 @@ $(document).ready(function() {
 		$("#openWallet").addClass("hidden").show();
 
 		$("#walletAddress").html("");
-		$("#walletHistory").attr('href','http://www.blockchain.info/address/');
+		$("#walletHistory").attr('href','https://btc.blockr.io/address/info/');
 
 		var qrcode = new QRCode("walletQrCode");
 		qrcode.makeCode("bitcoin:");
@@ -414,7 +414,7 @@ $(document).ready(function() {
 					$("#inputs .txidRemove, #inputs .txidClear").click();
 				}
 
-				$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://www.blockchain.info/address/'+addr+'" target="_blank">'+addr+'</a>');
+				$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+addr+'" target="_blank">'+addr+'</a>');
 
 				$.each($(data).find("unspent").children(), function(i,o){
 					var val = (($(o).find("value").text()*1)/100000000);
