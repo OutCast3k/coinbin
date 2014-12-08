@@ -414,13 +414,17 @@
 
 				for(i=1;i<=unspent.childElementCount;i++){
 					var u = xmlDoc.getElementsByTagName("unspent_"+i)[0]
-					var txhash = u.getElementsByTagName("tx_hash")[0].childNodes[0].nodeValue;
+					var txhash = (u.getElementsByTagName("tx_hash")[0].childNodes[0].nodeValue).match(/.{1,2}/g).reverse().join("")+'';
 					var n = u.getElementsByTagName("tx_output_n")[0].childNodes[0].nodeValue;
+					var script = u.getElementsByTagName("script")[0].childNodes[0].nodeValue;
+
+					self.addinput(txhash, n, script);
+
 					value += u.getElementsByTagName("value")[0].childNodes[0].nodeValue*1;
 					total++;
 				}
 
-				x.unspent = $(data).find("unspent");
+				x.unspent = $(xmlDoc).find("unspent");
 				x.value = value;
 				x.total = total;
 				return callback(x);
@@ -439,7 +443,7 @@
 
 		/* broadcast a transaction */
 		r.broadcast = function(callback, txhex){
-			var tx = txhex || this.serialize()
+			var tx = txhex || this.serialize();
 			coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction&rawtx='+tx+'&r='+Math.random(), callback, "GET");
 		}
 
