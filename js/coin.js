@@ -401,9 +401,19 @@
 				var total = 0;
 				var x = {};
 
-				var unspent = data.getElementsByTagName("unspent")[0];
+				if (window.DOMParser) {
+					parser=new DOMParser();
+					xmlDoc=parser.parseFromString(data,"text/xml");
+				} else {
+					xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+					xmlDoc.async=false;
+					xmlDoc.loadXML(data);
+				}
+
+				var unspent = xmlDoc.getElementsByTagName("unspent")[0];
+
 				for(i=1;i<=unspent.childElementCount;i++){
-					var u = data.getElementsByTagName("unspent_"+i)[0]
+					var u = xmlDoc.getElementsByTagName("unspent_"+i)[0]
 					var txhash = u.getElementsByTagName("tx_hash")[0].childNodes[0].nodeValue;
 					var n = u.getElementsByTagName("tx_output_n")[0].childNodes[0].nodeValue;
 					value += u.getElementsByTagName("value")[0].childNodes[0].nodeValue*1;
