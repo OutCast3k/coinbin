@@ -19,7 +19,7 @@
 	coinjs.developer = '1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg';
 
 	/* bit(coinb.in) api vars */
-	coinjs.host = 'http://coinb.in/api/';
+	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+'coinb.in/api/';
 	coinjs.uid = '1';
 	coinjs.key = '12345678901234567890123456789012';
 
