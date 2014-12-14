@@ -580,10 +580,10 @@ $(document).ready(function() {
 				if(o.script.chunks.length==5){
 					addr = coinjs.scripthash2address(Crypto.util.bytesToHex(o.script.chunks[2]));
 				} else {
-					var priv = coinjs.priv;
-					coinjs.priv = 0x05;
+					var pub = coinjs.pub;
+					coinjs.pub = coinjs.multisig;
 					addr = coinjs.scripthash2address(Crypto.util.bytesToHex(o.script.chunks[1]));
-					coinjs.priv = priv;
+					coinjs.pub = pub;
 				}
 
 				h += '<tr>';
