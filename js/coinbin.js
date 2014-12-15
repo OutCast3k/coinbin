@@ -356,8 +356,7 @@ $(document).ready(function() {
 
 		$.each($("#inputs .row"), function(i,o){
 			if($(".txId",o).val()!="" && $(".txIdN",o).val()!=""){
-				var sequence = ($("#nLockTime").val()=="0") ? 4294967295 : 0;
-				tx.addinput($(".txId",o).val(), $(".txIdN",o).val(), $(".txIdScript",o).val(), sequence);
+				tx.addinput($(".txId",o).val(), $(".txIdN",o).val(), $(".txIdScript",o).val());
 			}
 		});
 
