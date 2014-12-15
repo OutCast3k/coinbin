@@ -419,6 +419,13 @@ $(document).ready(function() {
 				$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+addr+'" target="_blank">'+addr+'</a>');
 
 				$.each($(data).find("unspent").children(), function(i,o){
+
+					if($("#inputs .txId:last").val()!=""){
+						$("#inputs .txidAdd").click();
+					}
+
+					$("#inputs .row:last input").attr('disabled',true);
+
 					var val = (($(o).find("value").text()*1)/100000000);
 					var txid = (($(o).find("tx_hash").text()).match(/.{1,2}/g).reverse()).join("")+'';
 
@@ -429,12 +436,6 @@ $(document).ready(function() {
 						$("#inputs .txIdScript:last").val(s);
 					} else {
 						$("#inputs .txIdScript:last").val($(o).find("script").text());
-					}
-
-					$("#inputs .row:last input").attr('disabled',true);
-
-					if(i<($(data).find("unspent").children().length-1)){
-						$("#inputs .txidAdd").click();
 					}
 				});
 			}
