@@ -289,14 +289,31 @@
 							</span>
 						</div>
 
-
-						<div class="checkbox">
-							<label><input type="checkbox" id="clearInputsOnLoad" class="checkbox-inline" checked> Clear existing inputs when new inputs are loaded</label>
-						</div>
+						<br>
 
 						<div class="hidden alert alert-danger" id="redeemFromStatus"></div>
 
 						<div class="hidden alert alert-info" id="redeemFromAddress"></div>
+
+						<div>
+							<a href="javascript:;" id="optionsCollapse"><div class="well well-sm"><span class="glyphicon glyphicon-collapse-down" id="glyphcollapse"></span> Advanced Options</div></a>
+
+							<div class="hidden" id="optionsAdvanced">
+
+								<label>Clear Inputs</label>
+								<p class="checkbox">
+									<label><input type="checkbox" id="clearInputsOnLoad" class="checkbox-inline" checked> Clear existing inputs when new inputs are loaded.</label>
+								</p>
+
+								<hr>
+
+								<label>Lock Time</label>
+								<p>The <a href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number">locktime</a> indicates the earliest time a transaction can be added to the block chain.</p>
+								<input type="text" class="form-control" value="0" id="nLockTime">
+
+								<hr>
+							</div>
+						</div>
 
 						<ul class="nav nav-tabs" id="putTabs">
 							<li class="active"><a href="#txoutputs" data-toggle="tab">Outputs (<span id="totalOutput">0.0000</span>)</a></li>

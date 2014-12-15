@@ -349,6 +349,12 @@ $(document).ready(function() {
 
 	$("#transactionBtn").click(function(){
 		var tx = coinjs.transaction();
+
+		if(($("#nLockTime").val()).match(/^[0-9]+$/g)){
+			tx.lock_time = $("#nLockTime").val()*1;
+		}
+
+
 		$.each($("#inputs .row"), function(i,o){
 			if($(".txId",o).val()!="" && $(".txIdN",o).val()!=""){
 				tx.addinput($(".txId",o).val(), $(".txIdN",o).val(), $(".txIdScript",o).val());
@@ -486,6 +492,16 @@ $(document).ready(function() {
 		$("#transactionFee").val((fee>0)?fee:'0.00');
 	}
 
+	$("#optionsCollapse").click(function(){
+		if($("#optionsAdvanced").hasClass('hidden')){
+			$("#glyphcollapse").removeClass('glyphicon-collapse-down').addClass('glyphicon-collapse-up');
+			$("#optionsAdvanced").removeClass("hidden");
+		} else {
+			$("#glyphcollapse").removeClass('glyphicon-collapse-up').addClass('glyphicon-collapse-down');
+			$("#optionsAdvanced").addClass("hidden");
+		}
+	});
+
 	/* broadcast a transaction */
 
 	$("#rawSubmitBtn").click(function(){
@@ -543,6 +559,7 @@ $(document).ready(function() {
 		var tx = coinjs.transaction();
 		try {
 			var decode = tx.deserialize($("#verifyScript").val());
+		//	console.log(decode);
 			$("#verifyTransactionData .transactionVersion").html(decode['version']);
 			$("#verifyTransactionData .transactionSize").html(decode.size()+' <i>bytes</i>');
 			$("#verifyTransactionData .transactionLockTime").html(decode['lock_time']);

@@ -711,7 +711,7 @@
 				});
 			}
 
- 			obj.locktime = readAsInt(4);
+ 			obj.lock_time = readAsInt(4);
 			return obj;
 		}
 
