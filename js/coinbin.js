@@ -354,10 +354,10 @@ $(document).ready(function() {
 			tx.lock_time = $("#nLockTime").val()*1;
 		}
 
-
 		$.each($("#inputs .row"), function(i,o){
 			if($(".txId",o).val()!="" && $(".txIdN",o).val()!=""){
-				tx.addinput($(".txId",o).val(), $(".txIdN",o).val(), $(".txIdScript",o).val());
+				var sequence = (tx.lock_time==0) ? 4294967295 : 0;
+				tx.addinput($(".txId",o).val(), $(".txIdN",o).val(), $(".txIdScript",o).val(), sequence);
 			}
 		});
 
@@ -679,6 +679,7 @@ $(document).ready(function() {
 			try {
 				var tx = coinjs.transaction();
 				var t = tx.deserialize(script.val());
+
 				var signed = t.sign(wifkey.val());
 				$("#signedData textarea").val(signed);
 				$("#signedData .txSize").html(t.size());

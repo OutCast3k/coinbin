@@ -369,11 +369,11 @@
 		r.block = null;
 
 		/* add an input to a transaction */
-		r.addinput = function(txid, index, script){
+		r.addinput = function(txid, index, script, sequence){
 			var o = {};
 			o.outpoint = {'hash':txid, 'index':index};
 			o.script = coinjs.script(script||[]);
-			o.sequence = 4294967295;
+			o.sequence = sequence || 4294967295;
 			return this.ins.push(o);
 		}
 
