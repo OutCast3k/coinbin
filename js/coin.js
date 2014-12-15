@@ -373,7 +373,7 @@
 			var o = {};
 			o.outpoint = {'hash':txid, 'index':index};
 			o.script = coinjs.script(script||[]);
-			o.sequence = sequence || 4294967295;
+			o.sequence = (typeof sequence===undefined) ? 4294967295 : sequence;
 			return this.ins.push(o);
 		}
 
@@ -892,7 +892,7 @@
 	}
 
 	coinjs.numToBytes = function(num,bytes) {
-		if (bytes === undefined) bytes = 8;
+		if (typeof bytes === undefined) bytes = 8;
 		if (bytes == 0) { 
 			return [];
 		} else {
