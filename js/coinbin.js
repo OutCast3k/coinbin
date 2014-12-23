@@ -289,6 +289,7 @@ $(document).ready(function() {
 			var multisig =  coinjs.pubkeys2MultisigAddress(keys, sigsNeeded);
 			$("#multiSigData .address").val(multisig['address']);
 			$("#multiSigData .script").val(multisig['redeemScript']);
+			$("#multiSigData .scriptUrl").val(document.location.origin+''+document.location.pathname+'?verify='+multisig['redeemScript']+'#verify');
 			$("#multiSigData").removeClass('hidden').addClass('show').fadeIn();
 			$("#releaseCoins").removeClass('has-error');
 		} else {
@@ -694,6 +695,35 @@ $(document).ready(function() {
 
 
 	/* page load code */
+
+	function _get(value) {
+		var dataArray = (document.location.search).match(/(([a-z0-9\_\[\]]+\=[a-z0-9\_\.\%\@]+))/gi);
+		var r = [];
+		if(dataArray) {
+			for(var x in dataArray) {
+				if((dataArray[x]) && typeof(dataArray[x])=='string') {
+					if((dataArray[x].split('=')[0].toLowerCase()).replace(/\[\]$/ig,'') == value.toLowerCase()) {
+						r.push(unescape(dataArray[x].split('=')[1]));
+					}
+				}
+			}
+		}
+		return r;
+	}
+
+
+	var _getBroadcast = _get("broadcast");
+	if(_getBroadcast[0]){
+		$("#rawTransaction").val(_getBroadcast[0]);
+		$("#rawSubmitBtn").click();
+	}
+
+	var _getVerify = _get("verify");
+	if(_getVerify[0]){
+		$("#verifyScript").val(_getVerify[0]);
+		$("#verifyBtn").click();
+	}
+
 
 	$(".qrcodeBtn").click(function(){
 		$("#qrcode").html("");
