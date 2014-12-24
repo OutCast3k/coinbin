@@ -716,14 +716,15 @@ $(document).ready(function() {
 	if(_getBroadcast[0]){
 		$("#rawTransaction").val(_getBroadcast[0]);
 		$("#rawSubmitBtn").click();
+		window.location.hash = "#broadcast";
 	}
 
 	var _getVerify = _get("verify");
 	if(_getVerify[0]){
 		$("#verifyScript").val(_getVerify[0]);
 		$("#verifyBtn").click();
+		window.location.hash = "#verify";
 	}
-
 
 	$(".qrcodeBtn").click(function(){
 		$("#qrcode").html("");
