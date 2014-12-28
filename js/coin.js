@@ -56,8 +56,8 @@
 		x += coinjs.random(64);
 		x += x+''+x;
 		var r = x;
-		for(i=0;i<(x).length;i++){
-			r = Crypto.SHA256(r);
+		for(i=0;i<(x).length/16;i++){
+			r = Crypto.SHA256(r.concat(x));
 		}
 		return r;
 	}
