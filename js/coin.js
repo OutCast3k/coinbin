@@ -383,7 +383,23 @@
 			o.value = new BigInteger('' + Math.round((value*1) * 1e8), 10);
 			var s = coinjs.script();
 			o.script = s.spendToScript(address);
+
 			return this.outs.push(o);
+		}
+
+		/* add data to a transaction */
+		r.adddata = function(data){
+			var r = false;
+			if(((data.match(/^[a-f0-9]+$/gi)) && data.length<80) && (data.length%2)==0) {
+				var s = coinjs.script();
+				s.writeOp(106); // OP_RETURN
+				s.writeBytes(Crypto.util.hexToBytes(data));
+				o = {};
+				o.value = 0;
+				o.script = s;
+				return this.outs.push(o);
+			}
+			return r;
 		}
 
 		/* list unspent transactions */

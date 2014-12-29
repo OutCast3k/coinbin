@@ -361,9 +361,16 @@ $(document).ready(function() {
 			}
 		});
 
+		$("#recipients .row").removeClass('has-error');
+
 		$.each($("#recipients .row"), function(i,o){
-			if($(".address",o).val()!="" && $(".amount",o).val()!=""){
-				tx.addoutput($(".address",o).val(), $(".amount",o).val());
+			var a = ($(".address",o).val()).substr(0,80);
+			if(((a!="") && coinjs.addressDecode(a)) && $(".amount",o).val()!=""){ // address
+				tx.addoutput(a, $(".amount",o).val());
+			} else if (((($("#opReturn").is(":checked")) && a.match(/^[a-f0-9]+$/ig)) && a.length<80) && (a.length%2)==0) { // data
+				tx.adddata(a);
+			} else { // neither address nor data
+				$(o).addClass('has-error');
 			}
 		});
 
@@ -589,26 +596,44 @@ $(document).ready(function() {
 				h += '</td>';
 				h += '</tr>';
 			});
+
 			$(h).appendTo("#verifyTransactionData .ins tbody");
 
 			h = '';
 			$.each(decode.outs, function(i,o){
 
-				var addr = '';
-				if(o.script.chunks.length==5){
-					addr = coinjs.scripthash2address(Crypto.util.bytesToHex(o.script.chunks[2]));
-				} else {
-					var pub = coinjs.pub;
-					coinjs.pub = coinjs.multisig;
-					addr = coinjs.scripthash2address(Crypto.util.bytesToHex(o.script.chunks[1]));
-					coinjs.pub = pub;
-				}
+				if(o.script.chunks.length==2 && o.script.chunks[0]==106){ // OP_RETURN
 
-				h += '<tr>';
-				h += '<td><input class="form-control" type="text" value="'+addr+'" readonly></td>';
-				h += '<td class="col-xs-1">'+(o.value/100000000).toFixed(8)+'</td>';
-				h += '<td class="col-xs-2"><input class="form-control" type="text" value="'+Crypto.util.bytesToHex(o.script.buffer)+'" readonly></td>';
-				h += '</tr>';
+					var data = Crypto.util.bytesToHex(o.script.chunks[1]);
+					var dataascii = hex2ascii(data);
+
+					if(dataascii.match(/^[\s\d\w]+$/ig)){
+						data = dataascii;
+					}
+
+					h += '<tr>';
+					h += '<td><input type="text" class="form-control" value="(OP_RETURN) '+data+'" readonly></td>';
+					h += '<td class="col-xs-1">'+(o.value/100000000).toFixed(8)+'</td>';
+					h += '<td class="col-xs-2"><input class="form-control" type="text" value="'+Crypto.util.bytesToHex(o.script.buffer)+'" readonly></td>';
+					h += '</tr>';
+				} else {
+
+					var addr = '';
+					if(o.script.chunks.length==5){
+						addr = coinjs.scripthash2address(Crypto.util.bytesToHex(o.script.chunks[2]));
+					} else {
+						var pub = coinjs.pub;
+						coinjs.pub = coinjs.multisig;
+						addr = coinjs.scripthash2address(Crypto.util.bytesToHex(o.script.chunks[1]));
+						coinjs.pub = pub;
+					}
+
+					h += '<tr>';
+					h += '<td><input class="form-control" type="text" value="'+addr+'" readonly></td>';
+					h += '<td class="col-xs-1">'+(o.value/100000000).toFixed(8)+'</td>';
+					h += '<td class="col-xs-2"><input class="form-control" type="text" value="'+Crypto.util.bytesToHex(o.script.buffer)+'" readonly></td>';
+					h += '</tr>';
+				}
 			});
 			$(h).appendTo("#verifyTransactionData .outs tbody");
 
@@ -616,6 +641,13 @@ $(document).ready(function() {
 		} catch(e) {
 			return false;
 		}
+	}
+
+	function hex2ascii(hex) {
+		var str = '';
+		for (var i = 0; i < hex.length; i += 2)
+			str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+		return str;
 	}
 
 	function decodePrivKey(){
