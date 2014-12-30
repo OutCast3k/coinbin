@@ -189,6 +189,57 @@
 		}
 	}
 
+	/* parse stealth address and return an object with the parts */
+	coinjs.stealthDecode = function(stealth){
+		try {
+			var bytes = coinjs.base58decode(stealth);
+			var front = bytes.slice(0, bytes.length-4);
+			var back = bytes.slice(bytes.length-4);
+			var checksum = Crypto.SHA256(Crypto.SHA256(front, {asBytes: true}), {asBytes: true}).slice(0, 4);
+			if (checksum+"" == back+"") {
+				var o = {};
+				
+				o.version = front[0];
+				
+				if (o.version != 42) {
+					return false;
+				};
+				
+				o.option = front[1];
+				
+				if (o.option != 0) {
+					alert("Stealth Address option other than 0 is currently not supported!");
+					return false;
+				};
+				
+				o.scankey = Crypto.util.bytesToHex(front.slice(2, 35));
+				o.n = front[35];
+				
+				if (o.n > 1) {
+					alert("Stealth Multisig is currently not supported!");
+					return false;
+				};
+				
+				o.spendkey = Crypto.util.bytesToHex(front.slice(36, 69));
+				o.m = front[69];
+				o.prefixlen = front[70];
+				
+				if (o.prefixlen > 0) {
+					alert("Stealth Address Prefixes are currently not supported!");
+					return false;
+				};
+				
+				o.prefix = front.slice(71)
+				
+				return o;
+			} else {
+				return false;
+			}
+		} catch(e) {
+			return false;
+		}
+	}
+
 	/* retreive the balance from a given address */
 	coinjs.addressBalance = function(address, callback){
 		coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=addresses&request=bal&address='+address+'&r='+Math.random(), callback, "GET");
@@ -384,6 +435,46 @@
 			var s = coinjs.script();
 			o.script = s.spendToScript(address);
 
+			return this.outs.push(o);
+		}
+
+		/* add two outputs for stealth addresses to a transaction */
+		r.addstealth = function(stealth, value){
+			var ephemeralKeyBigInt = BigInteger.fromByteArrayUnsigned(Crypto.util.hexToBytes(coinjs.newPrivkey()));
+			var curve = EllipticCurve.getSECCurveByName("secp256k1");
+			
+			var p = EllipticCurve.fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
+			var a = BigInteger.ZERO;
+			var b = EllipticCurve.fromHex("7");
+			var calccurve = new EllipticCurve.CurveFp(p, a, b);
+			
+			var ephemeralPt = curve.getG().multiply(ephemeralKeyBigInt);
+			var scanPt = calccurve.decodePointHex(stealth.scankey);
+			var sharedPt = scanPt.multiply(ephemeralKeyBigInt);
+			var stealthindexKeyBigInt = BigInteger.fromByteArrayUnsigned(Crypto.SHA256(sharedPt.getEncoded(true), {asBytes: true}));
+			
+			var stealthindexPt = curve.getG().multiply(stealthindexKeyBigInt);
+			var spendPt = calccurve.decodePointHex(stealth.spendkey);
+			var addressPt = spendPt.add(stealthindexPt);
+			
+			var sendaddress = coinjs.pubkey2address(Crypto.util.bytesToHex(addressPt.getEncoded(true)));
+			
+			
+			var OPRETBytes = [6].concat(Crypto.util.randomBytes(4)).concat(ephemeralPt.getEncoded(true)); // ephemkey data
+			var q = coinjs.script();
+			q.writeOp(106); // OP_RETURN
+			q.writeBytes(OPRETBytes);
+			v = {};
+			v.value = 0;
+			v.script = q;
+			
+			this.outs.push(v);
+			
+			var o = {};
+			o.value = new BigInteger('' + Math.round((value*1) * 1e8), 10);
+			var s = coinjs.script();
+			o.script = s.spendToScript(sendaddress);
+			
 			return this.outs.push(o);
 		}
 
