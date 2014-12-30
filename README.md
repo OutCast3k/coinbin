@@ -18,6 +18,7 @@ Coinb.in supports a number of key features such as:
 - Sign transactions offline.
 - Broadcast transactions.
 - nLockTime support.
+- Add custom data to transactions with the use of OP_RETURN.
 - Brain wallet support.
 - Compatible with bitcoin-qt
 - An offical .onion address for tor users.
