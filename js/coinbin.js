@@ -364,9 +364,17 @@ $(document).ready(function() {
 		$("#recipients .row").removeClass('has-error');
 
 		$.each($("#recipients .row"), function(i,o){
-			var a = ($(".address",o).val()).substr(0,80);
-			if(((a!="") && coinjs.addressDecode(a)) && $(".amount",o).val()!=""){ // address
+			var a = ($(".address",o).val());
+			var ad = coinjs.addressDecode(a)
+			if(((a!="") && (ad.version === 0 || ad.version === 5)) && $(".amount",o).val()!=""){ // address
 				tx.addoutput(a, $(".amount",o).val());
+			} else if (((a!="") && ad.version === 42) && $(".amount",o).val()!=""){ // stealth address
+				var stealth = coinjs.stealthDecode(a);
+				if (stealth == false) {
+					$(o).addClass('has-error');
+					return;
+				}
+				tx.addstealth(stealth, $(".amount",o).val());
 			} else if (((($("#opReturn").is(":checked")) && a.match(/^[a-f0-9]+$/ig)) && a.length<80) && (a.length%2)==0) { // data
 				tx.adddata(a);
 			} else { // neither address nor data

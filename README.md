@@ -19,6 +19,7 @@ Coinb.in supports a number of key features such as:
 - Broadcast transactions.
 - nLockTime support.
 - Add custom data to transactions with the use of OP_RETURN.
+- Support current Dark Wallet Stealth Address structure (as of version Alpha 7) for outputs.
 - Brain wallet support.
 - Compatible with bitcoin-qt
 - An offical .onion address for tor users.
