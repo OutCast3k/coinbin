@@ -830,8 +830,8 @@ $(document).ready(function() {
 		};
 		if (tempX < 0){tempX = 0};
 		if (tempY < 0){tempY = 0};
-		var xEnt = Crypto.util.bytesToHex([tempX]);
-		var yEnt = Crypto.util.bytesToHex([tempY]);
+		var xEnt = Crypto.util.bytesToHex([tempX]).slice(-2);
+		var yEnt = Crypto.util.bytesToHex([tempY]).slice(-2);
 		var addEnt = xEnt.concat(yEnt);
 		if ($("#entropybucket").html().indexOf(xEnt) == -1 && $("#entropybucket").html().indexOf(yEnt) == -1) {
 			$("#entropybucket").html(addEnt + $("#entropybucket").html());

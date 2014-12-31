@@ -60,6 +60,12 @@
 		for(i=0;i<(x).length/25;i++){
 			r = Crypto.SHA256(r.concat(x));
 		}
+		var checkrBigInt = new BigInteger(r);
+		var orderBigInt = new BigInteger("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141");
+		while (checkrBigInt.compareTo(orderBigInt) >= 0 || checkrBigInt.equals(BigInteger.ZERO) || checkrBigInt.equals(BigInteger.ONE)) {
+			r = Crypto.SHA256(r.concat(x));
+			checkrBigInt = new BigInteger(r);
+		}
 		return r;
 	}
 
