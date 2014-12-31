@@ -43,7 +43,7 @@
 		var x = window.location;
 		x += (window.screen.height * window.screen.width * window.screen.colorDepth);
 		x += coinjs.random(64);
-               	x += (window.screen.availHeight * window.screen.availWidth * window.screen.pixelDepth);
+		x += (window.screen.availHeight * window.screen.availWidth * window.screen.pixelDepth);
 		x += navigator.language;
 		x += window.history.length;
 		x += coinjs.random(64);
@@ -54,9 +54,10 @@
 		var dateObj = new Date();
 		x += dateObj.getTimezoneOffset();
 		x += coinjs.random(64);
+		x += $("#entropybucket").html();
 		x += x+''+x;
 		var r = x;
-		for(i=0;i<(x).length/16;i++){
+		for(i=0;i<(x).length/25;i++){
 			r = Crypto.SHA256(r.concat(x));
 		}
 		return r;
