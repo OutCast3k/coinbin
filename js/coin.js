@@ -54,7 +54,7 @@
 		var dateObj = new Date();
 		x += dateObj.getTimezoneOffset();
 		x += coinjs.random(64);
-		x += $("#entropybucket").html();
+		x += (document.getElementById("entropybucket")) ? document.getElementById("entropybucket").innerHTML : '';
 		x += x+''+x;
 		var r = x;
 		for(i=0;i<(x).length/25;i++){
