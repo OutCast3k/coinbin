@@ -315,6 +315,10 @@
 				} else {
 					this.chunks.push(opcode);
 				}
+
+				if(i<0x00){
+					break;
+				}
 			}
 
 			return true;
