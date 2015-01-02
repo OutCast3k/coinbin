@@ -646,14 +646,15 @@
 				var priv = BigInteger.fromByteArrayUnsigned(Crypto.util.hexToBytes(key['privkey']));
 				var n = curve.getN();
 				var e = BigInteger.fromByteArrayUnsigned(hash);
+				var badrs = 0
 				do {
-					var k = new BigInteger(n.bitLength(), rng).mod(n.subtract(BigInteger.ONE)).add(BigInteger.ONE);
+					var k = this.deterministicK(wif, hash, badrs);
 					var G = curve.getG();
 					var Q = G.multiply(k);
 					var r = Q.getX().toBigInteger().mod(n);
-				} while (r.compareTo(BigInteger.ZERO) <= 0);
-
-				var s = k.modInverse(n).multiply(e.add(priv.multiply(r))).mod(n);
+					var s = k.modInverse(n).multiply(e.add(priv.multiply(r))).mod(n);
+					badrs++
+				} while (r.compareTo(BigInteger.ZERO) <= 0 || s.compareTo(BigInteger.ZERO) <= 0);
 
 				var sig = serializeSig(r, s);
 				sig.push(parseInt(1, 10));
@@ -663,6 +664,110 @@
 				return false;
 			}
 		}
+
+		// https://tools.ietf.org/html/rfc6979#section-3.2
+		r.deterministicK = function(wif, hash, badrs) {
+			// if r or s were invalid when this function was used in signing,
+			// we do not want to actually compute r, s here for efficiency, so,
+			// we can increment badrs. explained at end of RFC 6979 section 3.2
+
+			// wif is b58check encoded wif privkey.
+			// hash is byte array of transaction digest.
+			// badrs is used only if the k resulted in bad r or s.
+
+			// some necessary things out of the way for clarity.
+			badrs = badrs || 0;
+			var key = coinjs.wif2privkey(wif);
+			var x = Crypto.util.hexToBytes(key['privkey'])
+			var curve = EllipticCurve.getSECCurveByName("secp256k1");
+			var N = curve.getN();
+
+			// Step: a
+			// hash is a byteArray of the message digest. so h1 == hash in our case
+
+			// Step: b
+			var v = new Uint8Array(32);
+			v = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+
+			// Step: c
+			var k = new Uint8Array(32);
+			k = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+			// Step: d
+			k = Crypto.HMAC(Crypto.SHA256, v.concat([0]).concat(x).concat(hash), k, { asBytes: true });
+
+			// Step: e
+			v = Crypto.HMAC(Crypto.SHA256, v, k, { asBytes: true });
+
+			// Step: f
+			k = Crypto.HMAC(Crypto.SHA256, v.concat([1]).concat(x).concat(hash), k, { asBytes: true });
+
+			// Step: g
+			v = Crypto.HMAC(Crypto.SHA256, v, k, { asBytes: true });
+
+			// Step: h1
+			var T = [];
+
+			// Step: h2 (since we know tlen = qlen, just copy v to T.)
+			v = Crypto.HMAC(Crypto.SHA256, v, k, { asBytes: true });
+			T = v;
+
+			// Step: h3
+			var KBigInt = BigInteger.fromByteArrayUnsigned(T);
+
+			// loop if KBigInt is not in the range of [1, N-1] or if badrs needs incrementing.
+			var i = 0
+			while (KBigInt.compareTo(N) >= 0 || KBigInt.compareTo(BigInteger.ZERO) <= 0 || i < badrs) {
+				k = Crypto.HMAC(Crypto.SHA256, v.concat([0]), k, { asBytes: true });
+				v = Crypto.HMAC(Crypto.SHA256, v, k, { asBytes: true });
+				T = v;
+				KBigInt = BigInteger.fromByteArrayUnsigned(T);
+				i++
+			};
+
+			return KBigInt;
+		};
+
+		r.testdeterministicK = function() {
+			// https://github.com/bitpay/bitcore/blob/9a5193d8e94b0bd5b8e7f00038e7c0b935405a03/test/crypto/ecdsa.js
+			// Line 21 and 22 specify digest hash and privkey.
+			// Line 96-117 tells expected result.
+			var hash = Crypto.SHA256('test data'.split('').map(function (c) { return c.charCodeAt (0); }), { asBytes: true });
+			var wif = coinjs.privkey2wif("fee0a1f7afebf9d2a5a80c0c98a31c709681cce195cbcd06342b517970c0be1e");
+
+			var KBigInt = this.deterministicK(wif, hash);
+			var KBigInt0 = this.deterministicK(wif, hash, 0);
+			var KBigInt1 = this.deterministicK(wif, hash, 1);
+
+			var K = Crypto.util.bytesToHex(KBigInt.toByteArrayUnsigned());
+			var K0 = Crypto.util.bytesToHex(KBigInt0.toByteArrayUnsigned());
+			var K1 = Crypto.util.bytesToHex(KBigInt1.toByteArrayUnsigned());
+
+			if (K != "fcce1de7a9bcd6b2d3defade6afa1913fb9229e3b7ddf4749b55c4848b2a196e") {
+				return false;
+			} else if (K0 != "fcce1de7a9bcd6b2d3defade6afa1913fb9229e3b7ddf4749b55c4848b2a196e") {
+				return false;
+			} else if (K1 != "6f4dcca6fa7a137ae9d110311905013b3c053c732ad18611ec2752bb3dcef9d8") {
+				return false;
+			};
+
+			hash = Crypto.SHA256('Everything should be made as simple as possible, but not simpler.'.split('').map(function (c) { return c.charCodeAt (0); }), { asBytes: true });
+			wif = coinjs.privkey2wif("0000000000000000000000000000000000000000000000000000000000000001");
+
+			KBigInt = this.deterministicK(wif, hash);
+			KBigInt0 = this.deterministicK(wif, hash, 0);
+
+			K = Crypto.util.bytesToHex(KBigInt.toByteArrayUnsigned());
+			K0 = Crypto.util.bytesToHex(KBigInt0.toByteArrayUnsigned());
+
+			if (K != "ec633bd56a5774a0940cb97e27a9e4e51dc94af737596a0c5cbb3d30332d92a5") {
+				return false;
+			} else if (K0 != "ec633bd56a5774a0940cb97e27a9e4e51dc94af737596a0c5cbb3d30332d92a5") {
+				return false;
+			};
+
+			return true;
+		};
 
 		/* sign a "standard" input */
 		r.signinput = function(index, wif){

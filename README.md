@@ -16,6 +16,7 @@ Coinb.in supports a number of key features such as:
 - Ability to decode transactions, redeem scripts and more offline.
 - Build custom transactions offline.
 - Sign transactions offline.
+- Signatures are deterministic as per RFC 6979 (https://tools.ietf.org/html/rfc6979#section-3.2)
 - Broadcast transactions.
 - nLockTime support.
 - Add custom data to transactions with the use of OP_RETURN.
