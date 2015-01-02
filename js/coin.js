@@ -185,59 +185,55 @@
 			var back = bytes.slice(bytes.length-4);
 			var checksum = Crypto.SHA256(Crypto.SHA256(front, {asBytes: true}), {asBytes: true}).slice(0, 4);
 			if (checksum+"" == back+"") {
-				var o = front.slice(1);
-				o.version = front[0];
-				return o;
-			} else {
-				return false;
-			}
-		} catch(e) {
-			return false;
-		}
-	}
 
-	/* parse stealth address and return an object with the parts */
-	coinjs.stealthDecode = function(stealth){
-		try {
-			var bytes = coinjs.base58decode(stealth);
-			var front = bytes.slice(0, bytes.length-4);
-			var back = bytes.slice(bytes.length-4);
-			var checksum = Crypto.SHA256(Crypto.SHA256(front, {asBytes: true}), {asBytes: true}).slice(0, 4);
-			if (checksum+"" == back+"") {
 				var o = {};
-				
+				o.bytes = front.slice(1);
+				o.valid = true;
 				o.version = front[0];
+
+				if(o.version==coinjs.pub){ // standard address
+					o.type = 'standard';
+
+				} else if (o.version==coinjs.multisig) { // multisig address
+					o.type = 'multisig';
+
+				} else if (o.version==coinjs.priv){ // wifkey
+					o.type = 'wifkey';
+
+				} else if (o.version==42) { // stealth address
+					o.type = 'stealth';
+
+					o.option = front[1];
+					if (o.option != 0) {
+						o.valid = false;
+						alert("Stealth Address option other than 0 is currently not supported!");
+						return false;
+					};
+
+					o.scankey = Crypto.util.bytesToHex(front.slice(2, 35));
+					o.n = front[35];
+
+					if (o.n > 1) {
+						o.valid = false;
+						alert("Stealth Multisig is currently not supported!");
+						return false;
+					};
 				
-				if (o.version != 42) {
-					return false;
-				};
+					o.spendkey = Crypto.util.bytesToHex(front.slice(36, 69));
+					o.m = front[69];
+					o.prefixlen = front[70];
 				
-				o.option = front[1];
-				
-				if (o.option != 0) {
-					alert("Stealth Address option other than 0 is currently not supported!");
-					return false;
-				};
-				
-				o.scankey = Crypto.util.bytesToHex(front.slice(2, 35));
-				o.n = front[35];
-				
-				if (o.n > 1) {
-					alert("Stealth Multisig is currently not supported!");
-					return false;
-				};
-				
-				o.spendkey = Crypto.util.bytesToHex(front.slice(36, 69));
-				o.m = front[69];
-				o.prefixlen = front[70];
-				
-				if (o.prefixlen > 0) {
-					alert("Stealth Address Prefixes are currently not supported!");
-					return false;
-				};
-				
-				o.prefix = front.slice(71)
-				
+					if (o.prefixlen > 0) {
+						o.valid = false;
+						alert("Stealth Address Prefixes are currently not supported!");
+						return false;
+					};
+					o.prefix = front.slice(71);
+
+				} else { // everything else
+					o.type = 'other'; // address is still valid but unknown version
+				}
+
 				return o;
 			} else {
 				return false;
@@ -473,12 +469,12 @@
 			var s = coinjs.script();
 			if(addr.version==5){ // multisig address
 				s.writeOp(169); //OP_HASH160
-				s.writeBytes(addr);
+				s.writeBytes(addr.bytes);
 				s.writeOp(135); //OP_EQUAL
 			} else { // regular address
 				s.writeOp(118); //OP_DUP
 				s.writeOp(169); //OP_HASH160
-				s.writeBytes(addr);
+				s.writeBytes(addr.bytes);
 				s.writeOp(136); //OP_EQUALVERIFY
 				s.writeOp(172); //OP_CHECKSIG
 			}
@@ -491,7 +487,7 @@
 			var s = coinjs.script();
 			s.writeOp(118);//OP_DUP
 			s.writeOp(169);//OP_HASH160
-			s.writeBytes(addr);
+			s.writeBytes(addr.bytes);
 			s.writeOp(136);//OP_EQUALVERIFY
 			s.writeOp(172);//OP_CHECKSIG
 			return s;
