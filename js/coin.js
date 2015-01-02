@@ -640,7 +640,6 @@
 			var hash = Crypto.util.hexToBytes(this.transactionHash(index));
 
 			if(hash){
-				var rng = new SecureRandom();
 				var curve = EllipticCurve.getSECCurveByName("secp256k1");
 				var key = coinjs.wif2privkey(wif);
 				var priv = BigInteger.fromByteArrayUnsigned(Crypto.util.hexToBytes(key['privkey']));
