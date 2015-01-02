@@ -729,40 +729,104 @@
 
 		r.testdeterministicK = function() {
 			// https://github.com/bitpay/bitcore/blob/9a5193d8e94b0bd5b8e7f00038e7c0b935405a03/test/crypto/ecdsa.js
-			// Line 21 and 22 specify digest hash and privkey.
+			// Line 21 and 22 specify digest hash and privkey for the first 2 test vectors.
 			// Line 96-117 tells expected result.
-			var hash = Crypto.SHA256('test data'.split('').map(function (c) { return c.charCodeAt (0); }), { asBytes: true });
-			var wif = coinjs.privkey2wif("fee0a1f7afebf9d2a5a80c0c98a31c709681cce195cbcd06342b517970c0be1e");
+			var test_vectors = [
+				{
+					'message': 'test data',
+					'privkey': 'fee0a1f7afebf9d2a5a80c0c98a31c709681cce195cbcd06342b517970c0be1e',
+					'k_bad00': 'fcce1de7a9bcd6b2d3defade6afa1913fb9229e3b7ddf4749b55c4848b2a196e',
+					'k_bad01': '6f4dcca6fa7a137ae9d110311905013b3c053c732ad18611ec2752bb3dcef9d8',
+					'k_bad15': '94eb9b7f0bd83a21bfc7616e217df00a8fb877229ca8c55527aedac272987a53'
+				},
+				{
+					'message': 'Everything should be made as simple as possible, but not simpler.',
+					'privkey': '0000000000000000000000000000000000000000000000000000000000000001',
+					'k_bad00': 'ec633bd56a5774a0940cb97e27a9e4e51dc94af737596a0c5cbb3d30332d92a5',
+					'k_bad01': 'aab427458cb075f9d51eefa61bc60ac093e996663899c18292ef1f587964438c',
+					'k_bad15': '525aaa881ac8928d685e4e9dfd49f6b82e9da224543e3963d94ec4ddbd9fe806'
+				},
+				{
+					'message': 'Satoshi Nakamoto',
+					'privkey': '0000000000000000000000000000000000000000000000000000000000000002',
+					'k_bad00': 'd3edc1b8224e953f6ee05c8bbf7ae228f461030e47caf97cde91430b4607405e',
+					'k_bad01': 'c26ff598af2412d92f78afda02afdcf837b783888f3bcdc76b141ce21320cf36',
+					'k_bad15': '622a12c58942d95225827883de41e8f9f2f71f803af2c2d65c6a2c0fe86ee2'
+				},
+				{
+					'message': 'Diffie Hellman',
+					'privkey': '7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f',
+					'k_bad00': 'c378a41cb17dce12340788dd3503635f54f894c306d52f6e9bc4b8f18d27afcc',
+					'k_bad01': '66628a1ffeda70d626ca4b27e1943720ccee61294940efc84c3174326a1b6394',
+					'k_bad15': 'b405ed2d8d2b24dc693829cf5397445c3fa092ed7b836767b23b1dac337e2a8f'
+				},
+				{
+					'message': 'Japan',
+					'privkey': '8080808080808080808080808080808080808080808080808080808080808080',
+					'k_bad00': 'f471e61b51d2d8db78f3dae19d973616f57cdc54caaa81c269394b8c34edcf59',
+					'k_bad01': '7b07f65a4bb37dfc180114e9666ceafa75cbf001aa63b425c0ec02ec0ce62ec4',
+					'k_bad15': 'cea3d94bb22be1b89b2d8b8f4b760d79ce7253cca990287a18d5c1bbaae1080e'
+				},
+				{
+					'message': 'Bitcoin',
+					'privkey': 'fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364140',
+					'k_bad00': '36c848ffb2cbecc5422c33a994955b807665317c1ce2a0f59c689321aaa631cc',
+					'k_bad01': '34efb2ba1a3fdbf423e6064cf45e56c121b1d3550e5193d805cf1d188dd82ae1',
+					'k_bad15': '6e2264d1c5c05e92ea511c397418d73d2585b24e3e8b690de273e99b10145df0'
+				},
+				{
+					'message': 'i2FLPP8WEus5WPjpoHwheXOMSobUJVaZM1JPMQZq',
+					'privkey': 'fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364140',
+					'k_bad00': '6e9b434fcc6bbb081a0463c094356b47d62d7efae7da9c518ed7bac23f4e2ed6',
+					'k_bad01': '8b107264434490d5abc0b7769ff2ffa2a0102f1033ba2e3fd46588a2a3e267f9',
+					'k_bad15': 'f6de7d2fdb488236c0d58f19b1cf9f530b01b0c3528b50568a61a3d9b6ff9c8a'
+				},
+				{
+					'message': 'lEE55EJNP7aLrMtjkeJKKux4Yg0E8E1SAJnWTCEh',
+					'privkey': '3881e5286abc580bb6139fe8e83d7c8271c6fe5e5c2d640c1f0ed0e1ee37edc9',
+					'k_bad00': '5b606665a16da29cc1c5411d744ab554640479dd8abd3c04ff23bd6b302e7034',
+					'k_bad01': 'e9c3ea3c6b40635b26ae92be582df4476f3dd5387f249bd99160f8935360d6a7',
+					'k_bad15': 'c9b4c6847a690568e7585b3ecd41aff2593ef9db5df256fbb768fe2ae7dca999'
+				},
+				{
+					'message': '2SaVPvhxkAPrayIVKcsoQO5DKA8Uv5X/esZFlf+y',
+					'privkey': '7259dff07922de7f9c4c5720d68c9745e230b32508c497dd24cb95ef18856631',
+					'k_bad00': '3ab6c19ab5d3aea6aa0c6da37516b1d6e28e3985019b3adb388714e8f536686b',
+					'k_bad01': 'a1445bad8eddcbd9eef6e5392ec4326a1423605cdd43ec2bf92ac318a6763d28',
+					'k_bad15': 'b66eb11ac924b7dc5f75cdc5b325bd6e6774ad2da688e54cc2e899fe1a22ad1f'
+				},
+				{
+					'message': '00A0OwO2THi7j5Z/jp0FmN6nn7N/DQd6eBnCS+/b',
+					'privkey': '0d6ea45d62b334777d6995052965c795a4f8506044b4fd7dc59c15656a28f7aa',
+					'k_bad00': '79487de0c8799158294d94c0eb92ee4b567e4dc7ca18addc86e49d31ce1d2db6',
+					'k_bad01': '1de8e99b13e78dc35ccb178d3d18b49e21313611335c1fe5a6445f9000a37aef',
+					'k_bad15': 'df2513ef973068fda11b2a5199942e8e6a85ea4497cdf0ff3b1aec79466271b7'
+				}
+			];
 
-			var KBigInt = this.deterministicK(wif, hash);
-			var KBigInt0 = this.deterministicK(wif, hash, 0);
-			var KBigInt1 = this.deterministicK(wif, hash, 1);
+			for (i = 0; i < test_vectors.length; i++) {
+				var hash = Crypto.SHA256(test_vectors[i]['message'].split('').map(function (c) { return c.charCodeAt (0); }), { asBytes: true });
+				var wif = coinjs.privkey2wif(test_vectors[i]['privkey']);
 
-			var K = Crypto.util.bytesToHex(KBigInt.toByteArrayUnsigned());
-			var K0 = Crypto.util.bytesToHex(KBigInt0.toByteArrayUnsigned());
-			var K1 = Crypto.util.bytesToHex(KBigInt1.toByteArrayUnsigned());
+				var KBigInt = this.deterministicK(wif, hash);
+				var KBigInt0 = this.deterministicK(wif, hash, 0);
+				var KBigInt1 = this.deterministicK(wif, hash, 1);
+				var KBigInt15 = this.deterministicK(wif, hash, 15);
 
-			if (K != "fcce1de7a9bcd6b2d3defade6afa1913fb9229e3b7ddf4749b55c4848b2a196e") {
-				return false;
-			} else if (K0 != "fcce1de7a9bcd6b2d3defade6afa1913fb9229e3b7ddf4749b55c4848b2a196e") {
-				return false;
-			} else if (K1 != "6f4dcca6fa7a137ae9d110311905013b3c053c732ad18611ec2752bb3dcef9d8") {
-				return false;
-			};
+				var K = Crypto.util.bytesToHex(KBigInt.toByteArrayUnsigned());
+				var K0 = Crypto.util.bytesToHex(KBigInt0.toByteArrayUnsigned());
+				var K1 = Crypto.util.bytesToHex(KBigInt1.toByteArrayUnsigned());
+				var K15 = Crypto.util.bytesToHex(KBigInt15.toByteArrayUnsigned());
 
-			hash = Crypto.SHA256('Everything should be made as simple as possible, but not simpler.'.split('').map(function (c) { return c.charCodeAt (0); }), { asBytes: true });
-			wif = coinjs.privkey2wif("0000000000000000000000000000000000000000000000000000000000000001");
-
-			KBigInt = this.deterministicK(wif, hash);
-			KBigInt0 = this.deterministicK(wif, hash, 0);
-
-			K = Crypto.util.bytesToHex(KBigInt.toByteArrayUnsigned());
-			K0 = Crypto.util.bytesToHex(KBigInt0.toByteArrayUnsigned());
-
-			if (K != "ec633bd56a5774a0940cb97e27a9e4e51dc94af737596a0c5cbb3d30332d92a5") {
-				return false;
-			} else if (K0 != "ec633bd56a5774a0940cb97e27a9e4e51dc94af737596a0c5cbb3d30332d92a5") {
-				return false;
+				if (K != test_vectors[i]['k_bad00']) {
+					return false;
+				} else if (K0 != test_vectors[i]['k_bad00']) {
+					return false;
+				} else if (K1 != test_vectors[i]['k_bad01']) {
+					return false;
+				} else if (K15 != test_vectors[i]['k_bad15']) {
+					return false;
+				};
 			};
 
 			return true;
