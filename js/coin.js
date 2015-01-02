@@ -769,6 +769,12 @@
 					badrs++
 				} while (r.compareTo(BigInteger.ZERO) <= 0 || s.compareTo(BigInteger.ZERO) <= 0);
 
+				// Force lower s values per BIP62
+				var halfn = n.shiftRight(1);
+				if (s.compareTo(halfn) > 0) {
+					s = n.subtract(s);
+				};
+
 				var sig = serializeSig(r, s);
 				sig.push(parseInt(1, 10));
 
