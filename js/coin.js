@@ -188,7 +188,6 @@
 
 				var o = {};
 				o.bytes = front.slice(1);
-				o.valid = true;
 				o.version = front[0];
 
 				if(o.version==coinjs.pub){ // standard address
@@ -205,7 +204,6 @@
 
 					o.option = front[1];
 					if (o.option != 0) {
-						o.valid = false;
 						alert("Stealth Address option other than 0 is currently not supported!");
 						return false;
 					};
@@ -214,7 +212,6 @@
 					o.n = front[35];
 
 					if (o.n > 1) {
-						o.valid = false;
 						alert("Stealth Multisig is currently not supported!");
 						return false;
 					};
@@ -224,7 +221,6 @@
 					o.prefixlen = front[70];
 				
 					if (o.prefixlen > 0) {
-						o.valid = false;
 						alert("Stealth Address Prefixes are currently not supported!");
 						return false;
 					};
