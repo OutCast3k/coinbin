@@ -249,6 +249,15 @@ $(document).ready(function() {
 		$("#newBitcoinAddress").val(coin.address);
 		$("#newPubKey").val(coin.pubkey);
 		$("#newPrivKey").val(coin.wif);
+
+		/* encrypted key code */
+		if((!$("#encryptKey").is(":checked")) || $("#aes256pass").val()==$("#aes256pass_confirm").val()){
+			$("#aes256passStatus").addClass("hidden");
+		} else {
+			$("#aes256passStatus").removeClass("hidden");
+		}
+		$("#newPrivKeyEnc").val(CryptoJS.AES.encrypt(coin.wif, $("#aes256pass").val())+'');
+
 	});
 
 	$("#newBrainwallet").click(function(){
@@ -256,6 +265,14 @@ $(document).ready(function() {
 			$("#brainwallet").removeClass("hidden");
 		} else {
 			$("#brainwallet").addClass("hidden");
+		}
+	});
+
+	$("#encryptKey").click(function(){
+		if($(this).is(":checked")){
+			$("#ase256wifkey, #aes256passform").removeClass("hidden");
+		} else {
+			$("#ase256wifkey, #aes256passform, #aes256passStatus").addClass("hidden");
 		}
 	});
 

@@ -21,6 +21,7 @@
 		<script type="text/javascript" src="js/crypto-sha256.js"></script>
 		<script type="text/javascript" src="js/crypto-sha256-hmac.js"></script>
 		<script type="text/javascript" src="js/ripemd160.js"></script>
+		<script type="text/javascript" src="js/aes.js"></script>
 
 		<script type="text/javascript" src="js/qrcode.js"></script>
 		<script type="text/javascript" src="js/jsbn.js"></script>
@@ -191,7 +192,7 @@
 							</span>
 						</div>
 
-						<label>Pubkey (Share)</label>
+						<label>Public key (Share)</label>
 						<input id="newPubKey" type="text" class="form-control" readonly>
 						<label>Private key (WIF key)</label>
 						<div class="input-group">
@@ -200,6 +201,12 @@
 								<button class="showKey btn btn-default" type="button">Show</button>
 							</span>
 						</div>
+
+						<div id="ase256wifkey" class="hidden">
+							<label>AES-256 Encrypted WIF key</label>
+							<input id="newPrivKeyEnc" type="text" class="form-control" value="" readonly>
+						</div>
+
 						<h3>Address Options</h3>
 						<p>You can use the advanced options below to generate different kind of keys and addresses.</p>
 						<div class="checkbox">
@@ -209,6 +216,27 @@
 							<label><input type="checkbox" id="newBrainwallet" class="checkbox-inline"> Custom Seed or Brain Wallet</label>
 							<input type="text" class="form-control hidden" id="brainwallet">
 						</div>
+
+						<div class="checkbox">
+							<label><input type="checkbox" id="encryptKey" class="checkbox-inline"> Encrypt Private Key with AES-256 Password</label>
+							<div id="aes256passform" class="row hidden">
+								<div class="col-md-6">
+									<input type="password" class="form-control" id="aes256pass" placeholder="Password"></label>
+								</div>
+								<div class="col-md-6">
+									<input type="password" class="form-control" id="aes256pass_confirm" placeholder="Confirm Password">
+								</div>
+							</div>
+
+							<div id="aes256passStatus" class="row hidden">
+								<div class="col-md-12">
+									<br>
+									<div class="alert alert-danger"> <span class="glyphicon glyphicon-exclamation-sign"></span> Your passwords do not match, please try again!</div>
+								</div>
+							</div>
+
+						</div>
+
 						<input type="button" class="btn btn-primary" value="Generate" id="newKeysBtn">
 						<br>
 					</div>
