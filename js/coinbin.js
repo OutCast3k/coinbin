@@ -34,6 +34,7 @@ $(document).ready(function() {
 
 					$("#walletKeys .privkey").val(keys.wif);
 					$("#walletKeys .pubkey").val(keys.pubkey);
+					$("#walletKeys .privkeyaes").val(CryptoJS.AES.encrypt(keys.wif, pass));
 
 					$("#openLogin").hide();
 					$("#openWallet").removeClass("hidden").show();
