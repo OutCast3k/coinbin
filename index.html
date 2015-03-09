@@ -361,8 +361,8 @@
 						</div>
 
 						<ul class="nav nav-tabs" id="putTabs">
-							<li class="active"><a href="#txoutputs" data-toggle="tab">Outputs <small>(<span id="totalOutput">0.0000</span>)</small></a></li>
-							<li><a href="#txinputs" data-toggle="tab">Inputs <small>(<span id="totalInput">0.0000</span>)</small></a></li>
+							<li class="active"><a href="#txoutputs" data-toggle="tab">Outputs <small>(<span id="totalOutput">0.00000000</span>)</small></a></li>
+							<li><a href="#txinputs" data-toggle="tab">Inputs <small>(<span id="totalInput">0.00000000</span>)</small></a></li>
 						</ul>
 
 						<br>
@@ -687,6 +687,7 @@
 
 				<div class="modal-body" align="center">
 					<select id="videoSource" class="form-control"></select>
+					<div id="videoReaderError" class="hidden">Your browser does not offer camera support</div>
 					<video id="videoReader" muted autoplay style="width:100%;height:100%"></video>
 					<div id="qrcode-scanner-callback-to" class="hidden"></div>
 				</div>
