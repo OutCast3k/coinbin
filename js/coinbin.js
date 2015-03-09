@@ -254,6 +254,9 @@ $(document).ready(function() {
 		/* encrypted key code */
 		if((!$("#encryptKey").is(":checked")) || $("#aes256pass").val()==$("#aes256pass_confirm").val()){
 			$("#aes256passStatus").addClass("hidden");
+			if($("#encryptKey").is(":checked")){
+				$("#aes256wifkey").removeClass("hidden");
+			}
 		} else {
 			$("#aes256passStatus").removeClass("hidden");
 		}
@@ -271,9 +274,9 @@ $(document).ready(function() {
 
 	$("#encryptKey").click(function(){
 		if($(this).is(":checked")){
-			$("#ase256wifkey, #aes256passform").removeClass("hidden");
+			$("#aes256passform").removeClass("hidden");
 		} else {
-			$("#ase256wifkey, #aes256passform, #aes256passStatus").addClass("hidden");
+			$("#aes256wifkey, #aes256passform, #aes256passStatus").addClass("hidden");
 		}
 	});
 
