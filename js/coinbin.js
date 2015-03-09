@@ -430,19 +430,19 @@ $(document).ready(function() {
  					}
 				}
 			});
+
+			$("#videoSource").unbind("change").change(function(){
+				scannerStart()
+			});
+
 		} else {
 			$("#videoSource").addClass("hidden");
 		}
-
-		$("#videoSource").unbind("change").change(function(){
-			videoStart()
-		});
-
-		videoStart();
+		scannerStart();
 		$("#qrcode-scanner-callback-to").html($(this).attr('forward-result'));
 	});
 
-	function videoStart(){
+	function scannerStart(){
 		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || false;
 		if(navigator.getUserMedia){
 			if (!!window.stream) {
