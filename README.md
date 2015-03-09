@@ -24,5 +24,6 @@ Coinb.in supports a number of key features such as:
 - Brain wallet support.
 - Compatible with bitcoin-qt
 - An offical .onion address for tor users.
+- Offline qrcode creator and scanning tool
 
 Donate to 1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg to see more development!
