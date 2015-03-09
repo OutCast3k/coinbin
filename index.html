@@ -24,6 +24,7 @@
 		<script type="text/javascript" src="js/aes.js"></script>
 
 		<script type="text/javascript" src="js/qrcode.js"></script>
+		<script type="text/javascript" src="js/qcode-decoder.min.js"></script>
 		<script type="text/javascript" src="js/jsbn.js"></script>
 		<script type="text/javascript" src="js/ellipticcurve.js"></script>
 
@@ -316,6 +317,9 @@
 
 						<b>Address, WIF key or Multisig Redeem Script</b>:
 						<div class="input-group">
+							<span class="input-group-btn">
+								<button class="btn btn-info qrcodeScanner" type="button" data-toggle="modal" data-target="#modalQrcodeScanner" forward-result="#redeemFrom"><span class="glyphicon glyphicon-camera"></span></button>
+							</span>
 							<input type="text" id="redeemFrom" class="form-control" value="">
 							<span class="input-group-btn">
 								<button id="redeemFromBtn" class="btn btn-info" type="button">Load</button>
@@ -357,8 +361,8 @@
 						</div>
 
 						<ul class="nav nav-tabs" id="putTabs">
-							<li class="active"><a href="#txoutputs" data-toggle="tab">Outputs (<span id="totalOutput">0.0000</span>)</a></li>
-							<li><a href="#txinputs" data-toggle="tab">Inputs (<span id="totalInput">0.0000</span>)</a></li>
+							<li class="active"><a href="#txoutputs" data-toggle="tab">Outputs <small>(<span id="totalOutput">0.0000</span>)</small></a></li>
+							<li><a href="#txinputs" data-toggle="tab">Inputs <small>(<span id="totalInput">0.0000</span>)</small></a></li>
 						</ul>
 
 						<br>
@@ -665,12 +669,35 @@
 				</div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal" id="agentClose">Close</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="qrCodeClose">Close</button>
 				</div>
 			</div>
 		</div>
 	</div>
 	<!-- qrcode modal -->
+
+	<!-- qrcode scanner modal -->
+	<div class="modal fade" id="modalQrcodeScanner" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">qrcode scanner</h4>
+				</div>
+
+				<div class="modal-body" align="center">
+					<select id="videoSource" class="form-control"></select>
+					<video id="videoReader" muted autoplay style="width:100%;height:100%"></video>
+					<div id="qrcode-scanner-callback-to" class="hidden"></div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="qrScanClose">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- qrcode scanner modal -->
 
 	<div class="hidden" id="entropybucket"></div>
 	</body>

@@ -413,6 +413,73 @@ $(document).ready(function() {
 		totalInputAmount();
 	});
 
+	/* code for the qr code scanner */
+
+	function gotSources(sourceInfos) {
+		for (var i = 0; i !== sourceInfos.length; ++i) {
+			var sourceInfo = sourceInfos[i];
+			var option = document.createElement('option');
+			option.value = sourceInfo.id;
+			if (sourceInfo.kind === 'video') {
+				option.text = sourceInfo.label || 'camera ' + ($("select#videoSource options").length + 1);
+				$(option).appendTo("select#videoSource");
+ 			}
+		}
+	}
+
+	if (typeof MediaStreamTrack === 'undefined'){
+		return alert('This browser does not support MediaStreamTrack.\n\nTry Chrome Canary.');
+	} else {
+		MediaStreamTrack.getSources(gotSources);
+	}
+
+	function videoStart(){
+
+		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+		if (!!window.stream) {
+			$("video").attr('src',null);
+			window.stream.stop();
+  		}
+
+		var videoSource = $("select#videoSource").val()
+		var constraints = {
+			video: {
+				optional: [{sourceId: videoSource}]
+			}
+		};
+		navigator.getUserMedia(constraints, function(stream){
+			window.stream = stream; // make stream available to console
+			var videoElement = document.querySelector('video');
+			videoElement.src = window.URL.createObjectURL(stream);
+			videoElement.play();
+		}, function(error){ });
+
+		QCodeDecoder().decodeFromCamera(document.getElementById('videoReader'), function(er,data){
+			if(!er){
+				var r = '';
+				var match = data.match(/^bitcoin\:(.*)\??$/i);
+				if(match){
+					r = match[1];
+				} else {
+					r = data;
+				}
+
+				$(""+$("#qrcode-scanner-callback-to").html()).val(r);
+				$("#qrScanClose").click();
+			}
+		});
+	}
+
+	$(".qrcodeScanner").click(function(){
+		$("select#videoSource").change(function(){
+			videoStart()
+		});
+		videoStart();
+
+		$("#qrcode-scanner-callback-to").html($(this).attr('forward-result'));
+	});
+
 	$("#redeemFromBtn").click(function(){
 		var thisbtn = this;
 		var addr = '';
