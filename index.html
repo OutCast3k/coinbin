@@ -44,7 +44,7 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a href="#home" class="navbar-brand" id="homeBtn"><b><img src="images/coinbin.gif" style="height:25px;margin-top:-5px"></b></a>
+						<a href="#home" class="navbar-brand" id="homeBtn"><img src="images/coinbin.gif" style="height:25px;margin-top:-5px"></a>
 					</div>
 					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav">
@@ -60,9 +60,8 @@
 							<li><a href="#verify" data-toggle="tab"><span class="glyphicon glyphicon-ok"></span> Verify</a></li>
 							<li><a href="#sign" data-toggle="tab"><span class="glyphicon glyphicon-pencil"></span> Sign</a></li>
 							<li><a href="#broadcast" data-toggle="tab"><span class="glyphicon glyphicon-globe"></span> Broadcast</a></li>
-							<li><a href="https://localbitcoins.com/?ch=173j" target="_blank"><span class="glyphicon glyphicon-shopping-cart"></span> Buy &amp; Sell</a></li>
-						<!--	<li><a href="#dev" data-toggle="tab"><span class="glyphicon glyphicon-wrench"></span> Dev</a></li>
-						-->	<li><a href="#about" data-toggle="tab"><span class="glyphicon glyphicon-info-sign"></span> About</a></li>
+							<li><a href="#wallet" data-toggle="tab"><span class="glyphicon glyphicon-briefcase"></span> Wallet</a></li>
+							<li><a href="#about" data-toggle="tab"><span class="glyphicon glyphicon-info-sign"></span> About</a></li>
 						</ul>
 					</div>
 				</div>
@@ -74,6 +73,56 @@
 
 				<div class="tab-content">
 					<div class="tab-pane tab-content active" id="home">
+						<div class="row">
+							<div class="col-md-12">
+								<h2>Coinb.in <small>Welcome to the Blockchain</small></h2>
+							</div>
+						</div>
+
+						<div class="jumbotron">
+							<h1>Bitcoin. It's your money!</h1>
+							<p>Be your own bank, take control of your own money and start using Bitcoin today!</p>
+							<p><a class="btn btn-primary btn-lg" href="#about" role="button">Learn more &raquo;</a></p>
+						</div>
+
+						<hr>
+
+						<div class="row">
+							<div class="col-md-4">
+								<h3><span class="glyphicon glyphicon-ok"></span> Open Source</h3>
+								<p>Coinbin is an open source web based wallet written in javascript and released under the <a href="LICENCE">MIT licence</a> which means its free to use and edit.</p>
+							</div>
+
+							<div class="col-md-4">
+								<h3><span class="glyphicon glyphicon-fullscreen"></span> MultiSig</h3>
+								<p>We offer a fully transparent <a href="#newMultiSig">multisig</a> solution which works seamlessly offline and with other bitcoin clients.</p>
+							</div>
+
+							<div class="col-md-4">
+								<h3><span class="glyphicon glyphicon-bitcoin"></span> Raw Transactions</h3>
+								<p><a href="#newTransaction">Create</a>, <a href="#verify">verify</a>, <a href="#sign">sign</a> and <a href="#broadcast">broadcast</a> custom raw transactions online with advanced features and minimal effort!</p>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-4">
+								<h3><span class="glyphicon glyphicon-piggy-bank"></span> Wallet</h3>
+								<p>Quick access to an <a href="#wallet">online wallet</a> where only you have access to your own private keys!</p>
+							</div>
+
+							<div class="col-md-4">
+								<h3><span class="glyphicon glyphicon-globe"></span> Addresses</h3>
+								<p>We support <a href="#newAddress">regular addresses</a> but also <a href="#newMultiSig">multisig</a> and stealth, and access to your own private keys!</p>
+							</div>
+
+							<div class="col-md-4">
+								<h3><span class="glyphicon glyphicon-wrench"></span>  Development</h3>
+								<p>Use what we've built to write your own projects! See our documention (coming soon), or contribute at <a href="https://github.com/OutCast3k/coinbin/">github</a>.</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="tab-pane tab-content" id="wallet">
 						<div class="row">
 							<div class="col-md-12">
 								<h2>Open Wallet <small> browser based bitcoin wallet</small></h2>
@@ -91,7 +140,7 @@
 										<input id="openPassConfirm" type="password" class="form-control" placeholder="Password confirm" required>
 										<br>
 										<div id="openLoginStatus" class="alert alert-danger hidden"></div>
-										<button id="openBtn" class="btn btn-lg btn-primary btn-block" type="submit">Open</button>
+										<button id="openBtn" class="btn btn-primary" type="submit">Submit</button>
 									</form>
 								</div>
 
@@ -251,7 +300,7 @@
 						<p>Enter the public keys of all the participants, to create a <a href="https://en.bitcoin.it/wiki/Address#Multi-signature_addresses" target="_blank">multi signature address</a>. Maximum of 15 allowed. Compressed and uncompressed public keys are accepted.</p>
 
 						<div id="multisigPubKeys" class="row">
-							<div class="form-inline">
+							<div class="form-horizontal">
 								<div class="col-xs-11">
 									<input type="text" class="form-control pubkey">
 								</div>
@@ -476,7 +525,7 @@
 
 						<div class="hidden verifyData" id="verifyRsData">
 							<h4>Redeem Script</h4>
-							<p>The above redeem script has been decoded</p>
+							<p><span style="float:right"><a href="javascript:;" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above redeem script has been decoded</p>
 							<label>Multi Signature Address</label>
 							<div class="row">
 								<div class="col-lg-6">
@@ -499,7 +548,7 @@
 
 						<div class="hidden verifyData" id="verifyTransactionData">
 							<h4>Transaction Script</h4>
-							<p>The above script has been decoded</p>
+							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above script has been decoded</p>
 							<div><b>Version</b>: <span class="transactionVersion"></span></div>
 							<div><b>Transaction Size</b>: <span class="transactionSize"></span></div>
 							<div><b>Lock time</b>: <span class="transactionLockTime"></span></div>
@@ -541,7 +590,7 @@
 
 						<div class="hidden verifyData" id="verifyPubKey">
 							<h4>Public key</h4>
-							<p>The above public key has been encoded to its address</p>
+							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above public key has been encoded to its address</p>
 							<p><b>Address</b>: <input type="text" class="form-control address" readonly></p>
 						</div>
 
@@ -602,17 +651,23 @@
 
 					<div class="tab-pane tab-content" id="dev">
 						<h2>Development <small>Javascript framework, API and more</small></h2>
-
+						<div class="alert alert-info">This section is currently under development and is subject to change.</div>
+						
 					</div>
 
 					<div class="tab-pane tab-content" id="about">
 						<h2>About <small>open source bitcoin wallet</small></h2>
-						<p>Version 1.0 beta by <a href="https://bitcointalk.org/index.php?action=profile;u=34834" target="_blank">OutCast3k</a></p>
+						<p>Version 1.1 by <a href="https://bitcointalk.org/index.php?action=profile;u=34834" target="_blank">OutCast3k</a></p>
 						<p>Compatible with bitcoin-qt</p>
 						<p>Github <a href="https://github.com/OutCast3k/coinbin/">https://github.com/OutCast3k/coinbin/</a></p>
 						<p>TOR <a href="http://4zpinp6gdkjfplhk.onion">4zpinp6gdkjfplhk.onion</a></p>
-						<br>
-						<p>Donate 1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg</p>
+						<h3>Information</h3>
+						<p>Coinb.in is a free and open source project released under the MIT licence, originally by <a href="https://bitcointalk.org/index.php?action=profile;u=34834" target="_blank">OutCast3k</a> in 2013. Discussion of the project can be found at <a href="https://bitcointalk.org/index.php?topic=390046" target="_blank">bitcointalk.org</a> during its early testing stages when its primary focus was to develop a proof of concept multisig solution in javascript.</p>
+						<p>Coinb.in is run and funded by the generosity of others in terms of <a href="https://github.com/OutCast3k/coinbin/graphs/contributors" target="_blank">development</a> and hosting.</p>
+						<h3>Privacy</h3>
+						<p>Coinb.in beleives strongly in privacy, not only do we support the use of TOR, the site does not collect and store IP or transaction data via our servers nor do we store your bitcoins private key. We do use google analytics to track hits and route traffic via cloudflare using an SSL certificate.</p>
+						<h3>Donate</h3>
+						<p>Please donate to 1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg if you found this project useful or want to see more features!</p>
 					</div>
 
 					<br>
@@ -625,7 +680,7 @@
 
 		<div id="footer">
 			<div class="container text-right">
-	        		<p class="text-muted">Version 1.0 beta</p>
+	        		<p class="text-muted">Version 1.1</p>
 			</div>
 		</div>
 
