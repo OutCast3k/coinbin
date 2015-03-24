@@ -206,7 +206,7 @@ $(document).ready(function() {
 	});
 
 	$("#walletSpendTo .addressAdd").click(function(){
-		var clone = '<div class="form-inline output">'+$(this).parent().html()+'</div>';
+		var clone = '<div class="form-horizontal output">'+$(this).parent().html()+'</div>';
 		$("#walletSpendTo").append(clone);
 		$("#walletSpendTo .glyphicon-plus:last").removeClass('glyphicon-plus').addClass('glyphicon-minus');
 		$("#walletSpendTo .glyphicon-minus:last").parent().removeClass('addressAdd').addClass('addressRemove');
