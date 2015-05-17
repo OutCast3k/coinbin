@@ -439,6 +439,7 @@
 			}
 		}
 
+		// extend prv/pub key
 		r.extend = function(){
 			var hd = coinjs.hd();
 			return hd.make({'depth':(this.depth*1)+1,
@@ -449,8 +450,9 @@
 				'pubkey':this.keys.pubkey});
 		}
 
+		// derive key from index
 		r.derive = function(i){
-			i = (i)?i:0;
+			i = (i)?:0;
 			var blob = (Crypto.util.hexToBytes(this.keys.pubkey)).concat(coinjs.numToBytes(i,4).reverse());
 
 			var j = new jsSHA(Crypto.util.bytesToHex(blob), 'HEX');
@@ -469,6 +471,7 @@
 			o.child_index = i;
 
 			if(this.type=='private'){
+				// derive xpub/xprv from a xprv key
 				k = il.add(new BigInteger([0].concat(Crypto.util.hexToBytes(this.keys.privkey)))).mod(ecparams.getN());
 				key = Crypto.util.bytesToHex(k.toByteArrayUnsigned());
 
@@ -480,6 +483,7 @@
 					'address':coinjs.pubkey2address(pubkey)};
 
 			} else if (this.type=='public'){
+				// derive xpub key from an xpub key
 				q = ecparams.curve.decodePointHex(this.keys.pubkey);
 				var curvePt = ecparams.getG().multiply(il).add(q);
 
@@ -535,12 +539,12 @@
 			//child index
 			k = k.concat((coinjs.numToBytes(data.child_index, 4)).reverse());
 
-			// Chain code
+			//Chain code
 			k = k.concat(data.chain_code);
 
 			var o = {}; // results
 
-			// Extended HD Private Key
+			//encode xprv key
 			if(data.privkey){
 				var prv = (coinjs.numToBytes(coinjs.hdkey.prv, 4)).reverse();
 				prv = prv.concat(k);
@@ -552,7 +556,7 @@
 				o.privkey = coinjs.base58encode(ret);
 			}
 
-			// Extended HD Public Key
+			//encode xpub key
 			if(data.pubkey){
 				var pub = (coinjs.numToBytes(coinjs.hdkey.pub, 4)).reverse();
 				pub = pub.concat(k);
