@@ -452,7 +452,7 @@
 
 		// derive key from index
 		r.derive = function(i){
-			i = (i)?:0;
+			i = (i)?i:0;
 			var blob = (Crypto.util.hexToBytes(this.keys.pubkey)).concat(coinjs.numToBytes(i,4).reverse());
 
 			var j = new jsSHA(Crypto.util.bytesToHex(blob), 'HEX');
