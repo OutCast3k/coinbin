@@ -331,6 +331,32 @@ $(document).ready(function() {
 		}
 	});
 
+	/* new -> Hd address code */
+
+	$(".deriveHDbtn").click(function(){
+		$("#verifyScript").val($("input[type='text']",$(this).parent().parent()).val());
+		window.location = "#verify";
+		$("#verifyBtn").click();
+	});
+
+	$("#newHDKeysBtn").click(function(){
+		coinjs.compressed = true;
+		var s = ($("#newHDBrainwallet").is(":checked")) ? $("#HDBrainwallet").val() : null;
+		var hd = coinjs.hd();
+		var pair = hd.master(s);
+		$("#newHDxpub").val(pair.pubkey);
+		$("#newHDxprv").val(pair.privkey);
+
+	});
+
+	$("#newHDBrainwallet").click(function(){
+		if($(this).is(":checked")){
+			$("#HDBrainwallet").removeClass("hidden");
+		} else {
+			$("#HDBrainwallet").addClass("hidden");
+		}
+	});
+
 	/* new -> transaction code */
 
 	$("#recipients .addressAddTo").click(function(){
@@ -626,7 +652,9 @@ $(document).ready(function() {
 			if(!decodeTransactionScript()){
 				if(!decodePrivKey()){
 					if(!decodePubKey()){
-						$("#verifyStatus").removeClass('hidden').fadeOut().fadeIn();
+						if(!decodeHDaddress()){
+							$("#verifyStatus").removeClass('hidden').fadeOut().fadeIn();
+						}
 					}
 				}
 			}
@@ -780,6 +808,50 @@ $(document).ready(function() {
 		}
 	}
 
+	function decodeHDaddress(){
+		var s = $("#verifyScript").val();
+		if(s.match(/^x[prv|pub]/)){
+			try {
+				var hd = coinjs.hd(s);
+				$("#verifyHDaddress .hdKey").html(s);
+				$("#verifyHDaddress .chain_code").val(Crypto.util.bytesToHex(hd.chain_code));
+				$("#verifyHDaddress .depth").val(hd.depth);
+				$("#verifyHDaddress .version").val('0x'+(hd.version).toString(16));
+				$("#verifyHDaddress .child_index").val(hd.child_index);
+				$("#verifyHDaddress .hdwifkey").val((hd.keys.wif)?hd.keys.wif:'');
+				$("#verifyHDaddress .key_type").html((((hd.depth==0 && hd.child_index==0)?'Master':'Derived')+' '+hd.type).toLowerCase());
+				$("#verifyHDaddress .parent_fingerprint").val(Crypto.util.bytesToHex(hd.parent_fingerprint));
+				$("#verifyHDaddress .derived_data table tbody").html("");
+				deriveHDaddress();
+				$(".verifyLink").attr('href','?verify='+$("#verifyScript").val());
+				$("#verifyHDaddress").removeClass("hidden");
+				return true;
+			} catch (e) {
+				return false;
+			}
+		}
+	}
+
+	function deriveHDaddress() {
+		var hd = coinjs.hd($("#verifyHDaddress .hdKey").html());
+		var index_start = $("#verifyHDaddress .derivation_index_start").val()*1;
+		var index_end = $("#verifyHDaddress .derivation_index_end").val()*1;
+		var html = '';
+		$("#verifyHDaddress .derived_data table tbody").html("");
+		for(var i=index_start;i<=index_end;i++){
+			var derived = hd.derive(i);
+			html += '<tr>';
+			html += '<td>'+i+'</td>';
+			html += '<td><input type="text" class="form-control" value="'+derived.keys.address+'" readonly></td>';
+			html += '<td><input type="text" class="form-control" value="'+((derived.keys.wif)?derived.keys.wif:'')+'" readonly></td>';
+			html += '<td><input type="text" class="form-control" value="'+derived.keys_extended.pubkey+'" readonly></td>';
+			html += '<td><input type="text" class="form-control" value="'+((derived.keys_extended.privkey)?derived.keys_extended.privkey:'')+'" readonly></td>';
+			html += '</tr>';
+		}
+		$(html).appendTo("#verifyHDaddress .derived_data table tbody");
+	}
+
+
 	/* sign code */
 
 	$("#signBtn").click(function(){
@@ -894,7 +966,8 @@ $(document).ready(function() {
 		$(".pubkeyAdd").click();
 	}
 
-	$("#newKeysBtn").click();
+	$("#newKeysBtn, #newHDKeysBtn").click();
+
 
 	validateOutputAmount();
 

@@ -20,6 +20,7 @@
 		<script type="text/javascript" src="js/crypto-min.js"></script>
 		<script type="text/javascript" src="js/crypto-sha256.js"></script>
 		<script type="text/javascript" src="js/crypto-sha256-hmac.js"></script>
+		<script type="text/javascript" src="js/sha512.js"></script>
 		<script type="text/javascript" src="js/ripemd160.js"></script>
 		<script type="text/javascript" src="js/aes.js"></script>
 
@@ -53,6 +54,7 @@
 								<ul class="dropdown-menu">
 									<li><a href="#newAddress" data-toggle="tab">New Address</a></li>
 									<li><a href="#newMultiSig" data-toggle="tab">MultiSig Address</a></li>
+									<li><a href="#newHDaddress" data-toggle="tab">HD Address</a></li>
 									<li class="divider"></li>
 									<li><a href="#newTransaction" data-toggle="tab">Transaction</a></li>
 								</ul>
@@ -90,7 +92,7 @@
 						<div class="row">
 							<div class="col-md-4">
 								<h3><span class="glyphicon glyphicon-ok"></span> Open Source</h3>
-								<p>Coinbin is an open source web based wallet written in javascript and released under the <a href="LICENCE">MIT licence</a> which means its free to use and edit.</p>
+								<p>Coinbin is an open source web based wallet written in javascript and released under the <a href="LICENSE">MIT license</a> which means its free to use and edit.</p>
 							</div>
 
 							<div class="col-md-4">
@@ -361,6 +363,37 @@
 						<br>
 					</div>
 
+					<div class="tab-pane tab-content" id="newHDaddress">
+						<h2>New HD Address <small>making bip32 even easier</small></h2>
+						<p>Use the form below to generate a <i>master</i> hierarchical deterministic address.</p>
+
+						<label>xPub Address</label>
+						<div class="input-group">
+							<input id="newHDxpub" type="text" class="form-control" value="" readonly>
+							<span class="input-group-btn">
+								<button class="deriveHDbtn btn btn-default" type="button"><span title="Derive from key" class="glyphicon glyphicon-chevron-right"></span></button>
+							</span>
+						</div>
+
+						<label>xPrv Address</label>
+						<div class="input-group">
+							<input id="newHDxprv" type="text" class="form-control" value="" readonly>
+							<span class="input-group-btn">
+								<button class="deriveHDbtn btn btn-default" type="button"><span title="Derive from key" class="glyphicon glyphicon-chevron-right"></span></button>
+							</span>
+						</div>
+
+						<h3>Address Options</h3>
+						<p>You can use the advanced options below to generate different kind of master address.</p>
+						
+						<div class="checkbox">
+							<label><input type="checkbox" id="newHDBrainwallet" class="checkbox-inline"> Custom Seed or Brain Wallet</label>
+							<input type="text" class="form-control hidden" id="HDBrainwallet">
+						</div>
+
+						<input type="button" class="btn btn-primary" value="Generate" id="newHDKeysBtn">
+					</div>
+
 					<div class="tab-pane tab-content" id="newTransaction">
 						<h2>Transaction <small>Create a new transaction</small></h2>
 						<p>Use this page to create a raw transaction</p>
@@ -518,7 +551,7 @@
 						<h2>Verify <small>transactions and other scripts</small></h2>
 						<div class="row">
 							<div class="col-md-12">
-								<p>Enter the raw transaction, redeem script, pubkey or wif key to convert it into a readable format that can be verified manually.</p>
+								<p>Enter the raw transaction, redeem script, pubkey, hd address or wif key to convert it into a readable format that can be verified manually.</p>
 								<textarea type="text" id="verifyScript" class="form-control" style="height:125px"></textarea>
 							</div>
 						</div>
@@ -595,6 +628,95 @@
 							<p><b>Address</b>: <input type="text" class="form-control address" readonly></p>
 						</div>
 
+						<div class="hidden verifyData" id="verifyHDaddress">
+							<h4>HD Address</h4>
+							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The key <small><span class="hdKey hidden"></span></small> has been decoded</p>
+							<div class="row">
+								<div class="col-md-2">
+									<b>Type</b><br>
+									<span class="key_type"></span>
+								</div>
+
+								<div class="col-md-5">
+									<b>Chain Code</b><br>
+									<input type="text" class="form-control chain_code" value="" readonly>
+								</div>
+
+
+								<div class="col-md-5">
+									<b>Key</b><br>
+									<input type="text" class="form-control hdwifkey" value="" readonly>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-md-3">
+									<b>Version</b><br>
+									<input type="text" class="form-control version" value="" readonly>
+								</div>
+
+								<div class="col-md-3">
+									<b>Parent FingerPrint</b><br>
+									<input type="text" class="form-control parent_fingerprint" value="" readonly>
+								</div>
+
+								<div class="col-md-3">
+									<b>Depth</b><br>
+									<input type="text" class="form-control depth" value="" readonly>
+								</div>
+
+								<div class="col-md-3">
+									<b>Index</b><br>
+									<input type="text" class="form-control child_index" value="" readonly>
+								</div>
+							</div>
+
+							<div class="row">
+							</div>
+
+							<hr>
+
+							<h4>Key Derivation</h4>
+							<p>The path of key derivation</p>
+
+							<div class="row">
+								<div class="col-md-8">
+									<b>Path</b><br>
+									<select class="form-control">
+										<option>Simple: m/i</option>
+									</select>
+								</div>
+
+								<div class="col-md-2">
+									<b>Index (Start)</b><br>
+									<input type="text" class="form-control derivation_index_start" value="0">
+								</div>
+
+								<div class="col-md-2">
+									<b>Index (End)</b><br>
+									<input type="text" class="form-control derivation_index_end" value="1">
+								</div>
+
+							</div>
+
+							<hr>
+							<h4>Keys</h4>
+
+							<p>Keys derived from the hd address provided</p>
+
+							<div class="derived_data">
+								<table class="table table-striped table-hover">
+									<thead>
+										<tr><td><b>Index</b></td><td><b>Address</b><td><b>Private Key (WIF)</b></td></td><td><b>Extended xPub</b></td><td><b>Extended xPrv</b></td></tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+
+							<br>
+						</div>
+
 						<div id="verifyStatus" class="alert alert-danger hidden"><span class="glyphicon glyphicon-exclamation-sign"></span> Unable to decode</div>
 
 						<input type="button" value="Submit" class="btn btn-primary" id="verifyBtn">
@@ -663,7 +785,7 @@
 						<p>Github <a href="https://github.com/OutCast3k/coinbin/">https://github.com/OutCast3k/coinbin/</a></p>
 						<p>TOR <a href="http://4zpinp6gdkjfplhk.onion">4zpinp6gdkjfplhk.onion</a></p>
 						<h3>Information</h3>
-						<p>Coinb.in is a free and open source project released under the MIT licence, originally by <a href="https://bitcointalk.org/index.php?action=profile;u=34834" target="_blank">OutCast3k</a> in 2013. Discussion of the project can be found at <a href="https://bitcointalk.org/index.php?topic=390046" target="_blank">bitcointalk.org</a> during its early testing stages when its primary focus was to develop a proof of concept multisig solution in javascript.</p>
+						<p>Coinb.in is a free and open source project released under the MIT license, originally by <a href="https://bitcointalk.org/index.php?action=profile;u=34834" target="_blank">OutCast3k</a> in 2013. Discussion of the project can be found at <a href="https://bitcointalk.org/index.php?topic=390046" target="_blank">bitcointalk.org</a> during its early testing stages when its primary focus was to develop a proof of concept multisig solution in javascript.</p>
 						<p>Coinb.in is run and funded by the generosity of others in terms of <a href="https://github.com/OutCast3k/coinbin/graphs/contributors" target="_blank">development</a> and hosting.</p>
 						<h3>Privacy</h3>
 						<p>Coinb.in beleives strongly in privacy, not only do we support the use of TOR, the site does not collect and store IP or transaction data via our servers nor do we store your bitcoins private key. We do use google analytics to track hits and route traffic via cloudflare using an SSL certificate.</p>

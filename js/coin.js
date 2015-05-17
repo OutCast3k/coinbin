@@ -1,6 +1,6 @@
 /*
  Coinjs 0.01 beta by OutCast3k{at}gmail.com
- A bitcoin framework loosely based on bitcoinjs.
+ A bitcoin frameworkcoinjs.
 
  http://github.com/OutCast3k/coinjs or http://coinb.in/coinjs
 */
@@ -13,10 +13,12 @@
 	coinjs.pub = 0x00;
 	coinjs.priv = 0x80;
 	coinjs.multisig = 0x05;
+	coinjs.hdkey = {'prv':0x0488ade4, 'pub':0x0488b21e};
+
 	coinjs.compressed = false;
 
 	/* other vars */
-	coinjs.developer = '1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg';
+	coinjs.developer = '1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg'; // bitcoin
 
 	/* bit(coinb.in) api vars */
 	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+'coinb.in/api/';
@@ -26,8 +28,8 @@
 	/* start of address functions */
 
 	/* generate a private and public keypair, with address and WIF address */
-	coinjs.newKeys = function(string){
-		var privkey = (string) ? Crypto.SHA256(string) : this.newPrivkey();
+	coinjs.newKeys = function(input){
+		var privkey = (input) ? Crypto.SHA256(input) : this.newPrivkey();
 		var pubkey = this.newPubkey(privkey);
 		return {
 			'privkey': privkey,
@@ -376,9 +378,199 @@
 		return result_txt;
 	};
 
+	/* start of hd functions, thanks bip32.org */
+	coinjs.hd = function(data){
+
+		var r = {};
+
+		/* some hd value parsing */
+		r.parse = function() {
+
+			var bytes = [];
+
+			// some quick validation
+			if(typeof(data) == 'string'){
+				var decoded = coinjs.base58decode(data);
+				if(decoded.length == 82){
+					var checksum = decoded.slice(78, 82);
+					var hash = Crypto.SHA256(Crypto.SHA256(decoded.slice(0, 78), { asBytes: true } ), { asBytes: true } );
+					if(checksum[0]==hash[0] && checksum[1]==hash[1] && checksum[2]==hash[2] && checksum[3]==hash[3]){
+						bytes = decoded.slice(0, 78);
+					}
+				}
+			}
+
+			// actual parsing code
+			if(bytes && bytes.length>0) {
+ 				r.version = coinjs.uint(bytes.slice(0, 4) , 4);
+ 				r.depth = coinjs.uint(bytes.slice(4, 5) ,1);
+				r.parent_fingerprint = bytes.slice(5, 9);
+				r.child_index = coinjs.uint(bytes.slice(9, 13), 4);
+ 				r.chain_code = bytes.slice(13, 45);
+				r.key_bytes = bytes.slice(45, 78);
+
+				var c = coinjs.compressed; // get current default
+				coinjs.compressed = true;
+
+				if(r.key_bytes[0] == 0x00) {
+					r.type = 'private';
+					var privkey = (r.key_bytes).slice(1, 33);
+					var privkeyHex = Crypto.util.bytesToHex(privkey);
+					var pubkey = coinjs.newPubkey(privkeyHex);
+
+					r.keys = {'privkey':privkeyHex,
+						'pubkey':pubkey,
+						'address':coinjs.pubkey2address(pubkey),
+						'wif':coinjs.privkey2wif(privkeyHex)};
+
+				} else if(r.key_bytes[0] == 0x02 || r.key_bytes[0] == 0x03) {
+					r.type = 'public';
+					var pubkeyHex = Crypto.util.bytesToHex(r.key_bytes);
+
+					r.keys = {'pubkey': pubkeyHex,
+						'address':coinjs.pubkey2address(pubkeyHex)};
+				} else {
+					r.type = 'invalid';
+				}
+
+				r.keys_extended = r.extend();
+
+				coinjs.compressed = c; // reset to default
+			}
+		}
+
+		r.extend = function(){
+			var hd = coinjs.hd();
+			return hd.make({'depth':(this.depth*1)+1,
+				'parent_fingerprint':this.parent_fingerprint,
+				'child_index':this.child_index,
+				'chain_code':this.chain_code,
+				'privkey':this.keys.privkey,
+				'pubkey':this.keys.pubkey});
+		}
+
+		r.derive = function(i){
+			i = (i)?i:0;
+			var blob = (Crypto.util.hexToBytes(this.keys.pubkey)).concat(coinjs.numToBytes(i,4).reverse());
+
+			var j = new jsSHA(Crypto.util.bytesToHex(blob), 'HEX');
+ 			var hash = j.getHMAC(Crypto.util.bytesToHex(r.chain_code), "HEX", "SHA-512", "HEX");
+
+			var il = new BigInteger(hash.slice(0, 64), 16);
+			var ir = Crypto.util.hexToBytes(hash.slice(64,128));
+
+			var ecparams = EllipticCurve.getSECCurveByName("secp256k1");
+			var curve = ecparams.getCurve();
+
+			var k, key, pubkey, o;
+
+			o = coinjs.clone(this);
+			o.chain_code = ir;
+			o.child_index = i;
+
+			if(this.type=='private'){
+				k = il.add(new BigInteger([0].concat(Crypto.util.hexToBytes(this.keys.privkey)))).mod(ecparams.getN());
+				key = Crypto.util.bytesToHex(k.toByteArrayUnsigned());
+
+				pubkey = coinjs.newPubkey(key);
+
+				o.keys = {'privkey':key,
+					'pubkey':pubkey,
+					'wif':coinjs.privkey2wif(key),
+					'address':coinjs.pubkey2address(pubkey)};
+
+			} else if (this.type=='public'){
+				q = ecparams.curve.decodePointHex(this.keys.pubkey);
+				var curvePt = ecparams.getG().multiply(il).add(q);
+
+				var x = curvePt.getX().toBigInteger();
+				var y = curvePt.getY().toBigInteger();
+
+				var publicKeyBytesCompressed = EllipticCurve.integerToBytes(x,32)
+				if (y.isEven()){
+					publicKeyBytesCompressed.unshift(0x02)
+				} else {
+					publicKeyBytesCompressed.unshift(0x03)
+				}
+				pubkey = Crypto.util.bytesToHex(publicKeyBytesCompressed);
+
+				o.keys = {'pubkey':pubkey,
+					'address':coinjs.pubkey2address(pubkey)}
+			} else {
+				// fail
+			}
+
+			o.parent_fingerprint = (ripemd160(Crypto.SHA256(Crypto.util.hexToBytes(r.keys.pubkey),{asBytes:true}),{asBytes:true})).slice(0,4);
+			o.keys_extended = o.extend();
+
+			return o;
+		}
+
+		r.master = function(pass) {
+			var seed = (pass) ? Crypto.SHA256(pass) : coinjs.newPrivkey();
+			var hasher = new jsSHA(seed, 'HEX');
+			var I = hasher.getHMAC("Bitcoin seed", "TEXT", "SHA-512", "HEX");
+
+			var privkey = Crypto.util.hexToBytes(I.slice(0, 64));
+			var chain = Crypto.util.hexToBytes(I.slice(64, 128));
+
+			var hd = coinjs.hd();
+			return hd.make({'depth':0,
+				'parent_fingerprint':[0,0,0,0],
+				'child_index':0,
+				'chain_code':chain,
+				'privkey':I.slice(0, 64),
+				'pubkey':coinjs.newPubkey(I.slice(0, 64))});
+		}
+
+		r.make = function(data){ // { (int) depth, (array) parent_fingerprint, (int) child_index, (byte array) chain_code, (hex str) privkey, (hex str) pubkey}
+			var k = [];
+
+			//depth
+			k.push(data.depth*1);
+
+			//parent fingerprint
+			k = k.concat(data.parent_fingerprint);
+
+			//child index
+			k = k.concat((coinjs.numToBytes(data.child_index, 4)).reverse());
+
+			// Chain code
+			k = k.concat(data.chain_code);
+
+			var o = {}; // results
+
+			// Extended HD Private Key
+			if(data.privkey){
+				var prv = (coinjs.numToBytes(coinjs.hdkey.prv, 4)).reverse();
+				prv = prv.concat(k);
+				prv.push(0x00);
+				prv = prv.concat(Crypto.util.hexToBytes(data.privkey));
+				var hash = Crypto.SHA256( Crypto.SHA256(prv, { asBytes: true } ), { asBytes: true } );
+				var checksum = hash.slice(0, 4);
+				var ret = prv.concat(checksum);
+				o.privkey = coinjs.base58encode(ret);
+			}
+
+			// Extended HD Public Key
+			if(data.pubkey){
+				var pub = (coinjs.numToBytes(coinjs.hdkey.pub, 4)).reverse();
+				pub = pub.concat(k);
+				pub = pub.concat(Crypto.util.hexToBytes(data.pubkey));
+				var hash = Crypto.SHA256( Crypto.SHA256(pub, { asBytes: true } ), { asBytes: true } );
+				var checksum = hash.slice(0, 4);
+				var ret = pub.concat(checksum);
+				o.pubkey = coinjs.base58encode(ret);
+			}
+			return o;
+		}
+
+		r.parse();
+		return r;
+	}
+
 
 	/* start of script functions */
-
 	coinjs.script = function(data) {
 		var r = {};
 
@@ -1209,6 +1401,17 @@
 	coinjs.bytesToNum = function(bytes) {
 		if (bytes.length == 0) return 0;
 		else return bytes[0] + 256 * coinjs.bytesToNum(bytes.slice(1));
+	}
+
+	coinjs.uint = function(f, size) {
+		if (f.length < size)
+			throw new Error("not enough data");
+		var n = 0;
+		for (var i = 0; i < size; i++) {
+			n *= 256;
+			n += f[i];
+		}
+		return n;
 	}
 
 	coinjs.isArray = function(o){

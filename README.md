@@ -25,5 +25,6 @@ Coinb.in supports a number of key features such as:
 - Compatible with bitcoin-qt
 - An offical .onion address for tor users.
 - Offline qrcode creator and scanning tool
+- HD (bip32) support
 
 Donate to 1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg to see more development!
