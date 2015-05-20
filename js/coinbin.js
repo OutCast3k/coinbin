@@ -810,8 +810,11 @@ $(document).ready(function() {
 
 	function decodeHDaddress(){
 		var s = $("#verifyScript").val();
-		if(s.match(/^x[prv|pub]/)){
-			try {
+		try {
+			var hex = Crypto.util.bytesToHex((coinjs.base58decode(s)).slice(0,4));
+			var hex_cmp_prv = Crypto.util.bytesToHex((coinjs.numToBytes(coinjs.hdkey.prv,4)).reverse());
+			var hex_cmp_pub = Crypto.util.bytesToHex((coinjs.numToBytes(coinjs.hdkey.pub,4)).reverse());
+			if(hex == hex_cmp_prv || hex == hex_cmp_pub){
 				var hd = coinjs.hd(s);
 				$("#verifyHDaddress .hdKey").html(s);
 				$("#verifyHDaddress .chain_code").val(Crypto.util.bytesToHex(hd.chain_code));
@@ -826,9 +829,9 @@ $(document).ready(function() {
 				$(".verifyLink").attr('href','?verify='+$("#verifyScript").val());
 				$("#verifyHDaddress").removeClass("hidden");
 				return true;
-			} catch (e) {
-				return false;
 			}
+		} catch (e) {
+			return false;
 		}
 	}
 
@@ -907,6 +910,7 @@ $(document).ready(function() {
 		return r;
 	}
 
+	$("#newKeysBtn, #newHDKeysBtn").click();
 
 	var _getBroadcast = _get("broadcast");
 	if(_getBroadcast[0]){
@@ -965,9 +969,6 @@ $(document).ready(function() {
 	for(i=1;i<3;i++){
 		$(".pubkeyAdd").click();
 	}
-
-	$("#newKeysBtn, #newHDKeysBtn").click();
-
 
 	validateOutputAmount();
 
