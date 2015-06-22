@@ -929,19 +929,24 @@ $(document).ready(function() {
 	$(".qrcodeBtn").click(function(){
 		$("#qrcode").html("");
 		var thisbtn = $(this).parent().parent();
-		
-		if($('textarea',$(this).closest('.input-group')).length){
-			var qrcode = new QRCode("qrcode",{width:512,height:512});
-			var qrstr = $('textarea',$(this).closest('.input-group')).val();
+		var qrstr = false;
+		var ta = $("textarea",thisbtn);
+
+		if(ta.length>0){
+			var w = (screen.availWidth > screen.availHeight ? screen.availWidth : screen.availHeight)/3;
+			var qrcode = new QRCode("qrcode", {width:w, height:w});
+			qrstr = $(ta).val();
 			if(qrstr.length > 2000){
 				$("#qrcode").html("<p>Sorry the data is too long for the QR generator.</p>");
-				return;
 			}
-		}else{
+		} else {
 			var qrcode = new QRCode("qrcode");
-			var qrstr = "bitcoin:"+$('.address',thisbtn).val();
+			qrstr = "bitcoin:"+$('.address',thisbtn).val();
 		}
-		qrcode.makeCode(qrstr);
+
+		if(qrstr){
+			qrcode.makeCode(qrstr);
+		}
 	});
 
 	$('input[title!=""], abbr[title!=""]').tooltip({'placement':'bottom'});

@@ -536,14 +536,12 @@
 
 						<div id="transactionCreate" class="alert alert-success hidden">
 							<label>Transaction</label>
+							<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode" style="float:right;"><span class="glyphicon glyphicon-qrcode"></span></button>
+
 							<p>The transaction below has been generated and encoded. It can be broadcasted once it has been signed.</p>
 							<br>
-                            <div class="input-group">
-                                <textarea class="form-control" style="height:150px" readonly></textarea>
-                                <span class="input-group-btn">
-                                    <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
-                                </span>
-                            </div>
+			                                <textarea class="form-control" style="height:150px" readonly></textarea>
+
 							<p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
 						</div>
 
