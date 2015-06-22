@@ -538,7 +538,12 @@
 							<label>Transaction</label>
 							<p>The transaction below has been generated and encoded. It can be broadcasted once it has been signed.</p>
 							<br>
-							<textarea class="form-control" style="height:150px" readonly></textarea>
+                            <div class="input-group">
+                                <textarea class="form-control" style="height:150px" readonly></textarea>
+                                <span class="input-group-btn">
+                                    <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+                                </span>
+                            </div>
 							<p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
 						</div>
 
@@ -740,8 +745,13 @@
 						</div>
 						<div class="row">
 							<div class="col-md-12">
-								<label for="signTransaction">Transaction</label>
-								<textarea type="text" id="signTransaction" class="form-control" style="height:125px"></textarea>
+                                <label for="signTransaction">Transaction</label>
+                                <div class="input-group">
+                                    <textarea type="text" id="signTransaction" class="form-control" style="height:125px"></textarea>
+                                    <span class="input-group-btn">
+                                        <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+                                    </span>
+                                </div>
 							</div>
 						</div>
 						<br>
@@ -753,7 +763,12 @@
 						<div class="alert alert-success hidden" id="signedData">
 							<label>Signed transaction</label>
 							<p>The above transaction has been signed:</p>
-							<textarea class="form-control script" style="height:160px" readonly></textarea>
+                            <div class="input-group">
+                                <textarea class="form-control script" style="height:160px" readonly></textarea>
+                                <span class="input-group-btn">
+                                    <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+                                </span>
+                            </div>
 							<p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
 						</div>
 
