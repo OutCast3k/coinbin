@@ -935,6 +935,7 @@ $(document).ready(function() {
 			var qrstr = $('textarea',$(this).closest('.input-group')).val();
 			if(qrstr.length > 2000){
 				$("#qrcode").html("<p>Sorry the data is too long for the QR generator.</p>");
+				return;
 			}
 		}else{
 			var qrcode = new QRCode("qrcode");
