@@ -936,7 +936,7 @@ $(document).ready(function() {
 			var w = (screen.availWidth > screen.availHeight ? screen.availWidth : screen.availHeight)/3;
 			var qrcode = new QRCode("qrcode", {width:w, height:w});
 			qrstr = $(ta).val();
-			if(qrstr.length > 2000){
+			if(qrstr.length > 1024){
 				$("#qrcode").html("<p>Sorry the data is too long for the QR generator.</p>");
 			}
 		} else {
