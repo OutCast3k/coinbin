@@ -741,15 +741,11 @@
 								</div>
 							</div>
 						</div>
+						<br>
+
 						<div class="row">
 							<div class="col-md-12">
-                                <label for="signTransaction">Transaction</label>
-                                <div class="input-group">
-                                    <textarea type="text" id="signTransaction" class="form-control" style="height:125px"></textarea>
-                                    <span class="input-group-btn">
-                                        <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
-                                    </span>
-                                </div>
+								<textarea type="text" id="signTransaction" class="form-control" style="height:125px"></textarea>
 							</div>
 						</div>
 						<br>
@@ -760,13 +756,11 @@
 
 						<div class="alert alert-success hidden" id="signedData">
 							<label>Signed transaction</label>
+							<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode" style="float:right;"><span class="glyphicon glyphicon-qrcode"></span></button>
 							<p>The above transaction has been signed:</p>
-                            <div class="input-group">
-                                <textarea class="form-control script" style="height:160px" readonly></textarea>
-                                <span class="input-group-btn">
-                                    <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
-                                </span>
-                            </div>
+
+                        				<textarea class="form-control script" style="height:160px" readonly></textarea>
+                                    
 							<p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
 						</div>
 
