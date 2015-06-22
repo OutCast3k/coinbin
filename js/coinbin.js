@@ -929,8 +929,18 @@ $(document).ready(function() {
 	$(".qrcodeBtn").click(function(){
 		$("#qrcode").html("");
 		var thisbtn = $(this).parent().parent();
-		var qrcode = new QRCode("qrcode");
-		qrcode.makeCode("bitcoin:"+$('.address',thisbtn).val());
+		
+		if($('textarea',$(this).closest('.input-group')).length){
+			var qrcode = new QRCode("qrcode",{width:512,height:512});
+			var qrstr = $('textarea',$(this).closest('.input-group')).val();
+			if(qrstr.length > 2000){
+				$("#qrcode").html("<p>Sorry the data is too long for the QR generator.</p>");
+			}
+		}else{
+			var qrcode = new QRCode("qrcode");
+			var qrstr = "bitcoin:"+$('.address',thisbtn).val();
+		}
+		qrcode.makeCode(qrstr);
 	});
 
 	$('input[title!=""], abbr[title!=""]').tooltip({'placement':'bottom'});
