@@ -1,7 +1,7 @@
 coinbin
 =======
 
-A Open Source Browser Based Bitcoin Wallet. Version 1.1 beta by OutCast3k
+A Open Source Browser Based Bitcoin Wallet. Version 1.2 beta by OutCast3k
 
 Live version available at http://coinb.in/ or http://4zpinp6gdkjfplhk.onion
 
