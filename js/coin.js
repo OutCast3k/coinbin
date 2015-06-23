@@ -471,7 +471,7 @@
 			o.child_index = i;
 
 			if(this.type=='private'){
-				// derive xpub/xprv from a xprv key
+				// derive key pair from from a xprv key
 				k = il.add(new BigInteger([0].concat(Crypto.util.hexToBytes(this.keys.privkey)))).mod(ecparams.getN());
 				key = Crypto.util.bytesToHex(k.toByteArrayUnsigned());
 
@@ -510,6 +510,7 @@
 			return o;
 		}
 
+		// make a master hd xprv/xpub
 		r.master = function(pass) {
 			var seed = (pass) ? Crypto.SHA256(pass) : coinjs.newPrivkey();
 			var hasher = new jsSHA(seed, 'HEX');
@@ -527,6 +528,7 @@
 				'pubkey':coinjs.newPubkey(I.slice(0, 64))});
 		}
 
+		// encode data to a base58 string
 		r.make = function(data){ // { (int) depth, (array) parent_fingerprint, (int) child_index, (byte array) chain_code, (hex str) privkey, (hex str) pubkey}
 			var k = [];
 
