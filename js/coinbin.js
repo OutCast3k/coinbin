@@ -1119,7 +1119,7 @@ $(document).ready(function() {
 
 		// deal with the reset
 		$("#coinjs_pub").val(o[0]);
-		$("#coinjs_prv").val(o[1]);
+		$("#coinjs_priv").val(o[1]);
 		$("#coinjs_multisig").val(o[2]);
 		$("#coinjs_hdpub").val(o[3]);
 		$("#coinjs_hdprv").val(o[4]);
