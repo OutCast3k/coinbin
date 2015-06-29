@@ -737,7 +737,9 @@ $(document).ready(function() {
 			$("#verifyRsData .signaturesRequired").html(decode['signaturesRequired']);
 			$("#verifyRsData table tbody").html("");
 			for(var i=0;i<decode.pubkeys.length;i++){
-				$('<tr><td><input type="text" class="form-control" value="'+decode.pubkeys[i]+'" readonly></td></tr>').appendTo("#verifyRsData table tbody");
+				var pubkey = decode.pubkeys[i];
+				var address = coinjs.pubkey2address(pubkey);
+				$('<tr><td width="30%"><input type="text" class="form-control" value="'+address+'" readonly></td><td><input type="text" class="form-control" value="'+pubkey+'" readonly></td></tr>').appendTo("#verifyRsData table tbody");
 			}
 			$("#verifyRsData").removeClass("hidden");
 			$(".verifyLink").attr('href','?verify='+$("#verifyScript").val());
