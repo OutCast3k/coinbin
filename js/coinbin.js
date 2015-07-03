@@ -413,7 +413,7 @@ $(document).ready(function() {
 		$.each($("#recipients .row"), function(i,o){
 			var a = ($(".address",o).val());
 			var ad = coinjs.addressDecode(a);
-			if(((a!="") && (ad.version == coinjs.pub || ad.version == coinjs.priv)) && $(".amount",o).val()!=""){ // address
+			if(((a!="") && (ad.version == coinjs.pub || ad.version == coinjs.multisig)) && $(".amount",o).val()!=""){ // address
 				tx.addoutput(a, $(".amount",o).val());
 			} else if (((a!="") && ad.version === 42) && $(".amount",o).val()!=""){ // stealth address
 				tx.addstealth(ad, $(".amount",o).val());
