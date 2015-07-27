@@ -10,8 +10,8 @@ f7c09f2f5a721371e7d478050119f7e2d58e3ef9  ./js/crypto-sha256-hmac.js
 ad038e1f39646b68ae666324ed4c2882a8c42474  ./js/qrcode.js
 64eb4ea5c882f8bce3e1885bf00728455f1c2f4c  ./js/ripemd160.js
 114089ef2a3feb6d4db4f9cabcb186d7750d5884  ./js/sha512.js
-3ff26f7ca616b01742a25f9aa304bdb653ce4a4d  ./js/coin.js
-54d781e1399ca0159ef38c8bbc8cb48b1ed4a324  ./js/coinbin.js
+8c2654113866b4a57fec302665ca2187a3eb7614  ./js/coin.js
+e544bb942aeb35a18a4cd7e0b440e6bba7a8e04f  ./js/coinbin.js
 ae49e56999d82802727455f0ba83b63acd90a22b  ./js/jquery-1.9.1.min.js
 5f570018ed044eafd464f7e0ab1783b966224055  ./LICENCE
 ed29315e0ffb3f14382431f2724235bf67f44eb3  ./css/bootstrap.min.css
@@ -25,4 +25,4 @@ de51a8494180a6db074af2dee2383f0a363c5b08  ./fonts/glyphicons-halflings-regular.s
 278e49a86e634da6f2a02f3b47dd9d2a8f26210f  ./fonts/glyphicons-halflings-regular.woff
 44bc1850f570972267b169ae18f1cb06b611ffa2  ./fonts/glyphicons-halflings-regular.ttf
 fe8d57914bb036ab94e86ec35b2671eeb6d20d0d  ./README.md
-5f14c340ab638b39560e30256ed68818053c0af8  ./index.html
+895bbb24f7c218d4c97fc6df90a7e503ec9cadaf  ./index.html

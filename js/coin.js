@@ -796,7 +796,7 @@
 		/* add data to a transaction */
 		r.adddata = function(data){
 			var r = false;
-			if(((data.match(/^[a-f0-9]+$/gi)) && data.length<80) && (data.length%2)==0) {
+			if(((data.match(/^[a-f0-9]+$/gi)) && data.length<160) && (data.length%2)==0) {
 				var s = coinjs.script();
 				s.writeOp(106); // OP_RETURN
 				s.writeBytes(Crypto.util.hexToBytes(data));

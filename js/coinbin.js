@@ -417,7 +417,7 @@ $(document).ready(function() {
 				tx.addoutput(a, $(".amount",o).val());
 			} else if (((a!="") && ad.version === 42) && $(".amount",o).val()!=""){ // stealth address
 				tx.addstealth(ad, $(".amount",o).val());
-			} else if (((($("#opReturn").is(":checked")) && a.match(/^[a-f0-9]+$/ig)) && a.length<80) && (a.length%2)==0) { // data
+			} else if (((($("#opReturn").is(":checked")) && a.match(/^[a-f0-9]+$/ig)) && a.length<160) && (a.length%2)==0) { // data
 				tx.adddata(a);
 			} else { // neither address nor data
 				$(o).addClass('has-error');
