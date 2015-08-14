@@ -1,4 +1,4 @@
----- Version 1.2 2015.07.27 ----
+---- Version 1.2 2015.08.14 ----
 e6810907c901e6bd34a28735a68850936f0823b8  ./js/ellipticcurve.js
 9ba5ede3d7f9d4c8fd623395f196adfdcf7e970f  ./js/crypto-min.js
 77e4519962e2f6a9fc93342137dbb31c33b76b04  ./js/aes.js
@@ -11,7 +11,7 @@ ad038e1f39646b68ae666324ed4c2882a8c42474  ./js/qrcode.js
 64eb4ea5c882f8bce3e1885bf00728455f1c2f4c  ./js/ripemd160.js
 114089ef2a3feb6d4db4f9cabcb186d7750d5884  ./js/sha512.js
 8c2654113866b4a57fec302665ca2187a3eb7614  ./js/coin.js
-e544bb942aeb35a18a4cd7e0b440e6bba7a8e04f  ./js/coinbin.js
+4b24ab93c1cb7068d5396d0794b2818c6a889daa  ./js/coinbin.js
 ae49e56999d82802727455f0ba83b63acd90a22b  ./js/jquery-1.9.1.min.js
 5f570018ed044eafd464f7e0ab1783b966224055  ./LICENCE
 ed29315e0ffb3f14382431f2724235bf67f44eb3  ./css/bootstrap.min.css
@@ -24,5 +24,5 @@ ca35b697d99cae4d1b60f2d60fcd37771987eb07  ./fonts/glyphicons-halflings-regular.w
 de51a8494180a6db074af2dee2383f0a363c5b08  ./fonts/glyphicons-halflings-regular.svg
 278e49a86e634da6f2a02f3b47dd9d2a8f26210f  ./fonts/glyphicons-halflings-regular.woff
 44bc1850f570972267b169ae18f1cb06b611ffa2  ./fonts/glyphicons-halflings-regular.ttf
-fe8d57914bb036ab94e86ec35b2671eeb6d20d0d  ./README.md
-f8d50a5ea3a06edacf2948f150221e027f1c1253  ./index.html
+0f5262c7910512cdcf38a6004129154be77ff2ee  ./README.md
+0ed7525c0504e2cb967f9fb0f9708fe6a345bfa6  ./index.html

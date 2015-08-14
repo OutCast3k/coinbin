@@ -510,8 +510,7 @@ $(document).ready(function() {
 	/* redeem from button code */
 
 	$("#redeemFromBtn").click(function(){
-		var string = $("#redeemFrom").val();
-		var redeem = redeemingFrom(string);
+		var redeem = redeemingFrom($("#redeemFrom").val());
 
 		$("#redeemFromStatus, #redeemFromAddress").addClass('hidden');
 
@@ -533,11 +532,11 @@ $(document).ready(function() {
 
 		var host = $(this).attr('rel');
 		if(host=='blockr.io_bitcoinmainnet'){
-			listUnspentBlockrio_BitcoinMainnet(redeem.addr);
+			listUnspentBlockrio_BitcoinMainnet(redeem);
 		} else if(host=='chain.so_litecoin'){
-			listUnspentChainso_Litecoin(redeem.addr);
+			listUnspentChainso_Litecoin(redeem);
 		} else {
-			listUnspentDefault(redeem.addr);
+			listUnspentDefault(redeem);
 		}
 	});
 
@@ -593,16 +592,16 @@ $(document).ready(function() {
 	}
 
 	/* default function to retreive unspent outputs*/	
-	function listUnspentDefault(addr){
+	function listUnspentDefault(redeem){
 		var tx = coinjs.transaction();
-		tx.listUnspent(addr, function(data){
-			if(addr) {
-				$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+addr+'" target="_blank">'+addr+'</a>');
+		tx.listUnspent(redeem.addr, function(data){
+			if(redeem.addr) {
+				$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 
 				$.each($(data).find("unspent").children(), function(i,o){
 					var tx = $(o).find("tx_hash").text();
 					var n = $(o).find("tx_output_n").text();
-					var script = (addr.isMultisig==true) ? $("#inputs .txIdScript:last").val(string) :$(o).find("script").text();
+					var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : $(o).find("script").text();
 					var amount = (($(o).find("value").text()*1)/100000000).toFixed(8);
 
 					addOutput(tx, n, script, amount);
@@ -615,22 +614,22 @@ $(document).ready(function() {
 	}
 
 	/* retrieve unspent data from blockrio for mainnet */
-	function listUnspentBlockrio_BitcoinMainnet(addr){
+	function listUnspentBlockrio_BitcoinMainnet(redeem){
 		$.ajax ({
 			type: "POST",
-			url: "https://btc.blockr.io/api/v1/address/unspent/"+addr,
+			url: "https://btc.blockr.io/api/v1/address/unspent/"+redeem.addr,
 			dataType: "json",
 			error: function(data) {
 				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
 			},
 			success: function(data) {
 				if((data.status && data.data) && data.status=='success'){
-					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+addr+'" target="_blank">'+addr+'</a>');
+					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 					for(var i in data.data.unspent){
 						var o = data.data.unspent[i];
 						var tx = o.tx;
 						var n = o.n;
-						var script = o.script;
+						var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script;
 						var amount = o.amount;
 						addOutput(tx, n, script, amount);
 					}
@@ -646,10 +645,10 @@ $(document).ready(function() {
 	}
 
 	/* retrieve unspent data from blockrio for litecoin */
-	function listUnspentChainso_Litecoin(addr){
+	function listUnspentChainso_Litecoin(redeem){
 		$.ajax ({
 			type: "GET",
-			url: "https://chain.so/api/v2/get_tx_unspent/ltc/"+addr,
+			url: "https://chain.so/api/v2/get_tx_unspent/ltc/"+redeem.addr,
 			dataType: "json",
 			error: function(data) {
 				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
@@ -657,12 +656,12 @@ $(document).ready(function() {
 			success: function(data) {
 				console.log(data);
 				if((data.status && data.data) && data.status=='success'){
-					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+addr+'" target="_blank">'+addr+'</a>');
+					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 					for(var i in data.data.txs){
 						var o = data.data.txs[i];
 						var tx = o.txid;
 						var n = o.output_no;
-						var script = o.script_hex;
+						var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script_hex;
 						var amount = o.value;
 						addOutput(tx, n, script, amount);
 					}
