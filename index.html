@@ -218,8 +218,8 @@
 															<input type="text" class="form-control" value="0.00001" id="txFee">
 														</div>
 														<div class="col-xs-5">
-															<label><abbr title="the amount to donate to the sites developer">Donation</abbr></label>
-															<input type="text" class="form-control" value="0.00" id="developerDonation">
+															<label><abbr title="the amount to donate to coinb.in">Donation</abbr></label>
+															<input type="text" class="form-control" value="0.001" id="developerDonation">
 														</div>
 													</div>
 													<br>
@@ -440,6 +440,12 @@
 								<label>Lock Time</label>
 								<p>The <a href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number">locktime</a> indicates the earliest time a transaction can be added to the block chain.</p>
 								<input type="text" class="form-control" value="0" id="nLockTime">
+
+								<hr>
+
+
+								<label>Network</label>
+								<p>The <a href="#settings">settings</a> page can be used to select alternative networks of which you can retrieve your unspent outputs and broadcast a signed transaction into.</p>
 
 								<hr>
 							</div>
@@ -815,7 +821,8 @@
 								<p class="text-muted">Select which network you'd like to use for key pair generation.</p>
 								<select class="form-control" id="coinjs_coin">
 									<option value="bitcoin_mainnet" rel="0x00;0x80;0x05;0x488b21e;0x488ade4;coinb.in;coinb.in">Bitcoin (mainnet)</option>
-									<option value="bitcoin_testnet" rel="0x6f;0xef;0xc4;0x043587cf;0x04358394;blockr.io_bitcointestnet;false">Bitcoin (testnet)</option>
+									<option value="litecoin_mainnet" rel="0x30;0xb0;0x05;0x019da462;0x019d9cfe;blockr.io_litecoin;chain.so_litecoin">Litecoin (mainnet)</option>
+								<!--	<option value="bitcoin_testnet" rel="0x6f;0xef;0xc4;0x043587cf;0x04358394;blockr.io_bitcointestnet;false">Bitcoin (testnet)</option> -->
 
 									<option value="custom" rel="0x00;0x80;0x05;0x488b21e;0x488ade4;false;false">Custom</option>
 								</select>
@@ -858,7 +865,7 @@
 
 							<br>
 
-							<div class="alert alert-info"> <span class="glyphicon glyphicon-info-sign"></span> You will not be able to automatically broadcast or retreive your unspent inputs from coinb.in when using this setting and will need to use your desktop client instead, however everything else will continue to function normally.</div>
+							<div class="alert alert-info"> <span class="glyphicon glyphicon-info-sign"></span> You will not be able to automatically broadcast or retreive your unspent outputs from coinb.in when using this setting and will need to use your desktop client instead, however everything else such as creating key pairs, addresses, transaction generation and signing will continue to function normally.</div>
 						</div>
 
 						<hr>
@@ -870,7 +877,8 @@
 								<select class="form-control" id="coinjs_broadcast">
 									<option value="coinb.in">coinb.in (Bitcoin mainnet)</option>
 									<option value="blockr.io_bitcoinmainnet"> Blockr.io (Bitcoin mainnet)</option>
-									<option value="blockr.io_bitcointestnet"> Blockr.io (Bitcoin testnet)</option>
+									<option value="blockr.io_litecoin"> Blockr.io (Litecoin)</option>
+								<!--	<option value="blockr.io_bitcointestnet"> Blockr.io (Bitcoin testnet)</option> -->
 								</select>
 							</div>
 						</div>
@@ -883,6 +891,8 @@
 								<p class="text-muted">Select the network you wish to retreive your unspent inputs from</p>
 								<select class="form-control" id="coinjs_utxo">
 									<option value="coinb.in">coinb.in (Bitcoin mainnet)</option>
+									<option value="blockr.io_bitcoinmainnet"> Blockr.io (Bitcoin mainnet)</option>
+									<option value="chain.so_litecoin"> Chain.so (Litecoin)</option>
 								</select>
 							</div>
 						</div>
