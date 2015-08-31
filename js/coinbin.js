@@ -617,7 +617,7 @@ $(document).ready(function() {
 	function listUnspentBlockrio_BitcoinMainnet(redeem){
 		$.ajax ({
 			type: "POST",
-			url: "https://btc.blockr.io/api/v1/address/unspent/"+redeem.addr,
+			url: "https://btc.blockr.io/api/v1/address/unspent/"+redeem.addr+"?unconfirmed=1",
 			dataType: "json",
 			error: function(data) {
 				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
