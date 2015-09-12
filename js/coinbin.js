@@ -126,6 +126,7 @@ $(document).ready(function() {
 						$("#walletSendConfirmStatus").removeClass('hidden').addClass('alert-success').html("txid: "+$(data).find("txid").text());
 					} else {
 						$("#walletSendConfirmStatus").removeClass('hidden').addClass('alert-danger').html(unescape($(data).find("response").text()).replace(/\+/g,' '));
+						thisbtn.attr('disabled',false);
 					}
 
 					// update wallet balance
@@ -134,9 +135,9 @@ $(document).ready(function() {
 				}, signed);
 			} else {
 				$("#walletSendConfirmStatus").removeClass("hidden").addClass('alert-danger').html("You have a confirmed balance of "+data.value+" BTC unable to send "+total+" BTC").fadeOut().fadeIn();
+				thisbtn.attr('disabled',false);
 			}
 
-			thisbtn.attr('disabled',false);
 			$("#walletLoader").addClass("hidden");
 		});
 	});
@@ -331,6 +332,34 @@ $(document).ready(function() {
 		}
 	});
 
+	$("#mediatorList").change(function(){
+		var data = ($(this).val()).split(";");
+		$("#mediatorPubkey").val(data[0]);
+		$("#mediatorEmail").val(data[1]);
+		$("#mediatorFee").val(data[2]);
+	}).change();
+
+	$("#mediatorAddKey").click(function(){
+		var count = 0;
+		var len = $(".pubkeyRemove").length;
+		if(len<14){
+			$.each($("#multisigPubKeys .pubkey"),function(i,o){
+				if($(o).val()==''){
+					$(o).val($("#mediatorPubkey").val()).fadeOut().fadeIn();
+					$("#mediatorClose").click();
+					return false;
+				} else if(count==len){
+					$("#multisigPubKeys .pubkeyAdd").click();
+					$("#mediatorAddKey").click();
+					return false;
+				}
+				count++;
+			});
+
+			$("#mediatorClose").click();
+		}
+	});
+
 	/* new -> Hd address code */
 
 	$(".deriveHDbtn").click(function(){
@@ -398,13 +427,29 @@ $(document).ready(function() {
 	$("#transactionBtn").click(function(){
 		var tx = coinjs.transaction();
 
+		$("#transactionCreate, #transactionCreateStatus").addClass("hidden");
+
 		if(($("#nLockTime").val()).match(/^[0-9]+$/g)){
 			tx.lock_time = $("#nLockTime").val()*1;
 		}
 
+		$("#inputs .row").removeClass('has-error');
+
+		$('#putTabs a[href="#txinputs"], #putTabs a[href="#txoutputs"]').attr('style','');
+
 		$.each($("#inputs .row"), function(i,o){
-			if($(".txId",o).val()!="" && $(".txIdN",o).val()!=""){
+			if(!($(".txId",o).val()).match(/^[a-f0-9]+$/i)){
+				$(o).addClass("has-error");
+			} else if((!($(".txIdScript",o).val()).match(/^[a-f0-9]+$/i)) && $(".txIdScript",o).val()!=""){
+				$(o).addClass("has-error");
+			} else if (!($(".txIdN",o).val()).match(/^[0-9]+$/i)){
+				$(o).addClass("has-error");
+			}
+
+			if(!$(o).hasClass("has-error")){
 				tx.addinput($(".txId",o).val(), $(".txIdN",o).val(), $(".txIdScript",o).val());
+			} else {
+				$('#putTabs a[href="#txinputs"]').attr('style','color:#a94442;');
 			}
 		});
 
@@ -421,13 +466,24 @@ $(document).ready(function() {
 				tx.adddata(a);
 			} else { // neither address nor data
 				$(o).addClass('has-error');
+				$('#putTabs a[href="#txoutputs"]').attr('style','color:#a94442;');
 			}
 		});
 
-		$("#transactionCreate textarea").val(tx.serialize());
-		$("#transactionCreate .txSize").html(tx.size());
 
-		$("#transactionCreate").removeClass("hidden");
+		if(!$("#recipients .row, #inputs .row").hasClass('has-error')){
+			$("#transactionCreate textarea").val(tx.serialize());
+			$("#transactionCreate .txSize").html(tx.size());
+
+			$("#transactionCreate").removeClass("hidden");
+
+			if($("#transactionFee").val()>=0.01){
+				$("#modalWarningFeeAmount").html($("#transactionFee").val());
+				$("#modalWarningFee").modal("show");
+			}
+		} else {
+			$("#transactionCreateStatus").removeClass("hidden").html("One or more input or output is invalid").fadeOut().fadeIn();
+		}
 	});
 
 	$(".txidClear").click(function(){
@@ -563,6 +619,7 @@ $(document).ready(function() {
 			if(decodeRs){ // redeem script
 				r.addr = decodeRs['address'];
 				r.from = 'redeemScript';
+				r.decodedRs = decodeRs;
 				r.isMultisig = true;
 			} else { // something else
 				r.addr = '';
@@ -571,6 +628,40 @@ $(document).ready(function() {
 			}
 		}
 		return r;
+	}
+
+	/* mediator payment code for when you used a public key */
+	function mediatorPayment(redeem){
+
+		if(redeem.from=="redeemScript"){
+
+			$('#recipients .row[rel="'+redeem.addr+'"]').parent().remove();
+
+			$.each(redeem.decodedRs.pubkeys, function(i, o){
+				$.each($("#mediatorList option"), function(mi, mo){
+
+					var ms = ($(mo).val()).split(";");
+
+					var pubkey = ms[0]; // mediators pubkey
+					var fee = ms[2]*1; // fee in a percentage
+					var payto = coinjs.pubkey2address(pubkey); // pay to mediators address
+
+					if(o==pubkey){ // matched a mediators pubkey?
+
+						var clone = '<span><div class="row recipients mediator mediator_'+pubkey+'" rel="'+redeem.addr+'">'+$("#recipients .addressAddTo").parent().parent().html()+'</div><br></span>';
+						$("#recipients").prepend(clone);
+
+						$("#recipients .mediator_"+pubkey+" .glyphicon-plus:first").removeClass('glyphicon-plus');
+						$("#recipients .mediator_"+pubkey+" .address:first").val(payto).attr('disabled', true).attr('readonly',true).attr('title','Medation fee for '+$(mo).html());
+
+						var amount = ((fee*$("#totalInput").html())/100).toFixed(8);
+						$("#recipients .mediator_"+pubkey+" .amount:first").attr('disabled',(((amount*1)==0)?false:true)).val(amount).attr('title','Medation fee for '+$(mo).html());
+					}
+				});
+			});
+
+			validateOutputAmount();
+		}
 	}
 
 	/* global function to add outputs to page */
@@ -610,6 +701,8 @@ $(document).ready(function() {
 
 			$("#redeemFromBtn").html("Load").attr('disabled',false);
 			totalInputAmount();
+
+			mediatorPayment(redeem);
 		});
 	}
 
@@ -659,7 +752,7 @@ $(document).ready(function() {
 					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 					for(var i in data.data.txs){
 						var o = data.data.txs[i];
-						var tx = o.txid;
+						var tx = ((o.txid).match(/.{1,2}/g).reverse()).join("")+'';
 						var n = o.output_no;
 						var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script_hex;
 						var amount = o.value;
