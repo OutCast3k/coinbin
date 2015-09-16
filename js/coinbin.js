@@ -830,20 +830,30 @@ $(document).ready(function() {
 
 	// broadcast transaction vai coinbin (default)
 	function rawSubmitDefault(btn){ 
-		var thisbtn = btn;
-		var tx = coinjs.transaction();
+		var thisbtn = btn;		
 		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
-		tx.broadcast(function(data){
-			$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
-			if($(data).find("result").text()==1){
-				$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger');
-				$("#rawTransactionStatus").html('txid: '+$(data).find("txid").text());
-			} else {
-				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
+		$.ajax ({
+			type: "POST",
+			url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction',
+			data: {'rawtx':$("#rawTransaction").val()},
+			dataType: "xml",
+			error: function(data) {
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(" There was an error submitting your request, please try again").prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+			},
+                        success: function(data) {
+				$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
+				if($(data).find("result").text()==1){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger');
+					$("#rawTransactionStatus").html('txid: '+$(data).find("txid").text());
+				} else {
+					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
+				}
+			},
+			complete: function(data, status) {
+				$("#rawTransactionStatus").fadeOut().fadeIn();
+				$(thisbtn).val('Submit').attr('disabled',false);				
 			}
-			$("#rawTransactionStatus").fadeOut().fadeIn();
-			$(thisbtn).val('Submit').attr('disabled',false);
-		}, $("#rawTransaction").val());
+		});
 	}
 
 	// broadcast transaction via blockr.io (mainnet)
