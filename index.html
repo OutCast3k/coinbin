@@ -54,6 +54,7 @@
 								<ul class="dropdown-menu">
 									<li><a href="#newAddress" data-toggle="tab">New Address</a></li>
 									<li><a href="#newMultiSig" data-toggle="tab">MultiSig Address</a></li>
+                                    <li><a href="#newMandatoryMultiSig" data-toggle="tab">Mandatory MultiSig Address</a></li>
 									<li><a href="#newHDaddress" data-toggle="tab">HD Address</a></li>
 									<li class="divider"></li>
 									<li><a href="#newTransaction" data-toggle="tab">Transaction</a></li>
@@ -377,6 +378,105 @@
 						<br>
 					</div>
 
+                    <div class="tab-pane tab-content" id="newMandatoryMultiSig">
+                        <h2>New Mandatory Multisig Address <small>Secure multisig address with some mandatory keys</small></h2>
+
+                        <!-- Not sure how to explain this P2SH
+                        <div class="row">
+
+                            <div class="col-md-11">
+                                <p>Public keys can be <a href="#newAddress">generated in your browser</a> or from your bitcoin client</a>.</p>
+                                <p>Enter the public keys of all the participants, to create a <a href="https://en.bitcoin.it/wiki/Address#Multi-signature_addresses" target="_blank">multi signature address</a>. Maximum of 15 allowed. Compressed and uncompressed public keys are accepted.</p>
+                            </div>
+
+                            <div class="col-md-1">
+                            </div>
+                        </div>
+                        -->
+
+                        <div class="row">
+                            <div class="col-md-11">
+                                <p>Please select the public keys <strong>absolutely necessary</strong> to release the coins. Without the signature of all of the following keys, the coins cannot be released</p>
+                            </div>
+                        </div>
+
+                        <div id="m_multisigMandatoryPubKeys" class="row">
+                            <div class="form-horizontal">
+                                <div class="col-xs-11">
+                                    <input type="text" class="form-control pubkey">
+                                </div>
+                                <a href="javascript:;" class="pubkeyAdd"><span class="glyphicon glyphicon-plus"></span></a>
+                                <br><br>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-11">
+                                <p>Please select the public keys for the multisignature.</p>
+                            </div>
+                        </div>
+
+                        <div id="m_multisigPubKeys" class="row">
+                            <div class="form-horizontal">
+                                <div class="col-xs-11">
+                                    <input type="text" class="form-control pubkey">
+                                </div>
+                                <a href="javascript:;" class="pubkeyAdd"><span class="glyphicon glyphicon-plus"></span></a>
+                                <br><br>
+                            </div>
+                        </div>
+
+                        <p>Enter the amount of signatures required to release the coins</p>
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <select id="m_releaseCoins" class="form-control">
+                                    <option>1</option>
+                                    <option selected>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                    <option>7</option>
+                                    <option>8</option>
+                                    <option>9</option>
+                                    <option>10</option>
+                                    <option>11</option>
+                                    <option>12</option>
+                                    <option>13</option>
+                                    <option>14</option>
+                                    <option>15</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <div id="m_multiSigErrorMsg" class="alert alert-danger" style="display:none;"></div>
+
+                        <div class="alert alert-success hidden" id="m_multiSigData">
+                            <label>Address</label>
+                            <p>Payment should be made to this address:</p>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control address" value="" readonly>
+                                        <span class="input-group-btn">
+                                            <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <label>Redeem Script</label>
+                            <p>This script should be <i>saved and should be shared with all the participants before a payment is made</i>, so they may validate the authenticity of the address, it will also be used later to release the bitcoins.</p>
+                            <textarea class="form-control script" style="height:160px" readonly></textarea>
+                            <label>Shareable URL</label>
+                            <input type="text" class="scriptUrl form-control" disabled>
+                        </div>
+
+                        <input type="button" class="btn btn-primary" value="Submit" id="newMandatoryMultiSigAddress">
+                        <br>
+                    </div>
+
 					<div class="tab-pane tab-content" id="newHDaddress">
 						<h2>New HD Address <small>making bip32 even easier</small></h2>
 						<p>Use the form below to generate a <i>master</i> hierarchical deterministic address.</p>
@@ -599,10 +699,17 @@
 							<label>Required Signatures</label>
 							<p class="signaturesRequired">?</p>
 							<label>Signatures Required from</label>
-							<table class="table table-striped table-hover">
+							<table id="verifyRsDataPubKeys" class="table table-striped table-hover">
 								<tbody>
 								</tbody>
 							</table>
+                            <div id="verifyRsDataMandatory" class="hidden">
+                                <label>Mandatory Signatures Required from</label>
+                                <table id="verifyRsDataMandatoryKeys" class="table table-striped table-hover">
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
 						</div>
 
 						<div class="hidden verifyData" id="verifyTransactionData">
