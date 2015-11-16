@@ -360,6 +360,87 @@ $(document).ready(function() {
 		}
 	});
 
+	/* new -> mandatory multisig code */
+
+	$("#newMandatoryMultiSigAddress").click(function(){
+
+		$("#m_multiSigData").removeClass('show').addClass('hidden').fadeOut();
+		$("#m_multisigPubKeys .pubkey").parent().removeClass('has-error');
+		$("#m_multisigMandatoryPubKeys .pubkey").parent().removeClass('has-error');
+		$("#m_releaseCoins").parent().removeClass('has-error');
+		$("#m_multiSigErrorMsg").hide();
+
+		if((isNaN($("#m_releaseCoins option:selected").html())) || ((!isNaN($("#m_releaseCoins option:selected").html())) && ($("#m_releaseCoins option:selected").html()>$("#m_multisigPubKeys .pubkey").length || $("#m_releaseCoins option:selected").html()*1<=0 || $("#m_releaseCoins option:selected").html()*1>8))){
+			$("#m_releaseCoins").parent().addClass('has-error');
+			$("#m_multiSigErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> Minimum signatures required is greater than the amount of public keys provided').fadeIn();
+			return false;
+		}
+
+		var keys = [];
+		$.each($("#m_multisigPubKeys .pubkey"), function(i,o){
+			if(coinjs.pubkeydecompress($(o).val())){
+				keys.push($(o).val());
+				$(o).parent().removeClass('has-error');
+			} else {
+				$(o).parent().addClass('has-error');
+			}
+		});
+
+		var mandatoryKeys = [];
+		$.each($("#m_multisigMandatoryPubKeys .pubkey"), function(i,o){
+			if(coinjs.pubkeydecompress($(o).val())){
+				mandatoryKeys.push($(o).val());
+				$(o).parent().removeClass('has-error');
+			} else {
+				$(o).parent().addClass('has-error');
+			}
+		});
+
+		if(keys.length + mandatoryKeys.length > 15){
+			$("#m_multiSigErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> Too many keys. Sum of all keys must be less or equal to 15.').fadeIn();
+			return false;
+		}
+
+		if($("#m_multisigPubKeys .pubkey").parent().hasClass('has-error')==false
+		&& $("#m_multisigMandatoryPubKeys .pubkey").parent().hasClass('has-error')==false
+		&& $("#m_releaseCoins").parent().hasClass('has-error')==false){
+			var sigsNeeded = $("#m_releaseCoins option:selected").html();
+			var m_multisig =  coinjs.pubkeysAndMandatory2MultisigAddress(mandatoryKeys, keys, sigsNeeded);
+			$("#m_multiSigData .address").val(m_multisig['address']);
+			$("#m_multiSigData .script").val(m_multisig['redeemScript']);
+			$("#m_multiSigData .scriptUrl").val(document.location.origin+''+document.location.pathname+'?verify='+m_multisig['redeemScript']+'#verify');
+			$("#m_multiSigData").removeClass('hidden').addClass('show').fadeIn();
+			$("#m_releaseCoins").removeClass('has-error');
+		} else {
+			$("#m_multiSigErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> One or more public key is invalid!').fadeIn();
+		}
+	});
+
+	$("#m_multisigPubKeys .pubkeyAdd").click(function(){
+		if($("#m_multisigPubKeys .pubkeyRemove").length<14){
+			var clone = '<div class="form-horizontal">'+$(this).parent().html()+'</div>';
+			$("#m_multisigPubKeys").append(clone);
+			$("#m_multisigPubKeys .glyphicon-plus:last").removeClass('glyphicon-plus').addClass('glyphicon-minus');
+			$("#m_multisigPubKeys .glyphicon-minus:last").parent().removeClass('pubkeyAdd').addClass('pubkeyRemove');
+			$("#m_multisigPubKeys .pubkeyRemove").unbind("");
+			$("#m_multisigPubKeys .pubkeyRemove").click(function(){
+				$(this).parent().fadeOut().remove();
+			});
+		}
+	});
+
+	$("#m_multisigMandatoryPubKeys .pubkeyAdd").click(function(){
+		var clone = '<div class="form-horizontal">'+$(this).parent().html()+'</div>';
+		$("#m_multisigMandatoryPubKeys").append(clone);
+		$("#m_multisigMandatoryPubKeys .glyphicon-plus:last").removeClass('glyphicon-plus').addClass('glyphicon-minus');
+		$("#m_multisigMandatoryPubKeys .glyphicon-minus:last").parent().removeClass('pubkeyAdd').addClass('pubkeyRemove');
+		$("#m_multisigMandatoryPubKeys .pubkeyRemove").unbind("");
+		$("#m_multisigMandatoryPubKeys .pubkeyRemove").click(function(){
+			$(this).parent().fadeOut().remove();
+		});
+	});
+
+
 	/* new -> Hd address code */
 
 	$(".deriveHDbtn").click(function(){
@@ -947,10 +1028,22 @@ $(document).ready(function() {
 			for(var i=0;i<decode.pubkeys.length;i++){
 				var pubkey = decode.pubkeys[i];
 				var address = coinjs.pubkey2address(pubkey);
-				$('<tr><td width="30%"><input type="text" class="form-control" value="'+address+'" readonly></td><td><input type="text" class="form-control" value="'+pubkey+'" readonly></td></tr>').appendTo("#verifyRsData table tbody");
+				$('<tr><td width="30%"><input type="text" class="form-control" value="'+address+'" readonly></td><td><input type="text" class="form-control" value="'+pubkey+'" readonly></td></tr>').appendTo("#verifyRsDataPubKeys tbody");
+			}
+			for(var i=0;i<decode.mandatorykeys.length;i++){
+				var pubkey = decode.mandatorykeys[i];
+				var address = coinjs.pubkey2address(pubkey);
+				$('<tr><td width="30%"><input type="text" class="form-control" value="'+address+'" readonly></td><td><input type="text" class="form-control" value="'+pubkey+'" readonly></td></tr>').appendTo("#verifyRsDataMandatoryKeys tbody");
 			}
 			$("#verifyRsData").removeClass("hidden");
 			$(".verifyLink").attr('href','?verify='+$("#verifyScript").val());
+
+			if(decode.mandatorykeys.length>0){
+				$("#verifyRsDataMandatory").removeClass("hidden");
+			} else {
+				$("#verifyRsDataMandatory").addClass("hidden");
+			}
+
 			return true;
 		} else {
 			return false;
@@ -984,7 +1077,9 @@ $(document).ready(function() {
 				if(s['type']=='multisig'){
 					var script = coinjs.script();
 					var rs = script.decodeRedeemScript(s.script);
+					if(rs['mandatorykeys'].length > 0) h += rs['mandatorykeys'].length + " and (";
 					h += rs['signaturesRequired']+' of '+rs['pubkeys'].length;
+					if(rs['mandatorykeys'].length > 0) h += ")";
 				} else {
 					h += '<span class="glyphicon glyphicon-remove-circle"></span>';
 				}
@@ -1260,7 +1355,8 @@ $(document).ready(function() {
 	});
 
 	for(i=1;i<3;i++){
-		$(".pubkeyAdd").click();
+		$("#multisigPubKeys .pubkeyAdd").click();
+		$("#m_multisigPubKeys .pubkeyAdd").click();
 	}
 
 	validateOutputAmount();
