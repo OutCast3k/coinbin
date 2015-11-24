@@ -1023,6 +1023,9 @@ $(document).ready(function() {
 
 		// log out of openwallet
 		$("#walletLogout").click();
+		
+		$("#newGeneratedAddress, #newPubKey, #newPrivKey, #newHDxpub, #newHDxprv").val("");
+		$("#multiSigData").removeClass('show').addClass('hidden').hide();
 
 		$("#statusSettings").removeClass("alert-success").removeClass("alert-danger").addClass("hidden").html("");
 		$("#settings .has-error").removeClass("has-error");
@@ -1436,7 +1439,7 @@ $(document).ready(function() {
 	}
 	$("#coinSelector").change();
 
-	$("#newKeysBtn, #newHDKeysBtn").click();
+	//$("#newKeysBtn, #newHDKeysBtn").click();
 
 	var _getBroadcast = _get("broadcast");
 	if(_getBroadcast[0]){
