@@ -330,13 +330,27 @@
 							</div>
 						</div>
 
-						<div id="multisigPubKeys" class="row">
-							<div class="form-horizontal">
-								<div class="col-xs-11">
-									<input type="text" class="form-control pubkey">
+						<div id="multisigPubKeys">
+							<div class="row headers">
+								<div class="col-xs-7">
+									<label>Public key</label>
 								</div>
-								<a href="javascript:;" class="pubkeyAdd"><span class="glyphicon glyphicon-plus"></span></a>
-								<br><br>
+								<div class="col-xs-4">
+									<label>Identity <span class="text-muted">(if <a href="known-pubkeys.js" target="_blank">known</a>)</span></label>
+								</div>
+							</div>
+							<div class="row list">
+								<div class="form-horizontal col-xs-12">
+									<div class="row">
+										<div class="col-xs-7">
+											<input type="text" class="form-control pubkey">
+										</div>
+										<div class="col-xs-4">
+											<input type="text" class="form-control id" readonly>	
+										</div>
+										<a href="javascript:;" class="pubkeyAdd"><span class="glyphicon glyphicon-plus"></span></a>
+									</div>
+								</div>
 							</div>
 						</div>
 
@@ -495,11 +509,14 @@
 							<div class="tab-pane fade in active" id="txoutputs">
 								<p>Enter the address and amount you wish to make a payment to.</p>
 								<div class="row">
-									<div class="col-xs-8">
+									<div class="col-xs-4">
 										<label><abbr title="Address to send to">Address</abbr></label>
 									</div>
-									<div class="col-xs-3">
+									<div class="col-xs-2">
 										<label><abbr title="Amount to send">Amount</abbr></label>
+									</div>
+									<div class="col-xs-5">
+										<label><abbr title="Receiver of the payment">Identity <span class="text-muted">(if <a href="known-pubkeys.js" target="_blank">known</a>)</span></abbr></label>
 									</div>
 									<div class="col-xs-1">
 									</div>
@@ -507,11 +524,14 @@
 
 								<div id="recipients">
 									<div class="row recipient">
-										<div class="col-xs-8">
+										<div class="col-xs-4">
 											<input type="text" class="form-control address" placeholder="">
 										</div>
-										<div class="col-xs-3">
+										<div class="col-xs-2">
 											<input type="text" class="form-control amount" placeholder="0.00">
+										</div>
+										<div class="col-xs-5">
+											<input type="text" class="form-control id" readonly>
 										</div>
 										<div class="col-xs-1">
 											<a href="javascript:;" class="addressAddTo"><span class="glyphicon glyphicon-plus"></span></a>
@@ -606,14 +626,27 @@
 						<div class="hidden verifyData" id="verifyRsData">
 							<h4>Redeem Script</h4>
 							<p><span style="float:right"><a href="javascript:;" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above redeem script has been decoded</p>
-							<label>Multi Signature Address</label>
 							<div class="row">
-								<div class="col-lg-6">
+								<div class="col-lg-4">
+								<label>Multi Signature Address</label>
 									<div class="input-group">
+			
 										<input type="text" class="form-control address multisigAddress" value="" readonly>
 										<span class="input-group-btn">
 											<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
 										</span>
+									</div>
+								</div>
+								<div class="col-lg-4">
+									<label>Script hash</label>
+									<div class="">
+										<input type="text" class="form-control address multisigScriptHash" value="" readonly>
+									</div>
+								</div>
+								<div class="col-lg-4">
+									<label>Identity <span class="text-muted">(if <a href="known-pubkeys.js" target="_blank">known</a>)</span></label>
+									<div class="">
+										<input type="text" class="form-control address multisigScriptHashKnown" value="" readonly>
 									</div>
 								</div>
 							</div>
@@ -625,7 +658,7 @@
 								<tr>
 									<th class="col-md-3">Address</th>
 									<th class="col-md-5">Pubkey</th>
-									<th class="col-md-4">Identity (if <a href="known-pubkeys.js" target="_blank">known</a>)</th>
+									<th class="col-md-4">Identity <span class="text-muted">(if <a href="known-pubkeys.js" target="_blank">known</a>)</span></th>
 								</tr>
 							</thead>
 								<tbody>
@@ -659,7 +692,10 @@
 							<table class="table table-striped table-hover outs">
 								<thead>
 									<tr style="font-weight:bold;">
-										<td><abbr title="address the funds are being sent to">Address</abbr></td><td><abbr title="the amount the address is being sent">Amount</abbr></td><td><abbr title="the script of the transaction">Script</abbr></td>
+										<td><abbr title="address the funds are being sent to">Address</abbr></td>
+										<td><abbr title="the identity of the receiver if known">Identity <span class="text-muted">(if <a href="known-pubkeys.js" target="_blank">known</a>)</span></abbr></td>
+										<td><abbr title="the amount the address is being sent">Amount</abbr></td>
+										<td><abbr title="the script of the transaction">Script</abbr></td>
 									</tr>
 								</thead>
 								<tbody>
@@ -1076,9 +1112,7 @@
 						<div class="col-md-5">
 							<label>Mediator:</label>
 
-							<select id="mediatorList" class="form-control">
-								<option value="02113443efda4a9fe9bd38ca1f932aaee2c3cb6ee637f22eaa25af370a1cde6952;ttutdxh.nubits@gmail.com;1">Developer</option>
-							</select>
+							<select id="mediatorList" class="form-control"></select>
 						</div>
 
 						<div class="col-md-5">

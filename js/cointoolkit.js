@@ -329,15 +329,20 @@ $(document).ready(function() {
 			$("#multiSigErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> One or more public key is invalid!').fadeIn();
 		}
 	});
+	
+	$("#multisigPubKeys .list").on('change', '.pubkey', function() {
+		var val = (known.pubKey[$(this).val()])?known.pubKey[$(this).val()].name:'';
+		$(this).parent().parent().find('.id').val(val)
+	});
 
-	$("#multisigPubKeys .pubkeyAdd").click(function(){
-		if($("#multisigPubKeys .pubkeyRemove").length<14){
-			var clone = '<div class="form-horizontal">'+$(this).parent().html()+'</div>';
-			$("#multisigPubKeys").append(clone);
-			$("#multisigPubKeys .glyphicon-plus:last").removeClass('glyphicon-plus').addClass('glyphicon-minus');
-			$("#multisigPubKeys .glyphicon-minus:last").parent().removeClass('pubkeyAdd').addClass('pubkeyRemove');
-			$("#multisigPubKeys .pubkeyRemove").unbind("");
-			$("#multisigPubKeys .pubkeyRemove").click(function(){
+	$("#multisigPubKeys .list .pubkeyAdd").click(function(){
+		if($("#multisigPubKeys .list .pubkeyRemove").length<14){
+			var clone = '<div class="form-horizontal col-xs-12"><div class="row">'+$(this).parent().html()+'</div></div>';
+			$("#multisigPubKeys .list").append(clone);
+			$("#multisigPubKeys .list .glyphicon-plus:last").removeClass('glyphicon-plus').addClass('glyphicon-minus');
+			$("#multisigPubKeys .list .glyphicon-minus:last").parent().removeClass('pubkeyAdd').addClass('pubkeyRemove');
+			$("#multisigPubKeys .list .pubkeyRemove").unbind("");
+			$("#multisigPubKeys .list .pubkeyRemove").click(function(){
 				$(this).parent().fadeOut().remove();
 			});
 		}
@@ -348,7 +353,7 @@ $(document).ready(function() {
 		$("#mediatorPubkey").val(data[0]);
 		$("#mediatorEmail").val(data[1]);
 		$("#mediatorFee").val(data[2]);
-	}).change();
+	})
 
 	$("#mediatorAddKey").click(function(){
 		var count = 0;
@@ -356,7 +361,7 @@ $(document).ready(function() {
 		if(len<14){
 			$.each($("#multisigPubKeys .pubkey"),function(i,o){
 				if($(o).val()==''){
-					$(o).val($("#mediatorPubkey").val()).fadeOut().fadeIn();
+					$(o).val($("#mediatorPubkey").val()).change().fadeOut().fadeIn();
 					$("#mediatorClose").click();
 					return false;
 				} else if(count==len){
@@ -398,6 +403,29 @@ $(document).ready(function() {
 	});
 
 	/* new -> transaction code */
+	
+	$("#recipients").on('change', '.address', function() {
+		var addr = $(this).val();
+		var identity = '';
+		var details = coinjs.addressDecode(addr);
+		if (details.type == 'standard') {
+			$.each(known.pubKey, function(pubkey, id) {
+				if (coinjs.pubkey2address(pubkey, coinjs.pub) == addr) {
+					identity = known.pubKey[pubkey].name;
+					return false;
+				}
+			});
+		} else if (details.type == 'multisig') {
+			$.each(known.scriptHash, function(scripthash, id) {
+				if (coinjs.scripthash2address(scripthash, coinjs.multisig) == addr) {
+					identity = known.scriptHash[scripthash].name;
+					return false;
+				}
+			});
+		}
+
+		$(this).parent().parent().find('.id').val(identity);
+	});
 
 	$("#recipients .addressAddTo").click(function(){
 		if($("#recipients .addressRemoveTo").length<19){
@@ -778,19 +806,22 @@ $(document).ready(function() {
 		var script = coinjs.script();
 		var decode = script.decodeRedeemScript($("#verifyScript").val());
 		if(decode){
+			console.log(decode['scriptHash'], coinjs.scripthash2address(decode['scriptHash'], coinjs.multisig));
 			$("#verifyRsData .multisigAddress").val(decode['address']);
+			$("#verifyRsData .multisigScriptHash").val(decode['scriptHash']);
+			$("#verifyRsData .multisigScriptHashKnown").val((known.scriptHash[decode['scriptHash']])?known.scriptHash[decode['scriptHash']].name:'');
 			$("#verifyRsData .signaturesRequired").html(decode['signaturesRequired']);
 			$("#verifyRsData table tbody").html("");
 			for(var i=0;i<decode.pubkeys.length;i++){
 				var pubkey = decode.pubkeys[i];
 				
-				knownPubKey = "";
-				if (known_pubkeys && known_pubkeys[pubkey]) {
-					knownPubKey = known_pubkeys[pubkey].name;
+				identity = "";
+				if (known.pubKey[pubkey]) {
+					identity = known.pubKey[pubkey].name;
 				}
 				
 				var address = coinjs.pubkey2address(pubkey);
-				$('<tr><td width="30%"><input type="text" class="form-control" value="'+address+'" readonly></td><td><input type="text" class="form-control" value="'+pubkey+'" readonly></td><td><input type="text" class="form-control" value="'+knownPubKey+'" readonly></td></tr>').appendTo("#verifyRsData table tbody");
+				$('<tr><td width="30%"><input type="text" class="form-control" value="'+address+'" readonly></td><td><input type="text" class="form-control" value="'+pubkey+'" readonly></td><td><input type="text" class="form-control" value="'+identity+'" readonly></td></tr>').appendTo("#verifyRsData table tbody");
 			}
 			$("#verifyRsData").removeClass("hidden");
 			$("#verify .verifyLink").attr('href','?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
@@ -853,25 +884,40 @@ $(document).ready(function() {
 
 					h += '<tr>';
 					h += '<td><input type="text" class="form-control" value="(OP_RETURN) '+data+'" readonly></td>';
+					h += '<td></td>'; // to account for known address value
 					h += '<td class="col-xs-1">'+(o.value/("1e"+coinjs.decimalPlaces)).toFixed(coinjs.decimalPlaces)+'</td>';
 					h += '<td class="col-xs-2"><input class="form-control" type="text" value="'+Crypto.util.bytesToHex(o.script.buffer)+'" readonly></td>';
 					h += '</tr>';
 				} else {
 
 					var addr = '';
+					var identity = '';
 					if(o.script.chunks.length==5){
-						addr = coinjs.scripthash2address(Crypto.util.bytesToHex(o.script.chunks[2]));
+						var pubKeyHash = Crypto.util.bytesToHex(o.script.chunks[2])
+						addr = coinjs.scripthash2address(pubKeyHash, coinjs.pub);
+						$.each(known.pubKey, function(pubkey, id) {
+							if (coinjs.pubkey2address(pubkey, coinjs.pub) == addr) {
+								identity = known.pubKey[pubkey].name;
+								return false;
+							}
+						});
 					} else {
-						var pub = coinjs.pub;
-						coinjs.pub = coinjs.multisig;
-						addr = coinjs.scripthash2address(Crypto.util.bytesToHex(o.script.chunks[1]));
-						coinjs.pub = pub;
+						var scriptHash = Crypto.util.bytesToHex(o.script.chunks[1]);
+						console.log(scriptHash);
+						addr = coinjs.scripthash2address(scriptHash, coinjs.multisig);
+						if (known.scriptHash[scriptHash]) {
+							identity = known.scriptHash[scriptHash].name;
+						}
 					}
+					
+					
+					
 
 					h += '<tr>';
-					h += '<td><input class="form-control" type="text" value="'+addr+'" readonly></td>';
+					h += '<td class="col-xs-4"><input class="form-control" type="text" value="'+addr+'" readonly></td>';
+					h += '<td class="col-xs-4"><input class="form-control" type="text" value="'+identity+'" readonly></td>';
 					h += '<td class="col-xs-1">'+(o.value/("1e"+coinjs.decimalPlaces)).toFixed(coinjs.decimalPlaces)+'</td>';
-					h += '<td class="col-xs-2"><input class="form-control" type="text" value="'+Crypto.util.bytesToHex(o.script.buffer)+'" readonly></td>';
+					h += '<td class="col-xs-3"><input class="form-control" type="text" value="'+Crypto.util.bytesToHex(o.script.buffer)+'" readonly></td>';
 					h += '</tr>';
 				}
 			});
@@ -1436,6 +1482,14 @@ $(document).ready(function() {
 	}
 	
 	/* page load code */
+	
+	$.each(known.pubKey, function(pubkey, id) {
+		$('#mediatorList').append($('<option>', {
+			value: pubkey+';'+id.email+';'+id.fee,
+			text: id.name
+		}));
+	});
+	$("#mediatorList").change();
 
 	$("#coinjs_coin option").clone().appendTo("#coinSelector");
 	

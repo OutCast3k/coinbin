@@ -120,16 +120,13 @@
 	/* provide a public key and return address */
 	coinjs.pubkey2address = function(h){
 		var r = ripemd160(Crypto.SHA256(Crypto.util.hexToBytes(h), {asBytes: true}));
-		r.unshift(coinjs.pub);
-		var hash = Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
-		var checksum = hash.slice(0, 4);
-		return coinjs.base58encode(r.concat(checksum));
+		return coinjs.scripthash2address(Crypto.util.bytesToHex(r), coinjs.pub);
 	}
 
 	/* provide a scripthash and return address */
-	coinjs.scripthash2address = function(h){
+	coinjs.scripthash2address = function(h, type){
 		var x = Crypto.util.hexToBytes(h);
-		x.unshift(coinjs.pub);
+		x.unshift(type);
 		var r = x;
 		r = Crypto.SHA256(Crypto.SHA256(r,{asBytes: true}),{asBytes: true});
 		var checksum = r.slice(0,4);
@@ -145,14 +142,12 @@
 		}
 		s.writeOp(81 + pubkeys.length - 1); //OP_1 
 		s.writeOp(174); //OP_CHECKMULTISIG
+		
 		var x = ripemd160(Crypto.SHA256(s.buffer, {asBytes: true}), {asBytes: true});
-		x.unshift(coinjs.multisig);
-		var r = x;
-		r = Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
-		var checksum = r.slice(0,4);
+		
 		var redeemScript = Crypto.util.bytesToHex(s.buffer);
-		var address = coinjs.base58encode(x.concat(checksum));
-		return {'address':address, 'redeemScript':redeemScript};
+
+		return {'address':coinjs.scripthash2address(Crypto.util.bytesToHex(x), coinjs.multisig),  'scriptHash':Crypto.util.bytesToHex(x), 'redeemScript':redeemScript};
 	}
 
 	/* provide a privkey and return an WIF  */
@@ -670,6 +665,7 @@
 					r.pubkeys = pubkeys;
 					var multi = coinjs.pubkeys2MultisigAddress(pubkeys, r.signaturesRequired);
 					r.address = multi['address'];
+					r.scriptHash = multi['scriptHash'];
 				}
 			} catch(e) {
 				if (coinjs.debug) {console.log(e)};
