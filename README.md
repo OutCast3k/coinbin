@@ -1,13 +1,11 @@
-coinbin
+Cointoolkit
 =======
 
-A Open Source Browser Based Bitcoin Wallet. Version 1.2 beta by OutCast3k
+A Open Source Browser Based Bitcoin Wallet.
 
-Live version available at http://coinb.in/ or http://4zpinp6gdkjfplhk.onion
+Live version available at http://ttutdxh-nubits.github.io/cointoolkit/
 
-Github URL: https://github.com/OutCast3k/coinbin/
-
-Coinb.in supports a number of key features such as: 
+Github URL: https://github.com/ttutdxh-nubits/cointoolkit
 
 - Offline Compressed & uncompressed Address creation.
 - Offline Multisignature Address creation.
@@ -28,4 +26,4 @@ Coinb.in supports a number of key features such as:
 - HD (bip32) support
 - Supports altcoins such as litecoin
 
-Donate to 1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg to see more development!
+Donate to 1JbsRVvU93PXN2JovuDE2NJTVNWkGEFrvx to see more development!

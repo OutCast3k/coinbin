@@ -2,7 +2,8 @@
  Coinjs 0.01 beta by OutCast3k{at}gmail.com
  A bitcoin frameworkcoinjs.
 
- http://github.com/OutCast3k/coinjs or http://coinb.in/coinjs
+ Originally by http://github.com/OutCast3k/coinjs or http://coinb.in/coinjs
+ Adapted to Peershares assets by ttutdxh.nubits@gmail.com
 */
 
 (function () {
@@ -10,6 +11,13 @@
 	var coinjs = window.coinjs = function () { };
 
 	/* public vars */
+	coinjs.txExtraTimeField = false;
+	coinjs.txExtraTimeFieldValue = false;
+	coinjs.txExtraUnitField = false;
+	coinjs.txExtraUnitFieldValue = false;
+	
+	coinjs.decimalPlaces = 8;
+	
 	coinjs.pub = 0x00;
 	coinjs.priv = 0x80;
 	coinjs.multisig = 0x05;
@@ -18,7 +26,7 @@
 	coinjs.compressed = false;
 
 	/* other vars */
-	coinjs.developer = '1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg'; // bitcoin
+	coinjs.developer = '1JbsRVvU93PXN2JovuDE2NJTVNWkGEFrvx'; // bitcoin
 
 	/* bit(coinb.in) api vars */
 	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+'coinb.in/api/';
@@ -50,7 +58,7 @@
 		x += window.history.length;
 		x += coinjs.random(64);
 		x += navigator.userAgent;
-		x += 'coinb.in';
+		x += 'cointoolkit';
 		x += (Crypto.util.randomBytes(64)).join("");
 		x += x.length;
 		var dateObj = new Date();
@@ -229,7 +237,8 @@
 					o.prefix = front.slice(71);
 
 				} else { // everything else
-					o.type = 'other'; // address is still valid but unknown version
+					//- invalid -// o.type = 'other'; // address is still valid but unknown version
+					return false;
 				}
 
 				return o;
@@ -733,6 +742,9 @@
 		r.outs = [];
 		r.timestamp = null;
 		r.block = null;
+		
+		r.nTime = 0;
+		r.nUnit = 0;
 
 		/* add an input to a transaction */
 		r.addinput = function(txid, index, script){
@@ -746,7 +758,7 @@
 		/* add an output to a transaction */
 		r.addoutput = function(address, value){
 			var o = {};
-			o.value = new BigInteger('' + Math.round((value*1) * 1e8), 10);
+			o.value = new BigInteger('' + Math.round((value*1) * ("1e"+coinjs.decimalPlaces)), 10);
 			var s = coinjs.script();
 			o.script = s.spendToScript(address);
 
@@ -786,7 +798,7 @@
 			this.outs.push(v);
 			
 			var o = {};
-			o.value = new BigInteger('' + Math.round((value*1) * 1e8), 10);
+			o.value = new BigInteger('' + Math.round((value*1) * ("1e"+coinjs.decimalPlaces)), 10);
 			var s = coinjs.script();
 			o.script = s.spendToScript(sendaddress);
 			
@@ -903,7 +915,13 @@
 					return {'type':'scriptpubkey', 'signed':'true', 'signatures':1, 'script': Crypto.util.bytesToHex(this.ins[index].script.buffer)};
 				} else if (this.ins[index].script.chunks[0]==0 && this.ins[index].script.chunks[this.ins[index].script.chunks.length-1][this.ins[index].script.chunks[this.ins[index].script.chunks.length-1].length-1]==174) { // OP_CHECKMULTISIG
 					// multisig script, with signature(s) included
-					return {'type':'multisig', 'signed':'true', 'signatures':this.ins[index].script.chunks.length-2, 'script': Crypto.util.bytesToHex(this.ins[index].script.chunks[this.ins[index].script.chunks.length-1])};
+					var count = -1;
+					for (var i = 0; i < this.ins[index].script.chunks.length; i++) {
+						if(this.ins[index].script.chunks[i]){
+							++count;
+						}
+					}
+					return {'type':'multisig', 'signed':'true', 'signatures':count, 'script': Crypto.util.bytesToHex(this.ins[index].script.chunks[this.ins[index].script.chunks.length-1])};
 				} else if (this.ins[index].script.chunks[0]>=80 && this.ins[index].script.chunks[this.ins[index].script.chunks.length-1]==174) { // OP_CHECKMULTISIG
 					// multisig script, without signature!
 					return {'type':'multisig', 'signed':'false', 'signatures':0, 'script': Crypto.util.bytesToHex(this.ins[index].script.buffer)};
@@ -1114,6 +1132,7 @@
 				} else if (d['type'] == 'multisig') {
 					this.signmultisig(i, wif);
 				} else {
+					console.log('could not sign input', i);
 					// could not sign
 				}
 			}
@@ -1124,6 +1143,11 @@
 		r.serialize = function(){
 			var buffer = [];
 			buffer = buffer.concat(coinjs.numToBytes(parseInt(this.version),4));
+			
+			if (coinjs.txExtraTimeField) {
+				buffer = buffer.concat(coinjs.numToBytes(parseInt(this.nTime),4));
+			}
+			
 			buffer = buffer.concat(coinjs.numToVarInt(this.ins.length));
 
 			for (var i = 0; i < this.ins.length; i++) {
@@ -1146,6 +1170,11 @@
 			}
 
 			buffer = buffer.concat(coinjs.numToBytes(parseInt(this.lock_time),4));
+			
+			if (coinjs.txExtraUnitField) {
+				buffer = buffer.concat(coinjs.numToBytes(parseInt(coinjs.txExtraUnitFieldValue),1));
+			}
+			
 			return Crypto.util.bytesToHex(buffer);
 		}
 
@@ -1183,6 +1212,11 @@
 			var obj = new coinjs.transaction();
 
 			obj.version = readAsInt(4);
+			
+			if (coinjs.txExtraTimeField) {
+				obj.nTime = readAsInt(4);
+			}
+			
 			var ins = readVarInt();
 			for (var i = 0; i < ins; i++) {
 				obj.ins.push({
@@ -1204,6 +1238,11 @@
 			}
 
  			obj.lock_time = readAsInt(4);
+			
+			if (coinjs.txExtraUnitField) {
+				obj.nUnit = readAsInt(1);
+			}
+			
 			return obj;
 		}
 

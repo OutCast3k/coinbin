@@ -2,11 +2,11 @@
 <html lang="en">
 	<head>
 
-		<title>Bitcoin Wallet by Coinb.in</title>
+		<title>Cointoolkit</title>
 
-        	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 		<meta name="keywords" content="bitcoin, wallet, multisig, multisignature, address, browser, javascript, js, broadcast, transaction, verify, decode" />
-		<meta name="description" content="A Bitcoin Wallet written in Javascript. Supports Multisig, Custom Transactions, nLockTime and more!" />
+		<meta name="description" content="A cryptoasset toolkit written in Javascript. Supports Multisig, Custom Transactions, nLockTime and more!" />
 
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +30,7 @@
 		<script type="text/javascript" src="js/ellipticcurve.js"></script>
 
 		<script type="text/javascript" src="js/coin.js"></script>
-		<script type="text/javascript" src="js/coinbin.js"></script>
+		<script type="text/javascript" src="js/cointoolkit.js"></script>
 	</head>
 
 	<body>
@@ -45,7 +45,7 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a href="#home" class="navbar-brand" id="homeBtn"><img src="images/coinbin.gif" style="height:25px;margin-top:-5px"></a>
+						<a href="#home" class="navbar-brand" id="homeBtn">Cointoolkit</a>
 					</div>
 					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav">
@@ -65,7 +65,16 @@
 							<li><a href="#wallet" data-toggle="tab"><span class="glyphicon glyphicon-briefcase"></span> Wallet</a></li>
 							<li><a href="#about" data-toggle="tab"><span class="glyphicon glyphicon-info-sign"></span> About</a></li>
 
-							<li class="hidden"><a href="#settings" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+							<li><a href="#settings" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+						</ul>
+						<ul class="nav navbar-right">
+							<li>
+								<div style="padding-top: 15px; padding-bottom: 15px; line-height: 20px;">
+									<span>Change mode</span>  :
+									<select id="coinSelector">
+									</select>
+								</div>
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -79,13 +88,13 @@
 					<div class="tab-pane tab-content active" id="home">
 						<div class="row">
 							<div class="col-md-12">
-								<h2>Coinb.in <small>Welcome to the Blockchain</small></h2>
+								<h2>Cointoolkit <small>Welcome to the Blockchain</small></h2>
 							</div>
 						</div>
 
 						<div class="jumbotron">
-							<h1>Bitcoin. It's your money!</h1>
-							<p>Be your own bank, take control of your own money and start using Bitcoin today!</p>
+							<h1>Cointoolkit</h1>
+							<p>Be your own bank, take control of your own money and start using <a href="https://nubits.com/">NuBits</a> today!</p>
 							<p><a class="btn btn-primary btn-lg" href="#about" role="button">Learn more &raquo;</a></p>
 						</div>
 
@@ -94,16 +103,16 @@
 						<div class="row">
 							<div class="col-md-4">
 								<h3><span class="glyphicon glyphicon-ok"></span> Open Source</h3>
-								<p>Coinbin is an open source web based wallet written in javascript and released under the <a href="LICENSE">MIT license</a> which means its free to use and edit.</p>
+								<p>Cointoolkit is an open source web based wallet written in javascript and released under the <a href="LICENSE">MIT license</a> which means its free to use and edit.</p>
 							</div>
 
 							<div class="col-md-4">
 								<h3><span class="glyphicon glyphicon-fullscreen"></span> MultiSig</h3>
-								<p>We offer a fully transparent <a href="#newMultiSig">multisig</a> solution which works seamlessly offline and with other bitcoin clients.</p>
+								<p>We offer a fully transparent <a href="#newMultiSig">multisig</a> solution which works seamlessly offline and with other wallets.</p>
 							</div>
 
 							<div class="col-md-4">
-								<h3><span class="glyphicon glyphicon-bitcoin"></span> Raw Transactions</h3>
+								<h3><span class="glyphicon glyphicon-random"></span> Raw Transactions</h3>
 								<p><a href="#newTransaction">Create</a>, <a href="#verify">verify</a>, <a href="#sign">sign</a> and <a href="#broadcast">broadcast</a> custom raw transactions online with advanced features and minimal effort!</p>
 							</div>
 						</div>
@@ -121,7 +130,7 @@
 
 							<div class="col-md-4">
 								<h3><span class="glyphicon glyphicon-wrench"></span>  Development</h3>
-								<p>Use what we've built to write your own projects! See our documention (coming soon), or contribute at <a href="https://github.com/OutCast3k/coinbin/">github</a>.</p>
+								<p>Use what we've built to write your own projects! See our documention (coming soon), or contribute at <a href="https://github.com/ttutdxh-nubits/cointoolkit">github</a>.</p>
 							</div>
 						</div>
 					</div>
@@ -129,7 +138,7 @@
 					<div class="tab-pane tab-content" id="wallet">
 						<div class="row">
 							<div class="col-md-12">
-								<h2>Open Wallet <small> browser based bitcoin wallet</small></h2>
+								<h2>Open Wallet <small> browser based wallet</small></h2>
 								<div id="openLogin">
 									<form class="form-signin" role="form" action="javascript:;">
 
@@ -144,7 +153,7 @@
 										<input id="openPassConfirm" type="password" class="form-control" placeholder="Password confirm" required>
 										<br>
 										<div id="openLoginStatus" class="alert alert-danger hidden"></div>
-										<button id="openBtn" class="btn btn-primary" type="submit">Submit</button>
+										<button id="openBtn" class="btn btn-primary" type="submit">Load wallet</button>
 									</form>
 								</div>
 
@@ -218,7 +227,7 @@
 															<input type="text" class="form-control" value="0.00001" id="txFee">
 														</div>
 														<div class="col-xs-5">
-															<label><abbr title="the amount to donate to coinb.in">Donation</abbr></label>
+															<label><abbr title="the amount to donate">Donation</abbr></label>
 															<input type="text" class="form-control" value="0.001" id="developerDonation">
 														</div>
 													</div>
@@ -238,18 +247,18 @@
 					</div>
 
 					<div class="tab-pane tab-content" id="newAddress">
-						<h2>New Address <small>create a new address</small></h2>
-						<p>Any keys used you will need to manually store safely as they will be needed later to redeem the bitcoins.</p>
-						<label>Address (Share)</label>
-
+						<h2>Create new address</h2>
+						<p>Any keys used you will need to manually store safely as they will be needed later to redeem the coins.</p>
+						
+						<label><span id="newAddrType"></span> Address </label> <small class="text-muted text-normal">click generate to update</small>
 						<div class="input-group">
-							<input id="newBitcoinAddress" type="text" class="form-control address" value="" readonly>
+							<input id="newGeneratedAddress" type="text" class="form-control address" value="" readonly>
 							<span class="input-group-btn">
 								<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
 							</span>
 						</div>
 
-						<label>Public key (Share)</label>
+						<label>Public key</label>
 						<input id="newPubKey" type="text" class="form-control" readonly>
 						<label>Private key (WIF key)</label>
 						<div class="input-group">
@@ -304,7 +313,7 @@
 						<div class="row">
 
 							<div class="col-md-8">
-								<p>Public keys can be <a href="#newAddress">generated in your browser</a> or from your bitcoin client</a>.</p>
+								<p>Public keys can be <a href="#newAddress">generated in your browser</a> or from your wallet</a>.</p>
 								<p>Enter the public keys of all the participants, to create a <a href="https://en.bitcoin.it/wiki/Address#Multi-signature_addresses" target="_blank">multi signature address</a>. Maximum of 15 allowed. Compressed and uncompressed public keys are accepted.</p>
 							</div>
 
@@ -367,7 +376,7 @@
 								</div>
 							</div>
 							<label>Redeem Script</label>
-							<p>This script should be <i>saved and should be shared with all the participants before a payment is made</i>, so they may validate the authenticity of the address, it will also be used later to release the bitcoins.</p>
+							<p>This script should be <i>saved and should be shared with all the participants before a payment is made</i>, so they may validate the authenticity of the address, it will also be used later to release the coins.</p>
 							<textarea class="form-control script" style="height:160px" readonly></textarea>
 							<label>Shareable URL</label>
 							<input type="text" class="scriptUrl form-control" readonly>
@@ -454,7 +463,14 @@
 								<input type="text" class="form-control" value="0" id="nLockTime">
 
 								<hr>
+								
+								<div id="txTimeOptional">
+									<label>Extra time field</label>
+									<p>Indicates the timestamp of a transaction.</p>
+									<input type="text" class="form-control" value="0" id="nTime">
 
+									<hr>
+								</div>
 
 								<label>Network</label>
 								<p>The <a href="#settings">settings</a> page can be used to select alternative networks of which you can retrieve your unspent outputs and broadcast a signed transaction into.</p>
@@ -487,7 +503,7 @@
 								<div id="recipients">
 									<div class="row recipient">
 										<div class="col-xs-8">
-											<input type="text" class="form-control address" placeholder="1">
+											<input type="text" class="form-control address" placeholder="">
 										</div>
 										<div class="col-xs-3">
 											<input type="text" class="form-control amount" placeholder="0.00">
@@ -567,7 +583,7 @@
 							<p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
 						</div>
 
-						<input type="button" value="Submit" class="btn btn-primary" id="transactionBtn">
+						<input type="button" value="Generate" class="btn btn-primary" id="transactionBtn">
 
 						<br>
 					</div>
@@ -609,8 +625,10 @@
 							<h4>Transaction Script</h4>
 							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above script has been decoded</p>
 							<div><b>Version</b>: <span class="transactionVersion"></span></div>
+							<div class="txtime"><b>Transaction Time</b>: <span class="transactionTime"></span></div>
 							<div><b>Transaction Size</b>: <span class="transactionSize"></span></div>
 							<div><b>Lock time</b>: <span class="transactionLockTime"></span></div>
+							<div class="txunit"><b>Unit</b>: <span class="transactionUnit"></span></div>
 
 							<hr>
 
@@ -744,7 +762,7 @@
 
 						<div id="verifyStatus" class="alert alert-danger hidden"><span class="glyphicon glyphicon-exclamation-sign"></span> Unable to decode</div>
 
-						<input type="button" value="Submit" class="btn btn-primary" id="verifyBtn">
+						<input type="button" value="Verify" class="btn btn-primary" id="verifyBtn">
 						<br>
 					</div>
 
@@ -786,19 +804,19 @@
 							<p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
 						</div>
 
-						<input type="button" value="Submit" class="btn btn-primary" id="signBtn">
+						<input type="button" value="Sign" class="btn btn-primary" id="signBtn">
 						<br>
 					</div>
 
 					<div class="tab-pane tab-content" id="broadcast">
-						<h2>Broadcast Transaction <small>into the bitcoin network</small></h2>
+						<h2>Broadcast Transaction <small>into the network</small></h2>
 						<a href="#settings" style="float:right;"><span class="glyphicon glyphicon-cog"></span></a>
-						<p>Enter your hex encoded bitcoin transaction</p>
+						<p>Enter your hex encoded transaction</p>
 						<textarea class="form-control" style="height:125px" id="rawTransaction"></textarea>
 						<br>
 						<div id="rawTransactionStatus" class="alert hidden">
 						</div>
-						<input type="button" value="Submit" id="rawSubmitBtn" class="btn btn-primary">
+						<input type="button" value="Broadcast" id="rawSubmitBtn" class="btn btn-primary">
 						<br>
 					</div>
 
@@ -809,44 +827,55 @@
 					</div>
 
 					<div class="tab-pane tab-content" id="about">
-						<h2>About <small>open source bitcoin wallet</small></h2>
+						<h2>About <small>open source toolkit</small></h2>
 						<p>Version 1.2</p>
-						<p>Compatible with bitcoin-qt</p>
-						<p>Github <a href="https://github.com/OutCast3k/coinbin/">https://github.com/OutCast3k/coinbin/</a></p>
-						<p>TOR <a href="http://4zpinp6gdkjfplhk.onion">4zpinp6gdkjfplhk.onion</a></p>
+						<p>Github <a href="https://github.com/ttutdxh-nubits/cointoolkit">https://github.com/ttutdxh-nubits/cointoolkit</a></p>
 						<h3>What is Bitcoin?</h3>
 						<p>Bitcoin is a type of digital currency in which encryption techniques are used to regulate the generation of units of currency and verify the transfer of funds, operating independently of a central bank. See <a href="http://www.weusecoins.com/" target="_blank">weusecoins.com</a> for more information.</p>
-						<p>If you are looking to buy some Bitcoin try <a href="https://localbitcoins.com/?ch=173j" target="_blank">LocalBitcoins.com</a>.</p>
+						<p>If you are looking to buy some Bitcoin try <a href="https://localbitcoins.com/?ch=4g53" target="_blank">LocalBitcoins.com</a>.</p>
+						<p>This toolkit supports multiple cryptoassets other than bitcoin</p>
 						<h3>Information</h3>
-						<p>Coinb.in is a free and open source project released under the MIT license, originally by <a href="https://bitcointalk.org/index.php?action=profile;u=34834" target="_blank">OutCast3k</a> in 2013. Discussion of the project can be found at <a href="https://bitcointalk.org/index.php?topic=390046" target="_blank">bitcointalk.org</a> during its early testing stages when its primary focus was to develop a proof of concept multisig solution in javascript.</p>
-						<p>Coinb.in is run and funded by the generosity of others in terms of <a href="https://github.com/OutCast3k/coinbin/graphs/contributors" target="_blank">development</a> and hosting.</p>
-						<h3>Privacy</h3>
-						<p>Coinb.in beleives strongly in privacy, not only do we support the use of TOR, the site does not collect and store IP or transaction data via our servers nor do we store your bitcoins private key. We do route traffic via cloudflare using an SSL certificate.</p>
+						<p>Cointoolkit is a free and open source project released under the MIT license, originally released by <a href="https://bitcointalk.org/index.php?action=profile;u=34834" target="_blank">OutCast3k</a> as Coinb.in in 2013, and modified to work with Peershares assets by ttutdxh.nubits@gmail.com</p>
 						<h3>Donate</h3>
-						<p>Please donate to <a href="bitcoin:1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg">1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg</a> if you found this project useful or want to see more features!</p>
+						<p>Please donate to <a href="bitcoin:1JbsRVvU93PXN2JovuDE2NJTVNWkGEFrvx">1JbsRVvU93PXN2JovuDE2NJTVNWkGEFrvx</a> if you found this project useful or want to see more features!</p>
 					</div>
 
 					<div class="tab-pane tab-content" id="settings">
-						<h2>Settings <small> making coinb.in even better!</small></h2>
-						<p>These simple settings below make coinb.in one of the most decentralized wallets in the world.</p>
+						<h2>Settings</h2>
+						<p>Customize the wallet settings to allow using the toolkit in other cryptoassets.</p>
 
 						<div class="row">
 							<div class="col-md-12">
 								<b>Network</b>: <br>
 								<p class="text-muted">Select which network you'd like to use for key pair generation.</p>
 								<select class="form-control" id="coinjs_coin">
-									<option value="bitcoin_mainnet" rel="0x00;0x80;0x05;0x488b21e;0x488ade4;coinb.in;coinb.in">Bitcoin (mainnet)</option>
-									<option value="litecoin_mainnet" rel="0x30;0xb0;0x05;0x019da462;0x019d9cfe;blockr.io_litecoin;chain.so_litecoin">Litecoin (mainnet)</option>
-									<option value="shadowcash_mainnet" rel="0x3f;0xbf;0x7d;0xee80286a;0xee8031e8;false;false">ShadowCash (mainnet)</option>
-								<!--	<option value="bitcoin_testnet" rel="0x6f;0xef;0xc4;0x043587cf;0x04358394;blockr.io_bitcointestnet;false">Bitcoin (testnet)</option> -->
+									<!-- pubPrefix, scriptPrefix, privPrefix, hdPubPrefix, hdPrivPrefix, broadcastProvider, unspentProvider, extraTimeField, extraUnitFieldValue, decimalPlaces -->
+									<option value="nubits" rel="0x19;0x1a;0x96;0x00000000;0x00000000;false;false;true;0x42;4;">NuBits</option>
+									<option value="nushares" rel="0x3f;0x40;0x95;0x00000000;0x00000000;false;false;true;0x53;4;">NuShares</option>
+									<option value="blockcredits" rel="0x1c;0x1e;0x9a;0x00000000;0x00000000;false;false;true;0x43;4;">BlockCredits</option>
+									<option value="blockshares" rel="0x12;0x14;0x99;0x00000000;0x00000000;false;false;true;0x38;4;">BlockShares</option>
+									<option value="peercoin" rel="0x37;0x75;0xb7;0x00000000;0x00000000;false;false;true;false;6;">Peercoin</option>
+									<option value="bitcoin" rel="0x00;0x05;0x80;0x488b21e;0x488ade4;coinbin;coinbin;false;false;8;">Bitcoin</option>
+									
+									<option value="nubits_testnet" rel="0x55;0x56;0xe0;0x00000000;0x00000000;false;false;true;0x42;4;">NuBits (testnet)</option>
+									<option value="nushares_testnet" rel="0x7d;0x7e;0xdf;0x00000000;0x00000000;false;false;true;0x53;4;">NuShares (testnet)</option>
+									<option value="blockcredits_testnet" rel="0x57;0x5a;0xe4;0x00000000;0x00000000;false;false;true;0x43;4;">BlockCredits (testnet)</option>
+									<option value="blockshares_testnet" rel="0x7f;0x82;0xe3;0x00000000;0x00000000;false;false;true;0x38;4;">BlockShares (testnet)</option>
+									<option value="peercoin_testnet" rel="0x6f;0xc4;0xef;0x00000000;0x00000000;false;false;true;false;6;">Peercoin (testnet)</option>
+									<option value="bitcoin_testnet" rel="0x6f;0xc4;0xef;0x043587cf;0x04358394;blockrio_bitcointestnet;false;false;false;8;">Bitcoin (testnet)</option>
+									
+									<option value="peershares_default" rel="0x3f;0x7d;0xbf;0x00000000;0x00000000;false;false;true;0x53;4;">Peershares default</option>
+									<option value="peershares_default_test" rel="0x20;0xd4;0xa0;0x00000000;0x00000000;false;false;true;0x53;4;">Peershares default (testnet)</option>
 
-									<option value="custom" rel="0x00;0x80;0x05;0x488b21e;0x488ade4;false;false">Custom</option>
+									<option value="custom" rel="0x00;0x05;0x80;0x488b21e;0x488ade4;false;false;false;false;8;">Custom</option>
 								</select>
 							</div>
 						</div>
 
 						<div id="settingsCustom" class="hidden">
-
+							<br>
+							<div class="alert alert-info"> <span class="glyphicon glyphicon-info-sign"></span> You will not be able to automatically broadcast or retreive your unspent outputs automatically when using this setting and will need to use your desktop client instead, however everything else such as creating key pairs, addresses, transaction generation and signing will continue to function normally.</div>
+						
 							<hr>
 
 							<div class="row">
@@ -866,35 +895,48 @@
 								</div>
 							</div>
 
-
 							<div class="row">
-								<div class="col-md-6">
+								<div class="col-md-3">
 									<b>HD Pub</b>: <br>
 									<input type="text" class="form-control coinjssetting" id="coinjs_hdpub">
 								</div>
 
-								<div class="col-md-6">
+								<div class="col-md-3">
 									<b>HD Priv</b>: <br>
 									<input type="text" class="form-control coinjssetting" id="coinjs_hdprv">
+								</div>
+
+								<div class="col-md-2">
+									<b>Extra time field?</b>: <br>
+									<select class="form-control" id="coinjs_extratimefield">
+										<option value="true">true</option>
+										<option value="false">false</option>
+									</select>
+								</div>
+								
+								<div class="col-md-2">
+									<b>Extra unit field value?</b>: <br>
+									<input type="text" class="form-control coinjssetting boolisvalid" id="coinjs_extraunitfieldvalue">
+								</div>
+								
+								<div class="col-md-2">
+									<b>Decimal places</b>: <br>
+									<input type="text" class="form-control" id="coinjs_decimalplaces">
 								</div>
 							</div>
 
 							<br>
 
-							<div class="alert alert-info"> <span class="glyphicon glyphicon-info-sign"></span> You will not be able to automatically broadcast or retreive your unspent outputs from coinb.in when using this setting and will need to use your desktop client instead, however everything else such as creating key pairs, addresses, transaction generation and signing will continue to function normally.</div>
 						</div>
 
 						<hr>
-
+						
 						<div class="row">
 							<div class="col-md-12">
-								<b>Broadcast</b>: <br>
-								<p class="text-muted">Select the network you wish to broadcast the transaction via</p>
-								<select class="form-control" id="coinjs_broadcast">
-									<option value="coinb.in">coinb.in (Bitcoin mainnet)</option>
-									<option value="blockr.io_bitcoinmainnet"> Blockr.io (Bitcoin mainnet)</option>
-									<option value="blockr.io_litecoin"> Blockr.io (Litecoin)</option>
-								<!--	<option value="blockr.io_bitcointestnet"> Blockr.io (Bitcoin testnet)</option> -->
+								<b>Unspent outputs</b>: <br>
+								<p class="text-muted">Select the network you wish to retreive your unspent inputs from</p>
+								<select class="form-control" id="coinjs_utxo">
+
 								</select>
 							</div>
 						</div>
@@ -903,12 +945,10 @@
 
 						<div class="row">
 							<div class="col-md-12">
-								<b>Unspent outputs</b>: <br>
-								<p class="text-muted">Select the network you wish to retreive your unspent inputs from</p>
-								<select class="form-control" id="coinjs_utxo">
-									<option value="coinb.in">coinb.in (Bitcoin mainnet)</option>
-									<option value="blockr.io_bitcoinmainnet"> Blockr.io (Bitcoin mainnet)</option>
-									<option value="chain.so_litecoin"> Chain.so (Litecoin)</option>
+								<b>Broadcast</b>: <br>
+								<p class="text-muted">Select the network you wish to broadcast the transaction via</p>
+								<select class="form-control" id="coinjs_broadcast">
+
 								</select>
 							</div>
 						</div>
@@ -918,12 +958,12 @@
 						<div id="statusSettings" class="hidden alert">
 						</div>
 
-						<input type="submit" class="btn btn-primary" id="settingsBtn">
+						<input type="submit" class="btn btn-primary" id="settingsBtn" value="Save">
 
 					</div>
 
 					<br>
-					<p class="text-muted">This page uses javascript to generate your addresses and sign your transactions within your browser, this means we <i>never</i> receive your private keys, this can be independently verified by reviewing the source code on <a href="https://github.com/OutCast3k/coinbin/" target="_blank">github</a>. You can even <a href="https://github.com/OutCast3k/coinbin/archive/master.zip">download</a> this page and host it yourself or run it offline!</p>
+					<p class="text-muted">This page uses javascript to generate your addresses and sign your transactions within your browser, this means we <i>never</i> receive your private keys, this can be independently verified by reviewing the source code on <a href="https://github.com/ttutdxh-nubits/cointoolkit" target="_blank">github</a>. You can even <a href="https://github.com/ttutdxh-nubits/cointoolkit/archive/gh-pages.zip">download</a> this page and host it yourself or run it offline!</p>
 					<br>
 
 				</div>
@@ -1024,15 +1064,8 @@
 						<div class="col-md-5">
 							<label>Mediator:</label>
 
-							<!-- 
-								You need to contact us before adding your pubkey 
-								and submitting a pull request on github. 
-
-								format is: pubkey;email;fee
-							-->
-
 							<select id="mediatorList" class="form-control">
-								<option value="02b6231cc602740c29436eafbb6448880f4058cc3d2745c709deee313104678277;support@coinb.in;1">Coinb.in</option>
+								<option value="02113443efda4a9fe9bd38ca1f932aaee2c3cb6ee637f22eaa25af370a1cde6952;ttutdxh.nubits@gmail.com;1">Developer</option>
 							</select>
 						</div>
 
@@ -1074,7 +1107,7 @@
 				</div>
 
 				<div class="modal-body">
-					Please be aware that you have created a transaction with what seems to be a very high fee of <span id="modalWarningFeeAmount"></span> BTC!
+					Please be aware that you have created a transaction with what seems to be a very high fee of <span id="modalWarningFeeAmount"></span>!
 				</div>
 
 				<div class="modal-footer">
