@@ -322,7 +322,7 @@ $(document).ready(function() {
 			var multisig =  coinjs.pubkeys2MultisigAddress(keys, sigsNeeded);
 			$("#multiSigData .address").val(multisig['address']);
 			$("#multiSigData .script").val(multisig['redeemScript']);
-			$("#multiSigData .scriptUrl").val(document.location.origin+''+document.location.pathname+'?verify='+multisig['redeemScript']+'#verify');
+			$("#multiSigData .scriptUrl").val(document.location.origin+''+document.location.pathname+'?mode='+$("#coinSelector").val()+'&verify='+multisig['redeemScript']+'#verify');
 			$("#multiSigData").removeClass('hidden').addClass('show').fadeIn();
 			$("#releaseCoins").removeClass('has-error');
 		} else {
