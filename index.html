@@ -31,6 +31,8 @@
 
 		<script type="text/javascript" src="js/coin.js"></script>
 		<script type="text/javascript" src="js/cointoolkit.js"></script>
+		
+		<script type="text/javascript" src="known-pubkeys.js"></script>
 	</head>
 
 	<body>
@@ -619,6 +621,13 @@
 							<p class="signaturesRequired">?</p>
 							<label>Signatures Required from</label>
 							<table class="table table-striped table-hover">
+							<thead>
+								<tr>
+									<th class="col-md-3">Address</th>
+									<th class="col-md-5">Pubkey</th>
+									<th class="col-md-4">Identity (if <a href="known-pubkeys.js" target="_blank">known</a>)</th>
+								</tr>
+							</thead>
 								<tbody>
 								</tbody>
 							</table>
