@@ -798,7 +798,7 @@ $(document).ready(function() {
 		var tx = coinjs.transaction();
 		try {
 			var decode = tx.deserialize($("#verifyScript").val());
-		//	console.log(decode);
+			if (coinjs.debug) {console.log(decode)};
 			$("#verifyTransactionData .transactionVersion").html(decode['version']);
 			$("#verifyTransactionData .transactionTime").html(decode['nTime']);
 			$("#verifyTransactionData .transactionSize").html(decode.size()+' <i>bytes</i>');
@@ -1000,7 +1000,7 @@ $(document).ready(function() {
 				$("#signedData .txSize").html(t.size());
 				$("#signedData").removeClass('hidden').fadeIn();
 			} catch(e) {
-				console.log(e);
+				if (coinjs.debug) {console.log(e)};
 			}
 		} else {
 			$("#signedDataError").removeClass('hidden').delay(2000).queue(function(){
@@ -1208,6 +1208,7 @@ $(document).ready(function() {
 				default: function(redeem){
 					var tx = coinjs.transaction();
 					tx.listUnspent(redeem.addr, function(data){
+						if (coinjs.debug) {console.log(data)};
 						if(redeem.addr) {
 							$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 
@@ -1236,7 +1237,7 @@ $(document).ready(function() {
 							$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
 						},
 						success: function(data) {
-							console.log(data);
+							if (coinjs.debug) {console.log(data)};
 							if((data.status && data.data) && data.status=='success'){
 								$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 								for(var i in data.data.unspent){
@@ -1327,7 +1328,7 @@ $(document).ready(function() {
 							$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
 						},
 						success: function(data) {
-							console.log(data);
+							if (coinjs.debug) {console.log(data)};
 							if((data.status && data.data) && data.status=='success'){
 								$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 								for(var i in data.data.txs){
@@ -1365,7 +1366,8 @@ $(document).ready(function() {
 							r = (r!='') ? r : ' Failed to broadcast'; // build response 
 							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 						},
-									success: function(data) {
+						success: function(data) {
+							if (coinjs.debug) {console.log(data)};
 							var obj = $.parseJSON(data.responseText);
 							if((obj.status && obj.data) && obj.status=='success'){
 								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+obj.data);
@@ -1393,14 +1395,11 @@ $(document).ready(function() {
 							$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
 						},
 						success: function(data) {
-							console.log(data);
+							if (coinjs.debug) {console.log(data)};
 							if((data.exists && data.tx) && data.address == redeem.addr){
-								console.log(1);
 								$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://blockexplorer.nu/address/'+redeem.addr+'/1/oldest" target="_blank">'+redeem.addr+'</a>');
 								for(var i in data.tx){
-									console.log(1);
 									for(var v in data.tx[i].outputs){
-										console.log(data.tx[i].outputs[v].status, data.tx[i].outputs[v].outAddress, redeem.addr);
 										if (data.tx[i].outputs[v].status == "unspent" && data.tx[i].outputs[v].outAddress == redeem.addr) {
 											var o = data.tx[i].outputs[v];
 											var tx = data.tx[i].txHash;

@@ -11,6 +11,8 @@
 	var coinjs = window.coinjs = function () { };
 
 	/* public vars */
+	coinjs.debug = false;
+	
 	coinjs.txExtraTimeField = false;
 	coinjs.txExtraTimeFieldValue = false;
 	coinjs.txExtraUnitField = false;
@@ -278,7 +280,7 @@
 			publicKeyBytes.unshift(0x04);
 			return Crypto.util.bytesToHex(publicKeyBytes);
 		} catch (e) {
-			// console.log(e);
+			if (coinjs.debug) {console.log(e)};
 			return false;
 		}
 	}
@@ -670,7 +672,7 @@
 					r.address = multi['address'];
 				}
 			} catch(e) {
-				// console.log(e);
+				if (coinjs.debug) {console.log(e)};
 				r = false;
 			}
 			return r;
@@ -1142,7 +1144,7 @@
 				} else if (d['type'] == 'multisig') {
 					this.signmultisig(i, wif);
 				} else {
-					console.log('could not sign input', i);
+					if (coinjs.debug) {console.log('could not sign input', i)};
 					// could not sign
 				}
 			}
