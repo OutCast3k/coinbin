@@ -257,8 +257,9 @@ $(document).ready(function() {
 		if($("#newCompressed").is(":checked")){
 			coinjs.compressed = true;
 		}
+		
 		var s = ($("#newBrainwallet").is(":checked")) ? $("#brainwallet").val() : null;
-		var coin = coinjs.newKeys(s);
+		var coin = coinjs.newKeys(s, ($("#newBrainwallet").is(":checked") && $("#brainwalletIsPrivKey").is(":checked")));
 		$("#newGeneratedAddress").val(coin.address);
 		$("#newPubKey").val(coin.pubkey);
 		$("#newPrivKey").val(coin.wif);
@@ -273,14 +274,13 @@ $(document).ready(function() {
 			$("#aes256passStatus").removeClass("hidden");
 		}
 		$("#newPrivKeyEnc").val(CryptoJS.AES.encrypt(coin.wif, $("#aes256pass").val())+'');
-		$("#newAddrType").text($("#coinSelector option:selected").text());
 	});
 
 	$("#newBrainwallet").click(function(){
 		if($(this).is(":checked")){
-			$("#brainwallet").removeClass("hidden");
+			$("#keyFromData").removeClass("hidden");
 		} else {
-			$("#brainwallet").addClass("hidden");
+			$("#keyFromData").addClass("hidden");
 		}
 	});
 

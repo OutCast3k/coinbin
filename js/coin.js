@@ -36,8 +36,18 @@
 	/* start of address functions */
 
 	/* generate a private and public keypair, with address and WIF address */
-	coinjs.newKeys = function(input){
-		var privkey = (input) ? Crypto.SHA256(input) : this.newPrivkey();
+	coinjs.newKeys = function(input, isPrivKey){
+		if (input == "" || (isPrivKey && !input.match(/^[a-f0-9]{64}$/gi))) {
+			var message = (input == "")?'Empty seed':'Invalid private key';
+			return {
+				'privkey': message,
+				'pubkey': message,
+				'address': message,
+				'wif': message,
+				'compressed': message,
+			};
+		}
+		var privkey = (input) ? ((isPrivKey)?input:Crypto.SHA256(input)) : this.newPrivkey();
 		var pubkey = this.newPubkey(privkey);
 		return {
 			'privkey': privkey,

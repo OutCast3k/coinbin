@@ -279,8 +279,11 @@
 							<label><input type="checkbox" id="newCompressed" class="checkbox-inline" checked> Compress <span class="text-muted">(recommended)</span></label>
 						</div>
 						<div class="checkbox">
-							<label><input type="checkbox" id="newBrainwallet" class="checkbox-inline"> Custom Seed or Brain Wallet</label>
-							<input type="text" class="form-control hidden" id="brainwallet">
+							<label><input type="checkbox" id="newBrainwallet" class="checkbox-inline"> Custom Seed, Brain Wallet or 64 char hex private key</label>
+							<div id="keyFromData" class="hidden" style="padding-left: 20px;">
+								<input type="text" class="form-control" id="brainwallet">
+								<label><input type="checkbox" id="brainwalletIsPrivKey" class="checkbox-inline"> This is a 64 char hex private key</label>
+							</div>
 						</div>
 
 						<div class="checkbox">
