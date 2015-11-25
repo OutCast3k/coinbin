@@ -283,7 +283,7 @@
 						<input id="newPubKey" type="text" class="form-control" readonly>
 						<label>Private key (WIF key)</label>
 						<div class="input-group">
-							<input id="newPrivKey" type="password" class="form-control" value="" readonly>
+							<input id="newPrivKeyWif" type="password" class="form-control" value="" readonly>
 							<span class="input-group-btn">
 								<button class="showKey btn btn-default" type="button">Show</button>
 							</span>
@@ -292,6 +292,14 @@
 						<div id="aes256wifkey" class="hidden">
 							<label>AES-256 Encrypted WIF key</label>
 							<input id="newPrivKeyEnc" type="text" class="form-control" value="" readonly>
+						</div>
+						
+						<label>Private key (hex)</label>
+						<div class="input-group">
+							<input id="newPrivKey" type="password" class="form-control" value="" readonly>
+							<span class="input-group-btn">
+								<button class="showKey btn btn-default" type="button">Show</button>
+							</span>
 						</div>
 
 						<h3>Address Options</h3>

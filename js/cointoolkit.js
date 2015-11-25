@@ -262,7 +262,8 @@ $(document).ready(function() {
 		var coin = coinjs.newKeys(s, ($("#newBrainwallet").is(":checked") && $("#brainwalletIsPrivKey").is(":checked")));
 		$("#newGeneratedAddress").val(coin.address);
 		$("#newPubKey").val(coin.pubkey);
-		$("#newPrivKey").val(coin.wif);
+		$("#newPrivKeyWif").val(coin.wif);
+		$("#newPrivKey").val(coin.privkey);
 
 		/* encrypted key code */
 		if((!$("#encryptKey").is(":checked")) || $("#aes256pass").val()==$("#aes256pass_confirm").val()){
@@ -1074,7 +1075,7 @@ $(document).ready(function() {
 		// log out of openwallet
 		$("#walletLogout").click();
 		
-		$("#newGeneratedAddress, #newPubKey, #newPrivKey, #newHDxpub, #newHDxprv").val("");
+		$("#newGeneratedAddress, #newPubKey, #newPrivKeyWif, #newPrivKey, #newHDxpub, #newHDxprv").val("");
 		$("#multiSigData").removeClass('show').addClass('hidden').hide();
 
 		$("#statusSettings").removeClass("alert-success").removeClass("alert-danger").addClass("hidden").html("");
