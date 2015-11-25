@@ -1524,6 +1524,13 @@ $(document).ready(function() {
 		window.location.hash = "#verify";
 	}
 
+	var _getAddress = _get("address");
+	if(_getAddress[0]){
+		$("#redeemFrom").val(_getAddress[0]);
+		$("#redeemFromBtn").click();
+		window.location.hash = "#newTransaction";
+	}
+
 	$(".qrcodeBtn").click(function(){
 		$("#qrcode").html("");
 		var thisbtn = $(this).parent().parent();
