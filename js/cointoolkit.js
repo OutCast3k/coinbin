@@ -594,8 +594,9 @@ $(document).ready(function() {
 
 			QCodeDecoder().decodeFromCamera(document.getElementById('videoReader'), function(er,data){
 				if(!er){
-					var match = data.match(/^bitcoin\:([13][a-z0-9]{26,33})/i);
-					var result = match ? match[1] : data;
+					var match = data.match(/^(bitcoin|nu|Nu|bcexchange|B\&C\ Exchange|ppcoin|peercoin)\:([a-z0-9]{27,34})/i);
+					var result = match ? match[2] : data;
+					console.log(data, result);
 					$(""+$("#qrcode-scanner-callback-to").html()).val(result);
 					$("#qrScanClose").click();
 				}
