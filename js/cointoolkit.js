@@ -596,7 +596,6 @@ $(document).ready(function() {
 				if(!er){
 					var match = data.match(/^(bitcoin|nu|Nu|bcexchange|B\&C\ Exchange|ppcoin|peercoin)\:([a-z0-9]{27,34})/i);
 					var result = match ? match[2] : data;
-					console.log(data, result);
 					$(""+$("#qrcode-scanner-callback-to").html()).val(result);
 					$("#qrScanClose").click();
 				}
@@ -807,7 +806,6 @@ $(document).ready(function() {
 		var script = coinjs.script();
 		var decode = script.decodeRedeemScript($("#verifyScript").val());
 		if(decode){
-			console.log(decode['scriptHash'], coinjs.scripthash2address(decode['scriptHash'], coinjs.multisig));
 			$("#verifyRsData .multisigAddress").val(decode['address']);
 			$("#verifyRsData .multisigScriptHash").val(decode['scriptHash']);
 			$("#verifyRsData .multisigScriptHashKnown").val((known.scriptHash[decode['scriptHash']])?known.scriptHash[decode['scriptHash']].name:'');
@@ -904,7 +902,6 @@ $(document).ready(function() {
 						});
 					} else {
 						var scriptHash = Crypto.util.bytesToHex(o.script.chunks[1]);
-						console.log(scriptHash);
 						addr = coinjs.scripthash2address(scriptHash, coinjs.multisig);
 						if (known.scriptHash[scriptHash]) {
 							identity = known.scriptHash[scriptHash].name;
@@ -1258,6 +1255,40 @@ $(document).ready(function() {
 	
 	/* external providers */
 	
+	var listunspent_blockexplorer_nu = function(redeem){
+		$.ajax ({
+			type: "GET",
+			url: "https://crossorigin.me/https://blockexplorer.nu/api/addressDetails/"+redeem.addr+"/1/newest",
+			dataType: "json",
+			error: function(data) {
+				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+			},
+			success: function(data) {
+				if (coinjs.debug) {console.log(data)};
+				if((data.exists && data.tx) && data.address == redeem.addr){
+					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://blockexplorer.nu/address/'+redeem.addr+'/1/oldest" target="_blank">'+redeem.addr+'</a>');
+					for(var i in data.tx){
+						for(var v in data.tx[i].outputs){
+							if (data.tx[i].outputs[v].status == "unspent" && data.tx[i].outputs[v].outAddress == redeem.addr) {
+								var o = data.tx[i].outputs[v];
+								var tx = data.tx[i].txHash;
+								var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : "00";
+								var amount = o.outValInt;
+								addOutput(tx, o.out_num, script, amount);
+							}
+						}
+					}
+				} else {
+					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+				}
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+			}
+		});
+	};
+
 	var providers = {
 		bitcoin: {
 			listUnspent: {
@@ -1441,44 +1472,18 @@ $(document).ready(function() {
 		},
 		nubits: {
 			listUnspent: {
-				blockexplorer_nu: function(redeem){
-					$.ajax ({
-						type: "GET",
-						url: "https://crossorigin.me/https://blockexplorer.nu/api/addressDetails/"+redeem.addr+"/1/oldest",
-						dataType: "json",
-						error: function(data) {
-							$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
-						},
-						success: function(data) {
-							if (coinjs.debug) {console.log(data)};
-							if((data.exists && data.tx) && data.address == redeem.addr){
-								$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://blockexplorer.nu/address/'+redeem.addr+'/1/oldest" target="_blank">'+redeem.addr+'</a>');
-								for(var i in data.tx){
-									for(var v in data.tx[i].outputs){
-										if (data.tx[i].outputs[v].status == "unspent" && data.tx[i].outputs[v].outAddress == redeem.addr) {
-											var o = data.tx[i].outputs[v];
-											var tx = data.tx[i].txHash;
-											var n = o.out_num;
-											var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script_hex;
-											var amount = o.outValInt;
-											addOutput(tx, n, script, amount);
-										}
-									}
-								}
-							} else {
-								$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
-							}
-						},
-						complete: function(data, status) {
-							$("#redeemFromBtn").html("Load").attr('disabled',false);
-							totalInputAmount();
-						}
-					});
-				}
+				blockexplorer_nu: listunspent_blockexplorer_nu
 			},
 			broadcast: {
 			}
 		},
+		nushares: {
+			listUnspent: {
+				blockexplorer_nu: listunspent_blockexplorer_nu
+			},
+			broadcast: {
+			}
+		}
 	}
 	
 	/* page load code */
