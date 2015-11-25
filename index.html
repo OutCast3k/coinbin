@@ -54,11 +54,13 @@
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span> New<b class="caret"></b></a>
 								<ul class="dropdown-menu">
+									<li><a href="#newTransaction" data-toggle="tab">Transaction</a></li>
+									<li class="divider"></li>
 									<li><a href="#newAddress" data-toggle="tab">New Address</a></li>
 									<li><a href="#newMultiSig" data-toggle="tab">MultiSig Address</a></li>
 									<li><a href="#newHDaddress" data-toggle="tab">HD Address</a></li>
 									<li class="divider"></li>
-									<li><a href="#newTransaction" data-toggle="tab">Transaction</a></li>
+									<li><a href="#newQrCode" data-toggle="tab">QR Code</a></li>
 								</ul>
 							</li>
 							<li><a href="#verify" data-toggle="tab"><span class="glyphicon glyphicon-ok"></span> Verify</a></li>
@@ -246,6 +248,23 @@
 								</div>
 							</div>
 						</div>
+					</div>
+					
+					<div class="tab-pane tab-content" id="newQrCode">
+						<h2>QR Code Generator<small> transfer data easily between devices</small></h2>
+						<p>You can store anything from an address to a entire transaction or a private key</p>
+						
+						<div class="row">
+							<div class="col-md-12">
+								<textarea type="text" id="qrCodeText" class="form-control" style="height:125px"></textarea>
+							</div>
+						</div>
+						<br>
+
+						<div>
+							<input type="button" value="Generate" class="btn btn-primary qrcodeBtn" id="qrBtn" data-toggle="modal" data-target="#modalQrcode">
+						</div>
+						<br>
 					</div>
 
 					<div class="tab-pane tab-content" id="newAddress">
@@ -625,7 +644,7 @@
 
 						<div class="hidden verifyData" id="verifyRsData">
 							<h4>Redeem Script</h4>
-							<p><span style="float:right"><a href="javascript:;" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above redeem script has been decoded</p>
+							<p>The above redeem script has been decoded</p>
 							<div class="row">
 								<div class="col-lg-4">
 								<label>Multi Signature Address</label>
@@ -664,11 +683,16 @@
 								<tbody>
 								</tbody>
 							</table>
+							<div>
+								<small>Shareable verification link</small>
+								<input type="text" class="form-control verifyLink" readonly>
+							</div>
+							</br>
 						</div>
 
 						<div class="hidden verifyData" id="verifyTransactionData">
 							<h4>Transaction Script</h4>
-							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above script has been decoded</p>
+							<p>The above script has been decoded</p>
 							<div><b>Version</b>: <span class="transactionVersion"></span></div>
 							<div class="txtime"><b>Transaction Time</b>: <span class="transactionTime"></span></div>
 							<div><b>Transaction Size</b>: <span class="transactionSize"></span></div>
@@ -701,6 +725,11 @@
 								<tbody>
 								</tbody>
 							</table>
+							<div>
+								<small>Shareable verification link</small>
+								<input type="text" class="form-control verifyLink" readonly>
+							</div>
+							</br>
 						</div>
 
 						<div class="hidden verifyData" id="verifyPrivKey">
@@ -710,18 +739,22 @@
 							<p><b>Public key</b>: <input type="text" class="form-control pubkey" readonly></p>
 							<p><b>Private key</b>: <input type="text" class="form-control privkey" readonly></p>
 							<p><b>Is compressed</b>: <span class="iscompressed"></span></p>
-
 						</div>
 
 						<div class="hidden verifyData" id="verifyPubKey">
 							<h4>Public key</h4>
-							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above public key has been encoded to its address</p>
+							<p>The above public key has been encoded to its address</p>
 							<p><b>Address</b>: <input type="text" class="form-control address" readonly></p>
+							<div>
+								<small>Shareable verification link</small>
+								<input type="text" class="form-control verifyLink" readonly>
+							</div>
+							</br>
 						</div>
 
 						<div class="hidden verifyData" id="verifyHDaddress">
 							<h4>HD Address</h4>
-							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The key <small><span class="hdKey hidden"></span></small> has been decoded</p>
+							<p>The key <small><span class="hdKey hidden"></span></small> has been decoded</p>
 							<div class="row">
 								<div class="col-md-2">
 									<b>Type</b><br>
@@ -810,6 +843,8 @@
 
 						<div id="verifyStatus" class="alert alert-danger hidden"><span class="glyphicon glyphicon-exclamation-sign"></span> Unable to decode</div>
 
+						<button class="btn btn-info qrcodeScanner" type="button" data-toggle="modal" data-target="#modalQrcodeScanner" forward-result="#verifyScript">Load from a qr code <span class="glyphicon glyphicon-camera"></span></button>
+						Or
 						<input type="button" value="Verify" class="btn btn-primary" id="verifyBtn">
 						<br>
 					</div>

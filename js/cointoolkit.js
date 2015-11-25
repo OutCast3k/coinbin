@@ -30,7 +30,7 @@ $(document).ready(function() {
 
 					$("#walletQrCode").html("");
 					var qrcode = new QRCode("walletQrCode");
-					qrcode.makeCode("bitcoin:"+keys.address);
+					qrcode.makeCode(keys.address);
 
 					$("#walletKeys .privkey").val(keys.wif);
 					$("#walletKeys .pubkey").val(keys.pubkey);
@@ -67,7 +67,7 @@ $(document).ready(function() {
 
 		$("#walletQrCode").html("");
 		var qrcode = new QRCode("walletQrCode");
-		qrcode.makeCode("bitcoin:");
+		qrcode.makeCode("");
 
 		$("#walletKeys .privkey").val("");
 		$("#walletKeys .pubkey").val("");
@@ -520,7 +520,7 @@ $(document).ready(function() {
 
 			$("#transactionCreate").removeClass("hidden");
 
-			if($("#transactionFee").val()>=0.01){
+			if($("#transactionFee").val()>=0.011){
 				$("#modalWarningFeeAmount").html($("#transactionFee").val());
 				$("#modalWarningFee").modal("show");
 			}
@@ -824,7 +824,7 @@ $(document).ready(function() {
 				$('<tr><td width="30%"><input type="text" class="form-control" value="'+address+'" readonly></td><td><input type="text" class="form-control" value="'+pubkey+'" readonly></td><td><input type="text" class="form-control" value="'+identity+'" readonly></td></tr>').appendTo("#verifyRsData table tbody");
 			}
 			$("#verifyRsData").removeClass("hidden");
-			$("#verify .verifyLink").attr('href','?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
+			$("#verify .verifyLink").val(document.location.origin+''+document.location.pathname+'?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
 			return true;
 		} else {
 			return false;
@@ -923,7 +923,7 @@ $(document).ready(function() {
 			});
 			$(h).appendTo("#verifyTransactionData .outs tbody");
 
-			$("#verify .verifyLink").attr('href','?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
+			$("#verify .verifyLink").val(document.location.origin+''+document.location.pathname+'?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
 			return true;
 		} catch(e) {
 			return false;
@@ -966,7 +966,7 @@ $(document).ready(function() {
 			try {
 				$("#verifyPubKey .address").val(coinjs.pubkey2address(pubkey));
 				$("#verifyPubKey").removeClass("hidden");
-				$("#verify .verifyLink").attr('href','?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
+				$("#verify .verifyLink").val(document.location.origin+''+document.location.pathname+'?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
 				return true;
 			} catch (e) {
 				return false;
@@ -994,7 +994,7 @@ $(document).ready(function() {
 				$("#verifyHDaddress .parent_fingerprint").val(Crypto.util.bytesToHex(hd.parent_fingerprint));
 				$("#verifyHDaddress .derived_data table tbody").html("");
 				deriveHDaddress();
-				$("#verify .verifyLink").attr('href','?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
+				// Not sharing private keys! $("#verify .verifyLink").val(document.location.origin+''+document.location.pathname+'?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
 				$("#verifyHDaddress").removeClass("hidden");
 				return true;
 			}
@@ -1443,8 +1443,7 @@ $(document).ready(function() {
 				blockexplorer_nu: function(redeem){
 					$.ajax ({
 						type: "GET",
-						url: "https://blockexplorer.nu/api/addressDetails/"+redeem.addr+"/1/oldest",
-						// url: "file", // testing offline
+						url: "https://crossorigin.me/https://blockexplorer.nu/api/addressDetails/"+redeem.addr+"/1/oldest",
 						dataType: "json",
 						error: function(data) {
 							$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
@@ -1482,6 +1481,10 @@ $(document).ready(function() {
 	}
 	
 	/* page load code */
+	
+	$('input[readonly]').click(function () {
+		this.select();
+	});
 	
 	$.each(known.pubKey, function(pubkey, id) {
 		$('#mediatorList').append($('<option>', {
@@ -1522,7 +1525,7 @@ $(document).ready(function() {
 		var ta = $("textarea",thisbtn);
 
 		if(ta.length>0){
-			var w = (screen.availWidth > screen.availHeight ? screen.availWidth : screen.availHeight)/3;
+			var w = (screen.availWidth > screen.availHeight ? screen.availWidth : screen.availHeight)/3.5;
 			var qrcode = new QRCode("qrcode", {width:w, height:w});
 			qrstr = $(ta).val();
 			if(qrstr.length > 1024){
@@ -1530,7 +1533,7 @@ $(document).ready(function() {
 			}
 		} else {
 			var qrcode = new QRCode("qrcode");
-			qrstr = "bitcoin:"+$('.address',thisbtn).val();
+			qrstr = $('.address',thisbtn).val();
 		}
 
 		if(qrstr){
