@@ -633,7 +633,7 @@ $(document).ready(function() {
 			$("#inputs .txidRemove, #inputs .txidClear").click();
 		}
 
-		$("#redeemFromBtn").html("Please wait, loading...").attr('disabled',true);
+		$("#redeemFromBtn").html('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
 
 		var host = $(this).attr('rel');
 		providers[$("#coinSelector").val()].listUnspent[host](redeem);
@@ -841,6 +841,10 @@ $(document).ready(function() {
 			$("#verifyTransactionData .transactionSize").html(decode.size()+' <i>bytes</i>');
 			$("#verifyTransactionData .transactionLockTime").html(decode['lock_time']);
 			$("#verifyTransactionData .transactionUnit").html(String.fromCharCode(decode['nUnit']));
+			$("#verifyTransactionData .verifyToSign").on( "click", function() {
+				$("#signTransaction").val(decode.serialize());
+				window.location.hash = "#sign";
+			});
 			$("#verifyTransactionData").removeClass("hidden");
 			$("#verifyTransactionData tbody").html("");
 

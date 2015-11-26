@@ -699,26 +699,34 @@
 						</div>
 
 						<div class="hidden verifyData" id="verifyTransactionData">
-							<h4>Transaction Script</h4>
-							<p>The above script has been decoded</p>
-							<div><b>Version</b>: <span class="transactionVersion"></span></div>
-							<div class="txtime"><b>Transaction Time</b>: <span class="transactionTime"></span></div>
-							<div><b>Transaction Size</b>: <span class="transactionSize"></span></div>
-							<div><b>Lock time</b>: <span class="transactionLockTime"></span></div>
-							<div class="txunit"><b>Unit</b>: <span class="transactionUnit"></span></div>
+							<div class="row">
+								<div class="col-xs-12">
+									<h4>Transaction Script</h4>
+									<p>The above script has been decoded</p>
+									<div><b>Version</b>: <span class="transactionVersion"></span></div>
+									<div class="txtime"><b>Transaction Time</b>: <span class="transactionTime"></span></div>
+									<div><b>Transaction Size</b>: <span class="transactionSize"></span></div>
+									<div><b>Lock time</b>: <span class="transactionLockTime"></span></div>
+									<div class="txunit"><b>Unit</b>: <span class="transactionUnit"></span></div>
+								</div>
+							</div>
 
 							<hr>
-
-							<label>Inputs</label>
-							<table class="table table-striped table-hover ins">
-								<thead>
-									<tr style="font-weight:bold;">
-										<td><abbr title="the transaction id">Txid</abbr></td><td><abbr title="index id of the the transaction">N</abbr></td><td><abbr title="transaction script">Script</abbr></td><td><abbr title="is input signed?">Signed?</abbr></td><td><abbr title="is transaction a multisig transaction?">MultiSig?</abbr></td>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
+							
+							<div class="row">
+								<div class="col-xs-12">
+									<label>Inputs</label>
+									<table class="table table-striped table-hover ins">
+										<thead>
+											<tr style="font-weight:bold;">
+												<td><abbr title="the transaction id">Txid</abbr></td><td><abbr title="index id of the the transaction">N</abbr></td><td><abbr title="transaction script">Script</abbr></td><td><abbr title="is input signed?">Signed?</abbr></td><td><abbr title="is transaction a multisig transaction?">MultiSig?</abbr></td>
+											</tr>
+										</thead>
+										<tbody>
+										</tbody>
+									</table>
+								</div>
+							</div>
 
 							<label>Outputs</label>
 							<table class="table table-striped table-hover outs">
@@ -733,9 +741,20 @@
 								<tbody>
 								</tbody>
 							</table>
-							<div>
-								<small>Shareable verification link</small>
-								<input type="text" class="form-control verifyLink" readonly>
+							<div class="row">
+								<div class="col-xs-12">
+									<div style="float:right;">
+										If the transaction is correct:
+										<button class="btn btn-info verifyToSign" type="button">
+											Continue to Sign
+											<span class="glyphicon glyphicon-pencil"></span>
+										</button>
+									</div>
+								</div>
+								<div class="col-xs-12">
+									<small>Shareable verification link</small>
+									<input type="text" class="form-control verifyLink" readonly>
+								</div>
 							</div>
 							</br>
 						</div>
@@ -851,9 +870,9 @@
 
 						<div id="verifyStatus" class="alert alert-danger hidden"><span class="glyphicon glyphicon-exclamation-sign"></span> Unable to decode</div>
 
-						<button class="btn btn-info qrcodeScanner" type="button" data-toggle="modal" data-target="#modalQrcodeScanner" forward-result="#verifyScript">Load from a qr code <span class="glyphicon glyphicon-camera"></span></button>
-						Or
 						<input type="button" value="Verify" class="btn btn-primary" id="verifyBtn">
+						Or
+						<button class="btn btn-info qrcodeScanner" type="button" data-toggle="modal" data-target="#modalQrcodeScanner" forward-result="#verifyScript">Load from a qr code <span class="glyphicon glyphicon-camera"></span></button>
 						<br>
 					</div>
 
