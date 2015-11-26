@@ -1260,81 +1260,43 @@ $(document).ready(function() {
 	
 	/* external providers */
 	
-	var listunspent_blockexplorer_nu = function(redeem, page){
-		if (typeof(page) == "undefined") {
-			page = 1;
-		}
+	var listunspent_blockexplorer_nu = function(redeem){
+		var msgSucess = '<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://blockexplorer.nu/address/'+redeem.addr+'/1/newest" target="_blank">'+redeem.addr+'</a>'		
+		var msgError = '<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs! Is <a href="http://blockexplorer.nu/">http://blockexplorer.nu/</a> down?';
 		$.ajax ({
 			type: "GET",
-			url: "//crossorigin.me/https://blockexplorer.nu/api/addressDetails/"+redeem.addr+"/"+page+"/oldest",
+			url: "//crossorigin.me/https://blockexplorer.nu/api/v1/addressUnspent/"+redeem.addr,
 			dataType: "json",
 			cache: "false",
 			error: function(data) {
-				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs! Is <a href="http://blockexplorer.nu/">http://blockexplorer.nu/</a> down?');
+				$("#redeemFromStatus").removeClass('hidden').html(msgError);
 				$("#redeemFromBtn").html("Load").attr('disabled',false);
 			},
 			success: function(data) {
 				if (coinjs.debug) {console.log(data)};
-				if (!data.exists) {
-					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://blockexplorer.nu/address/'+redeem.addr+'/1/newest" target="_blank">'+redeem.addr+'</a>');
+				if (data.length == 0) {
+					$("#redeemFromStatus").removeClass('hidden').html(msgError);
 					$("#redeemFromBtn").html("Load").attr('disabled',false);
-				} else if (data.address == redeem.addr && data.tx){
-					for(var i in data.tx){
-						for(var v in data.tx[i].outputs){
-							if (data.tx[i].outputs[v].status == "unspent" && data.tx[i].outputs[v].outAddress == redeem.addr) {
-								var o = data.tx[i].outputs[v];
-								var amount = o.outValInt;
-								var tx = data.tx[i].txHash;
-
-								if (redeem.isMultisig) {
-									var script = $("#redeemFrom").val();
-									addOutput(tx, o.out_num, script, amount);
-								} else {;
-									(function(txid, out_num, amount){
-										var msgTxError = '<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve transaction '+ txid +'! Is <a href="http://blockexplorer.nu/">http://blockexplorer.nu/</a> down?';
-										$.ajax ({
-											type: "GET",
-											url: "//crossorigin.me/https://blockexplorer.nu/api/txDetails/"+txid,
-											dataType: "json",
-											cache: "false",
-											error: function(data) {
-												$("#redeemFromStatus").removeClass('hidden').html(msgTxError);
-												$("#redeemFromBtn").html("Load").attr('disabled',false);
-											},
-											success: function(data) {
-												if (coinjs.debug) {console.log(data)};
-												if (data.txHash == txid && data.outputs && data.outputs[out_num] && data.outputs[out_num].outScript){
-													
-													var tx_rev = ((txid).match(/.{1,2}/g).reverse()).join("")+'';
-													var script = data.outputs[out_num].outScript;
-													script = script.replace('OP_DUP OP_HASH160 ', '76a914');
-													script = script.replace(' OP_EQUALVERIFY OP_CHECKSIG', '88ac');
-													
-													addOutput(tx_rev, out_num, script, amount);
-													
-													$("#redeemFromBtn").html('Loading, checked '+page*20+' records <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>');
-													totalInputAmount();
-												} else {
-													$("#redeemFromStatus").removeClass('hidden').html(msgTxError);
-													$("#redeemFromBtn").html("Load").attr('disabled',false);
-												}
-											}
-										});
-									})(tx, o.out_num, amount);
-								}
-							}
-						}
-					}
-					
-					$("#redeemFromBtn").html('Loading, checked '+page*20+' records <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>');
-					totalInputAmount();
-				
-					++page;
-					listunspent_blockexplorer_nu(redeem, page);
 				} else {
-					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
-					$("#redeemFromBtn").html("Load").attr('disabled',false);
+					for(var i=0;i<data.length;i++){
+						var tx_rev = ((data[i].txHash).match(/.{1,2}/g).reverse()).join("")+'';
+						
+						if (redeem.isMultisig==true) {
+							var script = $("#redeemFrom").val();
+						} else {
+							var script = data[i].outScript;
+							script = script.replace('OP_DUP OP_HASH160 ', '76a914');
+							script = script.replace(' OP_EQUALVERIFY OP_CHECKSIG', '88ac');
+						}
+						
+						addOutput(tx_rev, data[i].outNum, script, data[i].val);
+					}
+					$("#redeemFromAddress").removeClass('hidden').html(msgSucess);
 				}
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
 			}
 		});
 	};
