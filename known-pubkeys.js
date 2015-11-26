@@ -18,6 +18,6 @@ var known = {
 	scriptHash: {
 		// Nu FLOT addresses scripthash
 		"f35b24f264597d66ba8c366a5005824bb6a06138": {name:"Nu FLOT NBT group 1st address"},
-		"f35b24f264597d66ba8c366a5005824bb6a06138": {name:"Nu FLOT NSR group 1st address"},
+		"d4f1e97d23cf339c35b509de707acdcb9886e03b": {name:"Nu FLOT NSR group 1st address"},
 	}
 }
