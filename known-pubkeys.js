@@ -5,19 +5,38 @@ var known = {
 		// Developer
 		"02113443efda4a9fe9bd38ca1f932aaee2c3cb6ee637f22eaa25af370a1cde6952": {name:"Developer", email:"ttutdxh.nubits@gmail.com", fee:1},
 		
-		// Nu FLOT members https://discuss.nubits.com/t/flot-operations-thread/3098/
-		"0234139729dd413c84a71a0bfd6f236790be861b37311cef3240277c940e4b0c07": {name:"Nu FLOT member @jooize"},
-		"02547427fc2ea3a0ab9ef70f5e1640ff5112b113f65696948f992bd0770b942571": {name:"Nu FLOT member @woodstockmerkle"},
-		"02a144af74d018501f03d76ead130433335f969772792ec39ce389c8a234155259": {name:"Nu FLOT member @masterOfDisaster"},
-		"02e2fcdfe246e9cd4864d9119b8af465487385eccd0ea30a8cb21d44d36818189f": {name:"Nu FLOT member @Dhume"},
-		"034b0bd0f653d4ac0a2e9e81eb1863bb8e5743f6cb1ea40d845b939c225a1a80ff": {name:"Nu FLOT member @dysconnect"},
-		"03661a4370dfcfbcea25d1800057220f4572b6eecab95bb0670e8676a9e34451dc": {name:"Nu FLOT member @ttutdxh"},
-		"03686ee42f635c71c08f326e66139b6cb37167402cc0562584655aac03fe740495": {name:"Nu FLOT member @cryptog"},
-		"039854d0e2abf6e4971e1350137b876da6a05132737c11ca3e37aaed2a0eb66808": {name:"Nu FLOT member @mhps"},
+		// Nu FLOT members BTC https://discuss.nubits.com/t/flot-operations-thread/3098
+		"02435b894b94b4b27dd24436b3f9ad0b9409d855ab4be6e91141d445804e84750b": {name:"Nu FLOT @cryptog (BTC)"},
+		"02e2fcdfe246e9cd4864d9119b8af465487385eccd0ea30a8cb21d44d36818189f": {name:"Nu FLOT @Dhume"},
+		"034b0bd0f653d4ac0a2e9e81eb1863bb8e5743f6cb1ea40d845b939c225a1a80ff": {name:"Nu FLOT @dysconnect"},
+		"0234139729dd413c84a71a0bfd6f236790be861b37311cef3240277c940e4b0c07": {name:"Nu FLOT @jooize"},
+		"0312cd6eb361c9ebb0d90e44946492a237eab4c7a7d88a0db800f2f460937cc22f": {name:"Nu FLOT @masterOfDisaster (BTC)"},
+		"03a5fc09a5de595e4758bfbc3a932e2c448cc49a557dd6e64788cee530a7622521": {name:"Nu FLOT @mhps (BTC)"},
+		"03661a4370dfcfbcea25d1800057220f4572b6eecab95bb0670e8676a9e34451dc": {name:"Nu FLOT @ttutdxh"},
+		"03da8082062298c40f0b473b74f3c95b57eaaebe3e67ed30ce56347b2e727915fb": {name:"Nu FLOT @woodstockmerkle (BTC)"},
+
+		// Nu FLOT members NBT group https://discuss.nubits.com/t/flot-operations-thread/3098
+		"034b0bd0f653d4ac0a2e9e81eb1863bb8e5743f6cb1ea40d845b939c225a1a80ff": {name:"Nu FLOT @dysconnect"},
+		"0234139729dd413c84a71a0bfd6f236790be861b37311cef3240277c940e4b0c07": {name:"Nu FLOT @jooize"},
+		"02a144af74d018501f03d76ead130433335f969772792ec39ce389c8a234155259": {name:"Nu FLOT @masterOfDisaster (NBT and NSR)"},
+		"03661a4370dfcfbcea25d1800057220f4572b6eecab95bb0670e8676a9e34451dc": {name:"Nu FLOT @ttutdxh"},
+		"02547427fc2ea3a0ab9ef70f5e1640ff5112b113f65696948f992bd0770b942571": {name:"Nu FLOT @woodstockmerkle (NBT)"},
+		
+		
+		// Nu FLOT members NSR group https://discuss.nubits.com/t/flot-operations-buy-side-nsr-related/3103/
+		"03686ee42f635c71c08f326e66139b6cb37167402cc0562584655aac03fe740495": {name:"Nu FLOT @cryptog (NSR)"},
+		"02e2fcdfe246e9cd4864d9119b8af465487385eccd0ea30a8cb21d44d36818189f": {name:"Nu FLOT @Dhume"},
+		"02a144af74d018501f03d76ead130433335f969772792ec39ce389c8a234155259": {name:"Nu FLOT @masterOfDisaster (NBT and NSR)"},
+		"039854d0e2abf6e4971e1350137b876da6a05132737c11ca3e37aaed2a0eb66808": {name:"Nu FLOT @mhps (NSR)"},
+		"03661a4370dfcfbcea25d1800057220f4572b6eecab95bb0670e8676a9e34451dc": {name:"Nu FLOT @ttutdxh"},
 	},
 	scriptHash: {
 		// Nu FLOT addresses scripthash
-		"f35b24f264597d66ba8c366a5005824bb6a06138": {name:"Nu FLOT NBT group 1st address"},
-		"d4f1e97d23cf339c35b509de707acdcb9886e03b": {name:"Nu FLOT NSR group 1st address"},
+		"f716edbaa472c1470d36a3e78b17a4c9bb547fcf": {name:"Nu FLOT BTC group 1st address"},                                                     // 55210234139729dd413c84a71a0bfd6f236790be861b37311cef3240277c940e4b0c072102435b894b94b4b27dd24436b3f9ad0b9409d855ab4be6e91141d445804e84750b2102e2fcdfe246e9cd4864d9119b8af465487385eccd0ea30a8cb21d44d36818189f210312cd6eb361c9ebb0d90e44946492a237eab4c7a7d88a0db800f2f460937cc22f21034b0bd0f653d4ac0a2e9e81eb1863bb8e5743f6cb1ea40d845b939c225a1a80ff2103661a4370dfcfbcea25d1800057220f4572b6eecab95bb0670e8676a9e34451dc2103a5fc09a5de595e4758bfbc3a932e2c448cc49a557dd6e64788cee530a76225212103da8082062298c40f0b473b74f3c95b57eaaebe3e67ed30ce56347b2e727915fb58ae
+		
+		"f35b24f264597d66ba8c366a5005824bb6a06138": {name:"Nu FLOT NBT group 1st address"},             // 5321034b0bd0f653d4ac0a2e9e81eb1863bb8e5743f6cb1ea40d845b939c225a1a80ff2102a144af74d018501f03d76ead130433335f969772792ec39ce389c8a2341552592103661a4370dfcfbcea25d1800057220f4572b6eecab95bb0670e8676a9e34451dc210234139729dd413c84a71a0bfd6f236790be861b37311cef3240277c940e4b0c072102547427fc2ea3a0ab9ef70f5e1640ff5112b113f65696948f992bd0770b94257155ae
+		
+		"d4f1e97d23cf339c35b509de707acdcb9886e03b": {name:"Nu FLOT NSR group provisional address"},     // 53210234139729dd413c84a71a0bfd6f236790be861b37311cef3240277c940e4b0c072102a144af74d018501f03d76ead130433335f969772792ec39ce389c8a2341552592103661a4370dfcfbcea25d1800057220f4572b6eecab95bb0670e8676a9e34451dc2103686ee42f635c71c08f326e66139b6cb37167402cc0562584655aac03fe74049521039854d0e2abf6e4971e1350137b876da6a05132737c11ca3e37aaed2a0eb6680855ae
+		"c5389b7ac09e350895c1360906dc8e6f313cbb8c": {name:"Nu FLOT NSR group 1st address"},             // 532102a144af74d018501f03d76ead130433335f969772792ec39ce389c8a2341552592102e2fcdfe246e9cd4864d9119b8af465487385eccd0ea30a8cb21d44d36818189f2103661a4370dfcfbcea25d1800057220f4572b6eecab95bb0670e8676a9e34451dc2103686ee42f635c71c08f326e66139b6cb37167402cc0562584655aac03fe74049521039854d0e2abf6e4971e1350137b876da6a05132737c11ca3e37aaed2a0eb6680855ae
 	}
 }
