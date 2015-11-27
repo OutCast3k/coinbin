@@ -18,7 +18,7 @@ var known = {
 		// Nu FLOT members NBT group https://discuss.nubits.com/t/flot-operations-thread/3098
 		"034b0bd0f653d4ac0a2e9e81eb1863bb8e5743f6cb1ea40d845b939c225a1a80ff": {name:"Nu FLOT @dysconnect"},
 		"0234139729dd413c84a71a0bfd6f236790be861b37311cef3240277c940e4b0c07": {name:"Nu FLOT @jooize"},
-		"02a144af74d018501f03d76ead130433335f969772792ec39ce389c8a234155259": {name:"Nu FLOT @masterOfDisaster (NBT and NSR)"},
+		"02a144af74d018501f03d76ead130433335f969772792ec39ce389c8a234155259": {name:"Nu FLOT @masterOfDisaster (NBT)"},
 		"03661a4370dfcfbcea25d1800057220f4572b6eecab95bb0670e8676a9e34451dc": {name:"Nu FLOT @ttutdxh"},
 		"02547427fc2ea3a0ab9ef70f5e1640ff5112b113f65696948f992bd0770b942571": {name:"Nu FLOT @woodstockmerkle (NBT)"},
 		
@@ -26,7 +26,7 @@ var known = {
 		// Nu FLOT members NSR group https://discuss.nubits.com/t/flot-operations-buy-side-nsr-related/3103/
 		"03686ee42f635c71c08f326e66139b6cb37167402cc0562584655aac03fe740495": {name:"Nu FLOT @cryptog (NSR)"},
 		"02e2fcdfe246e9cd4864d9119b8af465487385eccd0ea30a8cb21d44d36818189f": {name:"Nu FLOT @Dhume"},
-		"02a144af74d018501f03d76ead130433335f969772792ec39ce389c8a234155259": {name:"Nu FLOT @masterOfDisaster (NBT and NSR)"},
+		"03d05d8fb69fcd289548140dde8e906f6fc217b02477f81842f2483d9ea1c92425": {name:"Nu FLOT @masterOfDisaster (NSR)"},
 		"039854d0e2abf6e4971e1350137b876da6a05132737c11ca3e37aaed2a0eb66808": {name:"Nu FLOT @mhps (NSR)"},
 		"03661a4370dfcfbcea25d1800057220f4572b6eecab95bb0670e8676a9e34451dc": {name:"Nu FLOT @ttutdxh"},
 	},
