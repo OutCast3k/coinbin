@@ -1153,6 +1153,14 @@ $(document).ready(function() {
 		}
 	});
 	
+	$("#verify #verifyScript").change(function(){
+		$("#verify .verifyData").addClass("hidden");
+	});
+
+	$("#sign #signTransaction, #sign #signPrivateKey").change(function(){
+		$("#sign #signedData").addClass("hidden");
+	});
+
 	$("#coinSelector").change(function(){
 		$("#coinjs_coin").val(this.value).change();
 		$("#settingsBtn").click();
