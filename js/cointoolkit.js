@@ -520,7 +520,7 @@ $(document).ready(function() {
 			$("#transactionCreate .txSize").html(tx.size());
 			
 			$("#transactionCreate .transactionToSign").on( "click", function() {
-				$("#signTransaction").val(tx.serialize());
+				$("#signTransaction").val(tx.serialize()).fadeOut().fadeIn();;
 				window.location.hash = "#sign";
 			});
 
@@ -847,7 +847,7 @@ $(document).ready(function() {
 			$("#verifyTransactionData .transactionLockTime").html(decode['lock_time']);
 			$("#verifyTransactionData .transactionUnit").html(String.fromCharCode(decode['nUnit']));
 			$("#verifyTransactionData .verifyToSign").on( "click", function() {
-				$("#signTransaction").val(decode.serialize());
+				$("#signTransaction").val(decode.serialize()).fadeOut().fadeIn();
 				window.location.hash = "#sign";
 			});
 			$("#verifyTransactionData").removeClass("hidden");
@@ -1059,6 +1059,16 @@ $(document).ready(function() {
 				$("#signedData textarea").val(signed);
 				$("#signedData .txSize").html(t.size());
 				$("#signedData").removeClass('hidden').fadeIn();
+
+				$("#signedData .signedToVerify").on( "click", function() {
+					$("#verifyScript").val(signed).fadeOut().fadeIn();
+					window.location.hash = "#verify";
+				});
+
+				$("#signedData .signedToBroadcast").on( "click", function() {
+					$("#broadcast #rawTransaction").val(signed).fadeOut().fadeIn();
+					window.location.hash = "#broadcast";
+				});
 			} catch(e) {
 				if (coinjs.debug) {console.log(e)};
 			}

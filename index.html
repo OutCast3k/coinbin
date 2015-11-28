@@ -921,7 +921,22 @@
 
                         				<textarea class="form-control script" style="height:160px" readonly></textarea>
                                     
-							<p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
+							<div class="row">
+								<div class="col-md-12">
+									<p class="text-muted" style="float:left;">Size: <span class="txSize">0</span> <i>bytes</i></p>
+									<div style="float:right;margin-top: 10px;">
+										<button class="btn btn-info signedToVerify" type="button">
+											Verify and share
+											<span class="glyphicon glyphicon-ok"></span>
+										</button>
+										Or
+										<button class="btn btn-info signedToBroadcast" type="button">
+											Broadcast
+											<span class="glyphicon glyphicon-globe"></span>
+										</button>
+									</div>
+								</div>
+							</div>
 						</div>
 
 						<input type="button" value="Sign" class="btn btn-primary" id="signBtn">
