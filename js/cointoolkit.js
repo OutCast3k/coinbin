@@ -1061,8 +1061,8 @@ $(document).ready(function() {
 				$("#signedData").removeClass('hidden').fadeIn();
 
 				$("#signedData .signedToVerify").on( "click", function() {
-					$("#verifyTransactionData").addClass("hidden");
 					$("#verifyScript").val(signed).fadeOut().fadeIn();
+					$("#verifyBtn").click();
 					window.location.hash = "#verify";
 				});
 
