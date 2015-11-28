@@ -678,7 +678,7 @@
 		r.spendToScript = function(address){
 			var addr = coinjs.addressDecode(address);
 			var s = coinjs.script();
-			if(addr.version==5){ // multisig address
+			if(addr.type=="multisig"){ // multisig address
 				s.writeOp(169); //OP_HASH160
 				s.writeBytes(addr.bytes);
 				s.writeOp(135); //OP_EQUAL
