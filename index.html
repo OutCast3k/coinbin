@@ -630,9 +630,19 @@
 
 							<p>The transaction below has been generated and encoded. It can be broadcasted once it has been signed.</p>
 							<br>
-			                                <textarea class="form-control" style="height:150px" readonly></textarea>
-
-							<p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
+							<textarea class="form-control" style="height:150px" readonly></textarea>
+							<div class="row">
+								<div class="col-md-12">
+									<p class="text-muted" style="float:left;">Size: <span class="txSize">0</span> <i>bytes</i></p>
+									<div style="float:right;margin-top: 10px;">
+										If you are sure:
+										<button class="btn btn-info transactionToSign" type="button">
+											Continue to Sign
+											<span class="glyphicon glyphicon-pencil"></span>
+										</button>
+									</div>
+								</div>
+							</div>
 						</div>
 
 						<input type="button" value="Generate" class="btn btn-primary" id="transactionBtn">

@@ -518,6 +518,11 @@ $(document).ready(function() {
 		if(!$("#recipients .row, #inputs .row").hasClass('has-error')){
 			$("#transactionCreate textarea").val(tx.serialize());
 			$("#transactionCreate .txSize").html(tx.size());
+			
+			$("#transactionCreate .transactionToSign").on( "click", function() {
+				$("#signTransaction").val(tx.serialize());
+				window.location.hash = "#sign";
+			});
 
 			$("#transactionCreate").removeClass("hidden");
 
