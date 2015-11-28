@@ -1151,9 +1151,11 @@ $(document).ready(function() {
 
 		var mode = this.options[this.selectedIndex].value;
 		
+		var walletAvailableUnspent = false;
+		var walletAvailableBroadcast = false;
 		
 		// deal with listUnspent settings`
-
+		
 		$('#coinjs_utxo').empty();
 		if(typeof(providers[mode]) == 'object' && typeof(providers[mode].listUnspent) == 'object' && Object.keys(providers[mode].listUnspent).length > 0){
 			$.each(providers[mode].listUnspent, function(key) {
@@ -1163,19 +1165,21 @@ $(document).ready(function() {
 				}));
 			});
 			
-			$("#coinjs_utxo, #redeemFrom, #redeemFromBtn, #openBtn, .qrcodeScanner").attr('disabled',false);
+			$("#coinjs_utxo, #redeemFrom, #redeemFromBtn, .qrcodeScanner").attr('disabled',false);
 			$("#coinjs_utxo").val(o[6]);
 			
 			$("#redeemFrom").val("");
+			
+			walletAvailableUnspent = true;
 		} else {
-			$("#coinjs_utxo, #redeemFrom, #redeemFromBtn, #openBtn, .qrcodeScanner").attr('disabled',true);
+			$("#coinjs_utxo, #redeemFrom, #redeemFromBtn, .qrcodeScanner").attr('disabled',true);
 			$("#coinjs_utxo").append('<option value="disabled">Currently not available for ' + this.options[ this.selectedIndex ].text+'</option>').val("disabled");
 			
 			$("#redeemFrom").val("Loading of address inputs is currently not available for " + this.options[ this.selectedIndex ].text);
 		}
 		
 		// deal with broadcasting settings
-		
+
 		$('#coinjs_broadcast').empty();
 		if(typeof(providers[mode]) == 'object' && typeof(providers[mode].broadcast) == 'object' && Object.keys(providers[mode].broadcast).length > 0){
 			$.each(providers[mode].broadcast, function(key) {
@@ -1185,16 +1189,21 @@ $(document).ready(function() {
 				}));
 			});
 			
-			$("#coinjs_broadcast, #rawTransaction, #rawSubmitBtn, #openBtn").attr('disabled',false);
+			$("#coinjs_broadcast, #rawTransaction, #rawSubmitBtn").attr('disabled',false);
 			$("#coinjs_broadcast").val(o[5]);
 			
 			$("#rawTransaction").val("");
+			
+			walletAvailableBroadcast = true;
 		} else {
-			$("#coinjs_broadcast, #rawTransaction, #rawSubmitBtn, #openBtn").attr('disabled',true);
+			$("#coinjs_broadcast, #rawTransaction, #rawSubmitBtn").attr('disabled',true);
 			$("#coinjs_broadcast").append('<option value="disabled">Currently not available for ' + this.options[ this.selectedIndex ].text+'</option>').val("disabled");
 			
 			$("#rawTransaction").val("Transaction broadcasting is currently not available for " + this.options[ this.selectedIndex ].text);	
 		}
+		
+		// enable wallet if available
+		$("#openBtn").attr('disabled', (walletAvailableUnspent && walletAvailableBroadcast));
 
 		// deal with the reset
 		$("#coinjs_pub").val(o[0]);
