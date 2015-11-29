@@ -99,7 +99,7 @@
 						<div class="jumbotron">
 							<h1>Cointoolkit</h1>
 							<p>Be your own bank, take control of your own money and start using <a href="https://nubits.com/">NuBits</a> today!</p>
-							<p><a class="btn btn-primary btn-lg" href="#about" role="button">Learn more &raquo;</a></p>
+							<p><a class="btn btn-primary btn-lg" href="#newAddress" role="button">Create new address &raquo;</a></p>
 						</div>
 
 						<hr>
@@ -112,7 +112,7 @@
 
 							<div class="col-md-4">
 								<h3><span class="glyphicon glyphicon-fullscreen"></span> MultiSig</h3>
-								<p>We offer a fully transparent <a href="#newMultiSig">multisig</a> solution which works seamlessly offline and with other wallets.</p>
+								<p>This is the first tool that supports combining signatures in a multi signature transaction. <a href="#verify">Verify</a> your first transaction, click the number of signatures and <strong>combine</strong> the other versions</p>
 							</div>
 
 							<div class="col-md-4">
@@ -271,7 +271,7 @@
 						<h2>Create new address</h2>
 						<p>Any keys used you will need to manually store safely as they will be needed later to redeem the coins.</p>
 						
-						<label><span id="newAddrType"></span> Address </label> <small class="text-muted text-normal">click generate to update</small>
+						<label><span id="newAddrType"></span> Address </label>
 						<div class="input-group">
 							<input id="newGeneratedAddress" type="text" class="form-control address" value="" readonly>
 							<span class="input-group-btn">
@@ -926,8 +926,9 @@
 									<p class="text-muted" style="float:left;">Size: <span class="txSize">0</span> <i>bytes</i></p>
 									<div style="float:right;margin-top: 10px;">
 										<button class="btn btn-info signedToVerify" type="button">
-											Verify and share
+											Verify
 											<span class="glyphicon glyphicon-ok"></span>
+											and share
 										</button>
 										Or
 										<button class="btn btn-info signedToBroadcast" type="button">

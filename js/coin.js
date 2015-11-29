@@ -1,9 +1,8 @@
 /*
- Coinjs 0.01 beta by OutCast3k{at}gmail.com
- A bitcoin frameworkcoinjs.
+ Framework to work with bitcoin-like transactions.
+ Adapted to Peershares assets by ttutdxh.nubits@gmail.com https://github.com/ttutdxh-nubits/
 
- Originally by http://github.com/OutCast3k/coinjs or http://coinb.in/coinjs
- Adapted to Peershares assets by ttutdxh.nubits@gmail.com
+ Originally by http://github.com/OutCast3k/coinjs
 */
 
 (function () {

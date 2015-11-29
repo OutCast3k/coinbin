@@ -39,3 +39,13 @@ body {
     from { transform: scale(1) rotate(0deg);}
     to { transform: scale(1) rotate(360deg);}
 }
+
+#verifyTransactionData .table>tbody>tr>td {
+	vertical-align: middle;
+}
+
+@media (min-width: 768px) {
+	#modalMultisig .modal-dialog {
+		width: 70%;
+	}
+}
