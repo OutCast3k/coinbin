@@ -840,7 +840,6 @@ $(document).ready(function() {
 		var tx = coinjs.transaction();
 		try {
 			var decode = tx.deserialize($("#verifyScript").val());
-			if (coinjs.debug) {console.log(decode)};
 			$("#verifyTransactionData .transactionVersion").html(decode['version']);
 			$("#verifyTransactionData .transactionTime").html(decode['nTime']);
 			$("#verifyTransactionData .transactionSize").html(decode.size()+' <i>bytes</i>');
@@ -860,16 +859,21 @@ $(document).ready(function() {
 				h += '<td><input class="form-control" type="text" value="'+o.outpoint.hash+'" readonly></td>';
 				h += '<td class="col-xs-1">'+o.outpoint.index+'</td>';
 				h += '<td class="col-xs-2"><input class="form-control" type="text" value="'+Crypto.util.bytesToHex(o.script.buffer)+'" readonly></td>';
-				h += '<td class="col-xs-1"> <span class="glyphicon glyphicon-'+((s.signed=='true')?'ok':'remove')+'-circle"></span>';
+				h += '<td class="col-xs-1">';
+				h += '<span class="glyphicon glyphicon-'+((s.signed=='true')?'ok':'remove')+'-circle"></span>';
 				if(s['type']=='multisig' && s['signatures']>=1){
+					h += '<a href="#" data-index="'+i+'">';
 					h += ' '+s['signatures'];
+					h += '</a>';
 				}
 				h += '</td>';
 				h += '<td class="col-xs-1">';
 				if(s['type']=='multisig'){
+					h += '<a href="#" data-index="'+i+'">';
 					var script = coinjs.script();
 					var rs = script.decodeRedeemScript(s.script);
 					h += rs['signaturesRequired']+' of '+rs['pubkeys'].length;
+					h += '</a>';
 				} else {
 					h += '<span class="glyphicon glyphicon-remove-circle"></span>';
 				}
@@ -878,6 +882,11 @@ $(document).ready(function() {
 			});
 
 			$(h).appendTo("#verifyTransactionData .ins tbody");
+			
+			$("#verifyTransactionData .ins tbody").on( "click", "a[data-index]", function(e) {
+				e.preventDefault();
+				decodeMultiSig(decode, $(this).attr("data-index"));
+			});
 
 			h = '';
 			$.each(decode.outs, function(i,o){
@@ -936,6 +945,50 @@ $(document).ready(function() {
 		} catch(e) {
 			return false;
 		}
+	}
+	
+	function decodeMultiSig(tx, i) {
+		var html = '';
+		var list = tx.listMultiSignature(i);
+		for (var pubkey in list) {
+			identity = "";
+			if (known.pubKey[pubkey]) {
+				identity = known.pubKey[pubkey].name;
+			}
+			
+			var address = coinjs.pubkey2address(pubkey);
+			html += '<tr style="'+((list[pubkey])?'background-color: rgb(223, 240, 216);':'')+'">\
+				<td width="30%">\
+					<input type="text" class="form-control" value="'+address+'" readonly>\
+				</td>\
+				<td>\
+					<input type="text" class="form-control" value="'+pubkey+'" readonly>\
+				</td>\
+				<td>\
+					<input type="text" class="form-control" value="'+identity+'" readonly>\
+				</td>\
+			</tr>';
+		}
+		
+		$("#modalMultisig table tbody").html(html);
+		$("#modalMultisig .combine .alert").addClass("hidden");
+		
+		$("#modalMultisig .combineTx").click(function() {
+			var newTx = tx.combineMultiSignature($("#modalMultisig .combine textarea").val());
+			if (newTx) {
+				console.log(newTx, newTx.serialize());
+				$("#verifyScript").val(newTx.serialize()).fadeOut().fadeIn();
+				$("#verifyBtn").click();
+				
+				$("#modalMultisig .combine .alert").addClass("hidden");
+				$("#modalMultisig").modal("hide");
+				
+				window.location.hash = "#verify";
+			} else {
+				$("#modalMultisig .combine .alert").removeClass("hidden");
+			}
+		});
+		$("#modalMultisig").modal("show");
 	}
 
 	function hex2ascii(hex) {

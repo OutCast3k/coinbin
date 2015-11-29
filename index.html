@@ -1251,6 +1251,57 @@
 		</div>
 	</div>
 	<!-- warning (fee) modal -->
+	
+	<!-- multisig modal -->
+	<div class="modal fade" id="modalMultisig" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Multisignature checker</h4>
+				</div>
+
+				<div class="modal-body">
+					<p>Here you can see the public keys and the correspondent addresses of the public keys with signing rights on this input.</p>
+
+					<p>Signatures already found in the current transaction are shown in green.</p>
+					<div class="row">
+						<div class="col-md-12">
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th class="col-md-3">Address</th>
+										<th class="col-md-5">Pubkey</th>
+										<th class="col-md-4">Identity <span class="text-muted">(if <a href="known-pubkeys.js" target="_blank">known</a>)</span></th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<br>
+					<div class="row">
+						<div class="col-md-12 combine">
+							<label><abbr title="When signers do not sign sequentially, and they end with multiple versions or forks of the same transaction. This only works if the rest of the transaction is the exactly the same">Combine with the same transaction signed by other pubkeys:</abbr></label>
+							<textarea class="form-control address" value="" style="height: 125px; display: block;"></textarea>
+							
+							<div class="alert alert-danger hidden">
+								<span class="glyphicon glyphicon-exclamation-sign"></span> This is not the same transaction. You only can combine the same transaction signed by diferent pubkeys.
+							</div>
+						</div>
+					</div>
+					<br>
+				</div>
+
+				<div class="modal-footer">
+					<button class="btn btn-primary combineTx" type="button">Combine transaction</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="mediatorClose">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- multisig modal -->
 
 	<div class="hidden" id="entropybucket"></div>
 	</body>
