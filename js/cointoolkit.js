@@ -957,7 +957,7 @@ $(document).ready(function() {
 				identity = known.pubKey[pubkey].name;
 			}
 			
-			if (coinjs.debug) {console.log(list, pubkey, ((list[pubkey]) ? 'background-color: rgb(223, 240, 216);':''))};
+			if (coinjs.debug) {console.log(list, pubkey)};
 			
 			var address = coinjs.pubkey2address(pubkey);
 			html += '<tr style="'+ ((list[pubkey]) ? 'background-color: rgb(223, 240, 216);':'') +'">\
@@ -1152,7 +1152,7 @@ $(document).ready(function() {
 		$("#walletLogout").click();
 		
 		$("#newGeneratedAddress, #newPubKey, #newPrivKeyWif, #newPrivKey, #newHDxpub, #newHDxprv").val("");
-		$("#multiSigData").removeClass('show').addClass('hidden').hide();
+		$("#multiSigData, .verifyData").removeClass('show').addClass('hidden');
 
 		$("#statusSettings").removeClass("alert-success").removeClass("alert-danger").addClass("hidden").html("");
 		$("#settings .has-error").removeClass("has-error");
