@@ -758,12 +758,6 @@ $(document).ready(function() {
 		}
 	});
 
-	/* broadcast a transaction */
-
-	$("#rawSubmitBtn").click(function(){
-		rawSubmitDefault(this);
-	});
-
 	/* verify script code */
 
 	$("#verifyBtn").click(function(){
@@ -1440,17 +1434,15 @@ $(document).ready(function() {
 						data: {"hex":$("#rawTransaction").val()},
 						dataType: "json",
 						error: function(data) {
-							var obj = $.parseJSON(data.responseText);
 							var r = ' ';
-							r += (obj.data) ? obj.data : '';
-							r += (obj.message) ? ' '+obj.message : '';
+							r += (data.data) ? data.data : '';
+							r += (data.message) ? ' '+data.message : '';
 							r = (r!='') ? r : ' Failed to broadcast'; // build response 
 							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 						},
-									success: function(data) {
-							var obj = $.parseJSON(data.responseText);
-							if((obj.status && obj.data) && obj.status=='success'){
-								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+obj.data);
+						success: function(data) {
+							if((data.status && data.data) && data.status=='success'){
+								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data);
 							} else {
 								$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 							}				
@@ -1472,7 +1464,7 @@ $(document).ready(function() {
 						error: function(data) {
 							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(" There was an error submitting your request, please try again").prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 						},
-									success: function(data) {
+						success: function(data) {
 							$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
 							if($(data).find("result").text()==1){
 								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger');
@@ -1529,18 +1521,16 @@ $(document).ready(function() {
 						data: {"hex":$("#rawTransaction").val()},
 						dataType: "json",
 						error: function(data) {
-							var obj = $.parseJSON(data.responseText);
 							var r = ' ';
-							r += (obj.data) ? obj.data : '';
-							r += (obj.message) ? ' '+obj.message : '';
+							r += (data.data) ? data.data : '';
+							r += (data.message) ? ' '+data.message : '';
 							r = (r!='') ? r : ' Failed to broadcast'; // build response 
 							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 						},
 						success: function(data) {
 							if (coinjs.debug) {console.log(data)};
-							var obj = $.parseJSON(data.responseText);
-							if((obj.status && obj.data) && obj.status=='success'){
-								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+obj.data);
+							if((data.status && data.data) && data.status=='success'){
+								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data);
 							} else {
 								$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 							}
