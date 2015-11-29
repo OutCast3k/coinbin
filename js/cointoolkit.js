@@ -87,12 +87,12 @@ $(document).ready(function() {
 		var thisbtn = $(this);
 		var tx = coinjs.transaction();
 		var txfee = $("#txFee");
-		var devaddr = coinjs.developer;
+		/*var devaddr = coinjs.developer;  // TODO: generate address from dev known pubkey
 		var devamount = $("#developerDonation");
 
 		if((devamount.val()*1)>0){
 			tx.addoutput(devaddr, devamount.val()*1);
-		}
+		}*/
 
 		var total = (devamount.val()*1) + (txfee.val()*1);
 
@@ -106,7 +106,7 @@ $(document).ready(function() {
 		thisbtn.attr('disabled',true);
 
 		tx.addUnspent($("#walletAddress").html(), function(data){
-			var dvalue = data.value/100000000
+			var dvalue = data.value/("1e"+coinjs.decimalPlaces);
 			if(dvalue>=total){
 				var change = dvalue-total;
 				if(change>0){
@@ -121,7 +121,17 @@ $(document).ready(function() {
 				var signed = txunspent.sign($("#walletKeys .privkey").val());
 
 				// and finally broadcast!
-				tx2.broadcast(function(data){
+				/*
+				tx2.broadcast(function(data){ // TODO: function no longer part of coin.js 
+				
+				
+				
+				r.broadcast = function(callback, txhex){
+					var tx = txhex || this.serialize();
+					coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction&rawtx='+tx+'&r='+Math.random(), callback, "GET");
+				}
+				
+				
 					if($(data).find("result").text()=="1"){
 						$("#walletSendConfirmStatus").removeClass('hidden').addClass('alert-success').html("txid: "+$(data).find("txid").text());
 					} else {
@@ -133,6 +143,7 @@ $(document).ready(function() {
 					walletBalance();
 
 				}, signed);
+				*/
 			} else {
 				$("#walletSendConfirmStatus").removeClass("hidden").addClass('alert-danger').html("You have a confirmed balance of "+data.value+" BTC unable to send "+total+" BTC").fadeOut().fadeIn();
 				thisbtn.attr('disabled',false);
@@ -183,7 +194,7 @@ $(document).ready(function() {
 			}
 		});
 
-		total = total.toFixed(8);
+		total = total.toFixed(coinjs.decimalPlaces);
 
 		if($("#walletSpend .has-error").length==0){
 			var balance = ($("#walletBalance").html()).replace(/[^0-9\.]+/g,'')*1;
@@ -233,7 +244,7 @@ $(document).ready(function() {
 		$("#walletLoader").removeClass("hidden");
 		coinjs.addressBalance($("#walletAddress").html(),function(data){
 			if($(data).find("result").text()==1){
-				var v = $(data).find("balance").text()/100000000;
+				var v = $(data).find("balance").text()/("1e"+coinjs.decimalPlaces);
 				$("#walletBalance").html(v+" BTC").attr('rel',v).fadeOut().fadeIn();
 			} else {
 				$("#walletBalance").html("0.00 BTC").attr('rel',v).fadeOut().fadeIn();
@@ -678,40 +689,6 @@ $(document).ready(function() {
 		return r;
 	}
 
-	/* mediator payment code for when you used a public key */
-	function mediatorPayment(redeem){
-
-		if(redeem.from=="redeemScript"){
-
-			$('#recipients .row[rel="'+redeem.addr+'"]').parent().remove();
-
-			$.each(redeem.decodedRs.pubkeys, function(i, o){
-				$.each($("#mediatorList option"), function(mi, mo){
-
-					var ms = ($(mo).val()).split(";");
-
-					var pubkey = ms[0]; // mediators pubkey
-					var fee = ms[2]*1; // fee in a percentage
-					var payto = coinjs.pubkey2address(pubkey); // pay to mediators address
-
-					if(o==pubkey){ // matched a mediators pubkey?
-
-						var clone = '<span><div class="row recipients mediator mediator_'+pubkey+'" rel="'+redeem.addr+'">'+$("#recipients .addressAddTo").parent().parent().html()+'</div><br></span>';
-						$("#recipients").prepend(clone);
-
-						$("#recipients .mediator_"+pubkey+" .glyphicon-plus:first").removeClass('glyphicon-plus');
-						$("#recipients .mediator_"+pubkey+" .address:first").val(payto).attr('disabled', true).attr('readonly',true).attr('title','Medation fee for '+$(mo).html());
-
-						var amount = ((fee*$("#totalInput").html())/100).toFixed(8);
-						$("#recipients .mediator_"+pubkey+" .amount:first").attr('disabled',(((amount*1)==0)?false:true)).val(amount).attr('title','Medation fee for '+$(mo).html());
-					}
-				});
-			});
-
-			validateOutputAmount();
-		}
-	}
-
 	/* global function to add outputs to page */
 	function addOutput(tx, n, script, amount) {
 		if(tx){
@@ -721,9 +698,7 @@ $(document).ready(function() {
 
 			$("#inputs .row:last input").attr('disabled',true);
 
-			var txid = ((tx).match(/.{1,2}/g).reverse()).join("")+'';
-
-			$("#inputs .txId:last").val(txid);
+			$("#inputs .txId:last").val(tx);
 			$("#inputs .txIdN:last").val(n);
 			$("#inputs .txIdAmount:last").val(amount);
 			$("#inputs .txIdScript:last").val(script);
@@ -743,7 +718,7 @@ $(document).ready(function() {
 				if(!isNaN($(o).val())){
 					f += $(o).val()*1;
 				}
-				$("#totalInput").html((($("#totalInput").html()*1) + (f*1)).toFixed(8));
+				$("#totalInput").html((($("#totalInput").html()*1) + (f*1)).toFixed(coinjs.decimalPlaces));
 			}
 		});
 		totalFee();
@@ -762,14 +737,14 @@ $(document).ready(function() {
 						f += $(o).val()*1;
 					}
 				});
-				$("#totalOutput").html((f).toFixed(8));
+				$("#totalOutput").html((f).toFixed(coinjs.decimalPlaces));
 			}
 			totalFee();
 		}).keyup();
 	}
 
 	function totalFee(){
-		var fee = (($("#totalInput").html()*1) - ($("#totalOutput").html()*1)).toFixed(8);
+		var fee = (($("#totalInput").html()*1) - ($("#totalOutput").html()*1)).toFixed(coinjs.decimalPlaces);
 		$("#transactionFee").val((fee>0)?fee:'0.00');
 	}
 
@@ -1367,9 +1342,7 @@ $(document).ready(function() {
 					$("#redeemFromStatus").removeClass('hidden').html(msgError);
 					$("#redeemFromBtn").html("Load").attr('disabled',false);
 				} else {
-					for(var i=0;i<data.length;i++){
-						var tx_rev = ((data[i].txHash).match(/.{1,2}/g).reverse()).join("")+'';
-						
+					for(var i=0;i<data.length;i++){						
 						if (redeem.isMultisig==true) {
 							var script = $("#redeemFrom").val();
 						} else {
@@ -1378,7 +1351,7 @@ $(document).ready(function() {
 							script = script.replace(' OP_EQUALVERIFY OP_CHECKSIG', '88ac');
 						}
 						
-						addOutput(tx_rev, data[i].outNum, script, data[i].val);
+						addOutput(data[i].txHash, data[i].outNum, script, data[i].val);
 					}
 					$("#redeemFromAddress").removeClass('hidden').html(msgSucess);
 				}
@@ -1390,35 +1363,17 @@ $(document).ready(function() {
 		});
 	};
 
+	/* bit(coinb.in) api vars */
+	coinjs.host = '//coinb.in/api/';
+	coinjs.uid = '1';
+	coinjs.key = '12345678901234567890123456789012';
+	
 	var providers = {
 		bitcoin: {
 			listUnspent: {
-				default: function(redeem){
-					var tx = coinjs.transaction();
-					tx.listUnspent(redeem.addr, function(data){
-						if (coinjs.debug) {console.log(data)};
-						if(redeem.addr) {
-							$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
-
-							$.each($(data).find("unspent").children(), function(i,o){
-								var tx = $(o).find("tx_hash").text();
-								var n = $(o).find("tx_output_n").text();
-								var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : $(o).find("script").text();
-								var amount = (($(o).find("value").text()*1)/100000000).toFixed(8);
-
-								addOutput(tx, n, script, amount);
-							});
-						}
-
-						$("#redeemFromBtn").html("Load").attr('disabled',false);
-						totalInputAmount();
-
-						mediatorPayment(redeem);
-					});
-				},
 				blockr_io: function(redeem){
 					$.ajax ({
-						type: "POST",
+						type: "GET",
 						url: "https://btc.blockr.io/api/v1/address/unspent/"+redeem.addr+"?unconfirmed=1",
 						dataType: "json",
 						error: function(data) {
@@ -1426,16 +1381,45 @@ $(document).ready(function() {
 						},
 						success: function(data) {
 							if (coinjs.debug) {console.log(data)};
-							if((data.status && data.data) && data.status=='success'){
+							if ((data.status && data.data) && data.status=='success'){
 								$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 								for(var i in data.data.unspent){
 									var o = data.data.unspent[i];
-									var tx = o.tx;
-									var n = o.n;
 									var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script;
-									var amount = o.amount;
-									addOutput(tx, n, script, amount);
+									
+									addOutput(o.tx, o.n, script, o.amount);
 								}
+							} else {
+								$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+							}
+						},
+						complete: function(data, status) {
+							$("#redeemFromBtn").html("Load").attr('disabled',false);
+							totalInputAmount();
+						}
+					});
+				},
+				coinb_in: function(redeem){
+					$.ajax ({
+						type: "GET",
+						url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=addresses&request=unspent&address='+redeem.addr+'&r='+Math.random(),
+						dataType: "xml",
+						error: function(data) {
+							if (coinjs.debug) {console.log(data)};
+							$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+						},
+						success: function(data) {
+							if (coinjs.debug) {console.log(data)};
+							if ($(data).children("request").children("result").text()){
+								$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address '+redeem.addr+'');
+								$.each($(data).children("request").children("unspent").children(), function(i,o){
+									var tx = (($(o).find("tx_hash").text()).match(/.{1,2}/g).reverse()).join("")+'';
+									var n = $(o).find("tx_output_n").text();
+									var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : $(o).find("script").text();
+									var amount = (($(o).find("value").text()*1)/("1e"+coinjs.decimalPlaces)).toFixed(coinjs.decimalPlaces);
+
+									addOutput(tx, n, script, amount);
+								});
 							} else {
 								$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
 							}
@@ -1448,32 +1432,6 @@ $(document).ready(function() {
 				}
 			},
 			broadcast: {
-				default: function(btn){ 
-					var thisbtn = btn;		
-					$(thisbtn).val('Please wait, loading...').attr('disabled',true);
-					$.ajax ({
-						type: "POST",
-						url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction',
-						data: {'rawtx':$("#rawTransaction").val()},
-						dataType: "xml",
-						error: function(data) {
-							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(" There was an error submitting your request, please try again").prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-						},
-									success: function(data) {
-							$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
-							if($(data).find("result").text()==1){
-								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger');
-								$("#rawTransactionStatus").html('txid: '+$(data).find("txid").text());
-							} else {
-								$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
-							}
-						},
-						complete: function(data, status) {
-							$("#rawTransactionStatus").fadeOut().fadeIn();
-							$(thisbtn).val('Submit').attr('disabled',false);				
-						}
-					});
-				},
 				blockr_io: function(thisbtn){ 
 					$(thisbtn).val('Please wait, loading...').attr('disabled',true);
 					$.ajax ({
@@ -1503,6 +1461,32 @@ $(document).ready(function() {
 						}
 					});
 				},
+				coinb_in: function(btn){ 
+					var thisbtn = btn;		
+					$(thisbtn).val('Please wait, loading...').attr('disabled',true);
+					$.ajax ({
+						type: "G",
+						url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction',
+						data: {'rawtx':$("#rawTransaction").val()},
+						dataType: "xml",
+						error: function(data) {
+							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(" There was an error submitting your request, please try again").prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+						},
+									success: function(data) {
+							$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
+							if($(data).find("result").text()==1){
+								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger');
+								$("#rawTransactionStatus").html('txid: '+$(data).find("txid").text());
+							} else {
+								$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
+							}
+						},
+						complete: function(data, status) {
+							$("#rawTransactionStatus").fadeOut().fadeIn();
+							$(thisbtn).val('Submit').attr('disabled',false);				
+						}
+					});
+				}
 			}
 		},
 		litecoin: {
@@ -1521,11 +1505,9 @@ $(document).ready(function() {
 								$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 								for(var i in data.data.txs){
 									var o = data.data.txs[i];
-									var tx = ((o.txid).match(/.{1,2}/g).reverse()).join("")+'';
-									var n = o.output_no;
 									var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script_hex;
-									var amount = o.value;
-									addOutput(tx, n, script, amount);
+
+									addOutput(o.txid, o.output_no, script, o.value);
 								}
 							} else {
 								$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');

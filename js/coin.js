@@ -26,13 +26,6 @@
 
 	coinjs.compressed = false;
 
-	/* other vars */
-	coinjs.developer = '1JbsRVvU93PXN2JovuDE2NJTVNWkGEFrvx'; // bitcoin
-
-	/* bit(coinb.in) api vars */
-	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+'coinb.in/api/';
-	coinjs.uid = '1';
-	coinjs.key = '12345678901234567890123456789012';
 
 	/* start of address functions */
 
@@ -255,11 +248,6 @@
 			if (coinjs.debug) {console.log(e)};
 			return false;
 		}
-	}
-
-	/* retreive the balance from a given address */
-	coinjs.addressBalance = function(address, callback){
-		coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=addresses&request=bal&address='+address+'&r='+Math.random(), callback, "GET");
 	}
 
 	/* decompress an compressed public key */
@@ -828,15 +816,10 @@
 			return r;
 		}
 
-		/* list unspent transactions */
-		r.listUnspent = function(address, callback) {
-			coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=addresses&request=unspent&address='+address+'&r='+Math.random(), callback, "GET");
-		}
-
 		/* add unspent to transaction */
 		r.addUnspent = function(address, callback){
 			var self = this;
-			this.listUnspent(address, function(data){
+			/*this.listUnspent(address, function(data){ TODO: not available anymore
 				var s = coinjs.script();
 				var pubkeyScript = s.pubkeyHash(address);
 				var value = 0;
@@ -870,7 +853,7 @@
 				x.value = value;
 				x.total = total;
 				return callback(x);
-			});
+			});*/
 		}
 
 		/* add unspent and sign */
@@ -881,12 +864,6 @@
 				self.sign(wif);
 				return callback(data);
 			});
-		}
-
-		/* broadcast a transaction */
-		r.broadcast = function(callback, txhex){
-			var tx = txhex || this.serialize();
-			coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction&rawtx='+tx+'&r='+Math.random(), callback, "GET");
 		}
 
 		/* generate the transaction hash to sign from a transaction input */
@@ -1446,36 +1423,6 @@
 		var bytes = bi.toByteArrayUnsigned();
 		while (leadingZerosNum-- > 0) bytes.unshift(0);
 		return bytes;		
-	}
-
-	/* raw ajax function to avoid needing bigger frame works like jquery, mootools etc */
-	coinjs.ajax = function(u, f, m, a){
-		var x = false;
-		try{
-			x = new ActiveXObject('Msxml2.XMLHTTP')
-		} catch(e) {
-			try {
-				x = new ActiveXObject('Microsoft.XMLHTTP')
-			} catch(e) {
-				x = new XMLHttpRequest()
-			}
-		}
-
-		if(x==false) {
-			return false;
-		}
-
-		x.open(m, u, true);
-		x.onreadystatechange=function(){
-			if((x.readyState==4) && f)
-				f(x.responseText);
-		};
-
-		if(m == 'POST'){
-			x.setRequestHeader('Content-type','application/x-www-form-urlencoded');
-		}
-
-		x.send(a);
 	}
 
 	/* clone an object */
