@@ -950,6 +950,9 @@ $(document).ready(function() {
 	function decodeMultiSig(tx, i) {
 		var html = '';
 		var list = tx.listMultiSignature(i);
+		
+		if (coinjs.debug) {console.log(e)};
+		
 		for (var pubkey in list) {
 			identity = "";
 			if (known.pubKey[pubkey]) {
@@ -958,7 +961,7 @@ $(document).ready(function() {
 			
 			var address = coinjs.pubkey2address(pubkey);
 			html += '<tr style="'+((list[pubkey])?'background-color: rgb(223, 240, 216);':'')+'">\
-				<td width="30%">\
+				<td>\
 					<input type="text" class="form-control" value="'+address+'" readonly>\
 				</td>\
 				<td>\
