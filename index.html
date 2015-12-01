@@ -729,7 +729,24 @@
 									<table class="table table-striped table-hover ins">
 										<thead>
 											<tr style="font-weight:bold;">
-												<td><abbr title="the transaction id">Txid</abbr></td><td><abbr title="index id of the the transaction">N</abbr></td><td><abbr title="transaction script">Script</abbr></td><td><abbr title="is input signed?">Signed?</abbr></td><td><abbr title="is transaction a multisig transaction?">MultiSig?</abbr></td>
+												<td>
+													<abbr title="the transaction id">Txid</abbr>
+												</td>
+												<td>
+													<abbr title="index id of the the transaction">N</abbr>
+												</td>
+												<td>
+													<abbr title="Amount of the input. Only shown if provider is online and available.">Amount</abbr>
+												</td>
+												<td>
+													<abbr title="transaction script">Script</abbr>
+												</td>
+												<td>
+													<abbr title="is input signed?">Signed?</abbr>
+												</td>
+												<td>
+													<abbr title="is transaction a multisig transaction?">MultiSig?</abbr>
+												</td>
 											</tr>
 										</thead>
 										<tbody>
@@ -754,6 +771,7 @@
 							<div class="row">
 								<div class="col-xs-12">
 									<div style="float:right;">
+										<span class="fee hidden">Fee is <span class="amount"></span>.</span>
 										If the transaction is correct:
 										<button class="btn btn-info verifyToSign" type="button">
 											Continue to Sign
@@ -761,6 +779,8 @@
 										</button>
 									</div>
 								</div>
+							</div>
+							<div class="row">
 								<div class="col-xs-12">
 									<small>Shareable verification link</small>
 									<input type="text" class="form-control verifyLink" readonly>
@@ -985,25 +1005,25 @@
 								<b>Network</b>: <br>
 								<p class="text-muted">Select which network you'd like to use for key pair generation.</p>
 								<select class="form-control" id="coinjs_coin">
-									<!-- pubPrefix, scriptPrefix, privPrefix, hdPubPrefix, hdPrivPrefix, broadcastProvider, unspentProvider, extraTimeField, extraUnitFieldValue, decimalPlaces -->
-									<option value="nubits" rel="0x19;0x1a;0x96;0x0488b21e;0x0488ade4;false;false;true;0x42;4;">NuBits</option>
-									<option value="nushares" rel="0x3f;0x40;0x95;0x0488b21e;0x0488ade4;false;false;true;0x53;4;">NuShares</option>
-									<option value="blockcredits" rel="0x1c;0x1e;0x9a;0x0488b21e;0x0488ade4;false;false;true;0x43;4;">BlockCredits</option>
-									<option value="blockshares" rel="0x12;0x14;0x99;0x0488b21e;0x0488ade4;false;false;true;0x38;4;">BlockShares</option>
-									<option value="peercoin" rel="0x37;0x75;0xb7;0x0488b21e;0x0488ade4;false;false;true;false;6;">Peercoin</option>
-									<option value="bitcoin" rel="0x00;0x05;0x80;0x0488b21e;0x0488ade4;blockr_io;blockr_io;false;false;8;">Bitcoin</option>
+									<!-- pubPrefix, scriptPrefix, privPrefix, hdPubPrefix, hdPrivPrefix, broadcastProvider, unspentProvider, getInputAmountProvider, extraTimeField, extraUnitFieldValue, decimalPlaces, symbol -->
+									<option value="nubits" rel="0x19;0x1a;0x96;0x0488b21e;0x0488ade4;false;false;false;true;0x42;4;NBT;">NuBits</option>
+									<option value="nushares" rel="0x3f;0x40;0x95;0x0488b21e;0x0488ade4;false;false;false;true;0x53;4;NSR;">NuShares</option>
+									<option value="blockcredits" rel="0x1c;0x1e;0x9a;0x0488b21e;0x0488ade4;false;false;false;true;0x43;4;BKC;">BlockCredits</option>
+									<option value="blockshares" rel="0x12;0x14;0x99;0x0488b21e;0x0488ade4;false;false;false;true;0x38;4;BKS;">BlockShares</option>
+									<option value="peercoin" rel="0x37;0x75;0xb7;0x0488b21e;0x0488ade4;false;false;false;true;false;6;PPC;">Peercoin</option>
+									<option value="bitcoin" rel="0x00;0x05;0x80;0x0488b21e;0x0488ade4;false;blockr_io;blockr_io;false;false;8;BTC;">Bitcoin</option>
 									
-									<option value="nubits_testnet" rel="0x55;0x56;0xe0;0x043587cf;0x04358394;false;false;true;0x42;4;">NuBits (testnet)</option>
-									<option value="nushares_testnet" rel="0x7d;0x7e;0xdf;0x043587cf;0x04358394;false;false;true;0x53;4;">NuShares (testnet)</option>
-									<option value="blockcredits_testnet" rel="0x57;0x5a;0xe4;0x043587cf;0x04358394;false;false;true;0x43;4;">BlockCredits (testnet)</option>
-									<option value="blockshares_testnet" rel="0x7f;0x82;0xe3;0x043587cf;0x04358394;false;false;true;0x38;4;">BlockShares (testnet)</option>
-									<option value="peercoin_testnet" rel="0x6f;0xc4;0xef;0x043587cf;0x04358394;false;false;true;false;6;">Peercoin (testnet)</option>
-									<option value="bitcoin_testnet" rel="0x6f;0xc4;0xef;0x043587cf;0x04358394;blockrio_bitcointestnet;false;false;false;8;">Bitcoin (testnet)</option>
+									<option value="nubits_testnet" rel="0x55;0x56;0xe0;0x043587cf;0x04358394;false;false;false;true;0x42;4;tNBT;">NuBits (testnet)</option>
+									<option value="nushares_testnet" rel="0x7d;0x7e;0xdf;0x043587cf;0x04358394;false;false;false;true;0x53;4;tNSR;">NuShares (testnet)</option>
+									<option value="blockcredits_testnet" rel="0x57;0x5a;0xe4;0x043587cf;0x04358394;false;false;false;true;0x43;4;tBKC;">BlockCredits (testnet)</option>
+									<option value="blockshares_testnet" rel="0x7f;0x82;0xe3;0x043587cf;0x04358394;false;false;false;true;0x38;4;tBKS;">BlockShares (testnet)</option>
+									<option value="peercoin_testnet" rel="0x6f;0xc4;0xef;0x043587cf;0x04358394;false;false;false;true;false;6;tPPC;">Peercoin (testnet)</option>
+									<option value="bitcoin_testnet" rel="0x6f;0xc4;0xef;0x043587cf;0x04358394;false;blockrio_bitcointestnet;false;false;false;8;tBTC">Bitcoin (testnet)</option>
 									
-									<option value="peershares_default" rel="0x3f;0x7d;0xbf;0x0488b21e;0x0488ade4;false;false;true;0x53;4;">Peershares default</option>
-									<option value="peershares_default_test" rel="0x20;0xd4;0xa0;0x043587cf;0x04358394;false;false;true;0x53;4;">Peershares default (testnet)</option>
+									<option value="peershares_default" rel="0x3f;0x7d;0xbf;0x0488b21e;0x0488ade4;false;false;false;true;0x53;4;PSR">Peershares default</option>
+									<option value="peershares_default_test" rel="0x20;0xd4;0xa0;0x043587cf;0x04358394;false;false;false;true;0x53;4;tPSR">Peershares default (testnet)</option>
 
-									<option value="custom" rel="0x00;0x05;0x80;0x0488b21e;0x0488ade4;false;false;false;false;8;">Custom</option>
+									<option value="custom" rel="0x00;0x05;0x80;0x0488b21e;0x0488ade4;false;false;false;false;false;8;CUSTOM">Custom</option>
 								</select>
 							</div>
 						</div>
@@ -1015,23 +1035,21 @@
 							<hr>
 
 							<div class="row">
-								<div class="col-md-4">
+								<div class="col-md-2">
 									<b>Pub</b>: <br>
 									<input type="text" class="form-control coinjssetting" id="coinjs_pub">
 								</div>
 
-								<div class="col-md-4">
+								<div class="col-md-2">
 									<b>Priv</b>: <br>
 									<input type="text" class="form-control coinjssetting" id="coinjs_priv">
 								</div>
 
-								<div class="col-md-4">
+								<div class="col-md-2">
 									<b>Script Hash (multisig)</b>: <br>
 									<input type="text" class="form-control coinjssetting" id="coinjs_multisig">
 								</div>
-							</div>
-
-							<div class="row">
+								
 								<div class="col-md-3">
 									<b>HD Pub</b>: <br>
 									<input type="text" class="form-control coinjssetting" id="coinjs_hdpub">
@@ -1041,8 +1059,10 @@
 									<b>HD Priv</b>: <br>
 									<input type="text" class="form-control coinjssetting" id="coinjs_hdprv">
 								</div>
+							</div>
 
-								<div class="col-md-2">
+							<div class="row">
+								<div class="col-md-3">
 									<b>Extra time field?</b>: <br>
 									<select class="form-control" id="coinjs_extratimefield">
 										<option value="true">true</option>
@@ -1050,14 +1070,19 @@
 									</select>
 								</div>
 								
-								<div class="col-md-2">
+								<div class="col-md-3">
 									<b>Extra unit field value?</b>: <br>
 									<input type="text" class="form-control coinjssetting boolisvalid" id="coinjs_extraunitfieldvalue">
 								</div>
 								
-								<div class="col-md-2">
+								<div class="col-md-3">
 									<b>Decimal places</b>: <br>
 									<input type="text" class="form-control" id="coinjs_decimalplaces">
+								</div>
+								
+								<div class="col-md-3">
+									<b>Symbol</b>: <br>
+									<input type="text" class="form-control" id="coinjs_symbol">
 								</div>
 							</div>
 
@@ -1070,8 +1095,20 @@
 						<div class="row">
 							<div class="col-md-12">
 								<b>Unspent outputs</b>: <br>
-								<p class="text-muted">Select the network you wish to retreive your unspent inputs from</p>
+								<p class="text-muted">Select the provider you wish to retreive your unspent inputs from</p>
 								<select class="form-control" id="coinjs_utxo">
+
+								</select>
+							</div>
+						</div>
+							
+						<hr>
+						
+						<div class="row">
+							<div class="col-md-12">
+								<b>Input amount</b>: <br>
+								<p class="text-muted">Select the provider you wish to retreive transactions input amounts</p>
+								<select class="form-control" id="coinjs_getinputamount">
 
 								</select>
 							</div>
@@ -1082,7 +1119,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<b>Broadcast</b>: <br>
-								<p class="text-muted">Select the network you wish to broadcast the transaction via</p>
+								<p class="text-muted">Select the provider you wish to broadcast the transaction via</p>
 								<select class="form-control" id="coinjs_broadcast">
 
 								</select>
