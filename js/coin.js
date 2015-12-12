@@ -1082,7 +1082,7 @@
 		r.signmultisig = function(index, wif){
 			var redeemScript = this.extractRedeemScript(this.ins[index].script);
 			var sighash = Crypto.util.hexToBytes(this.transactionHash(index));
-			var signature = Crypto.util.hexToBytes(this.transactionSig(index, wif));
+			var newSignature = Crypto.util.hexToBytes(this.transactionSig(index, wif));
 			var s = coinjs.script();
 
 			s.writeOp(0);
@@ -1093,11 +1093,21 @@
 			}  else if (this.ins[index].script.chunks[0]==0 && this.ins[index].script.chunks[this.ins[index].script.chunks.length-1][this.ins[index].script.chunks[this.ins[index].script.chunks.length-1].length-1]==174){
 				var pubkeyList = this.scriptListPubkey(coinjs.script(redeemScript));
 				var sigsList = this.scriptListSigs(this.ins[index].script);
-				sigsList[sigsList.length] = signature;
+				sigsList[sigsList.length] = newSignature;
+
+				var signatures = {};
+				var pubkey;
 				
 				for (var y = 0; y < sigsList.length; y++) {
-					if(coinjs.verifySignature(sighash, sigsList[y], pubkeyList)){
-						s.writeBytes(sigsList[y]);
+					pubkey = coinjs.verifySignature(sighash, sigsList[y], pubkeyList)
+					if(pubkey){
+						signatures[pubkey] = sigsList[y];
+					}
+				}
+
+				for (var i in pubkeyList) {
+					if (signatures[pubkeyList[i]]) {
+						s.writeBytes(signatures[pubkeyList[i]]);
 					}
 				}
 
@@ -1147,12 +1157,16 @@
 			for (var index = 0; index < this.ins.length; index++) {
 				var s = this.extractScriptKey(index);
 				if (s['type'] == 'multisig') {
+					var redeemScript = this.extractRedeemScript(this.ins[index].script);
+					var pubkeyList = this.scriptListPubkey(coinjs.script(redeemScript));
+
 					var listThis = this.listMultiSignature(index);
 					var list2 = tx2.listMultiSignature(index);
 					
 					var s = coinjs.script();
 					s.writeOp(0);
-					for (var pubkey in listThis) {
+					for (var i in pubkeyList) {
+						var pubkey = pubkeyList[i];
 						var valid = (listThis[pubkey])?listThis[pubkey]:list2[pubkey];
 						if (valid) {
 							s.writeBytes(Crypto.util.hexToBytes(valid));
