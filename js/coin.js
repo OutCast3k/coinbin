@@ -1153,7 +1153,6 @@
 			if (this.transactionHash(0) != tx2.transactionHash(0)) return false;
 			
 			var newTx = coinjs.clone(this);
-			var newTxList = {};
 			for (var index = 0; index < this.ins.length; index++) {
 				var s = this.extractScriptKey(index);
 				if (s['type'] == 'multisig') {

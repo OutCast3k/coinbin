@@ -45,7 +45,11 @@ body {
 }
 
 @media (min-width: 768px) {
-	#modalMultisig .modal-dialog {
+	.wideModal .modal-dialog {
 		width: 70%;
 	}
+}
+
+.sig_position {
+    text-align: center;
 }
