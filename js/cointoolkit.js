@@ -1675,13 +1675,16 @@ $(document).ready(function() {
 		}
 	});
 	
-	$("#verify #verifyScript").change(function(){
+
+	// clear results when data changed
+	$("#verify #verifyScript").on('input', function(){
 		$("#verify .verifyData").addClass("hidden");
 	});
 
-	$("#sign #signTransaction, #sign #signPrivateKey").change(function(){
+	$("#sign #signTransaction, #sign #signPrivateKey").on('input', function(){
 		$("#sign #signedData").addClass("hidden");
 	});
+
 
 	$("#coinSelector").change(function(){
 		$("#coinjs_coin").val(this.value).change();
