@@ -1,7 +1,912 @@
 $(document).ready(function() {
 
 	var toolkit = {};
-	/* open wallet code */
+	
+	function updateQueryStringParameter(uri, key, value) {
+		var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+		var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+		if (uri.match(re)) {
+			return uri.replace(re, '$1' + key + "=" + value + '$2');
+		}
+		else {
+			return uri + separator + key + "=" + value;
+		}
+	}
+
+	function walletBalance(){
+		var tx = coinjs.transaction();
+		$("#walletLoader").removeClass("hidden");
+		coinjs.addressBalance($("#walletAddress").html(),function(data){
+			if($(data).find("result").text()==1){
+				var v = $(data).find("balance").text()/("1e"+coinjs.decimalPlaces);
+				$("#walletBalance").html(v+" BTC").attr('rel',v).fadeOut().fadeIn();
+			} else {
+				$("#walletBalance").html("0.00 BTC").attr('rel',v).fadeOut().fadeIn();
+			}
+
+			$("#walletLoader").addClass("hidden");
+		});
+	}
+
+	function checkBalanceLoop(){
+		setTimeout(function(){
+			walletBalance();
+			checkBalanceLoop();
+		},45000);
+	}
+
+
+	function scannerStart(){
+		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || false;
+		if(navigator.getUserMedia){
+			if (!!window.stream) {
+				$("video").attr('src',null);
+				window.stream.stop();
+  			}
+
+			var videoSource = $("select#videoSource").val();
+			var constraints = {
+				video: {
+					optional: [{sourceId: videoSource}]
+				}
+			};
+
+			navigator.getUserMedia(constraints, function(stream){
+				window.stream = stream; // make stream available to console
+				var videoElement = document.querySelector('video');
+				videoElement.src = window.URL.createObjectURL(stream);
+				videoElement.play();
+			}, function(error){ });
+
+			QCodeDecoder().decodeFromCamera(document.getElementById('videoReader'), function(er,data){
+				if(!er){
+					var match = data.match(/^(bitcoin|nu|Nu|bcexchange|B\&C\ Exchange|ppcoin|peercoin)\:([a-z0-9]{27,34})/i);
+					var result = match ? match[2] : data;
+					$(""+$("#qrcode-scanner-callback-to").html()).val(result);
+					$("#qrScanClose").click();
+				}
+			});
+		} else {
+			$("#videoReaderError").removeClass("hidden");
+			$("#videoReader, #videoSource").addClass("hidden");
+		}
+	}
+
+	/* function to determine what we are redeeming from */
+	function redeemingFrom(string){
+		var r = {};
+		var decode = coinjs.addressDecode(string);
+		if(decode.version == coinjs.pub){ // regular address
+			r.addr = string;
+			r.from = 'address';
+			r.isMultisig = false;
+		} else if (decode.version == coinjs.priv){ // wif key
+			var a = coinjs.wif2address(string);
+			r.addr = a['address'];
+			r.from = 'wif';
+			r.isMultisig = false;
+		} else if (decode.version == coinjs.multisig){ // mulisig address
+			r.addr = '';
+			r.from = 'multisigAddress';
+			r.isMultisig = false;
+		} else {
+			var script = coinjs.script();
+			var decodeRs = script.decodeRedeemScript(string);
+			if(decodeRs){ // redeem script
+				r.addr = decodeRs['address'];
+				r.from = 'redeemScript';
+				r.decodedRs = decodeRs;
+				r.isMultisig = true;
+			} else { // something else
+				r.addr = '';
+				r.from = 'other';
+				r.isMultisig = false;
+			}
+		}
+		return r;
+	}
+
+	/* global function to add outputs to page */
+	function addOutput(tx, n, script, amount) {
+		if(tx){
+			if($("#inputs .txId:last").val()!=""){
+				$("#inputs .txidAdd").click();
+			}
+
+			$("#inputs .row:last input").attr('disabled',true);
+
+			$("#inputs .txId:last").val(tx);
+			$("#inputs .txIdN:last").val(n);
+			$("#inputs .txIdAmount:last").val(amount);
+			$("#inputs .txIdScript:last").val(script);
+		}
+	}
+
+	/* math to calculate the inputs and outputs */
+
+	function totalInputAmount(){
+		$("#totalInput").html('0.00');
+		$.each($("#inputs .txIdAmount"), function(i,o){
+			if(isNaN($(o).val())){
+				$(o).parent().addClass('has-error');
+			} else {
+				$(o).parent().removeClass('has-error');
+				var f = 0;
+				if(!isNaN($(o).val())){
+					f += $(o).val()*1;
+				}
+				$("#totalInput").html((($("#totalInput").html()*1) + (f*1)).toFixed(coinjs.decimalPlaces));
+			}
+		});
+		totalFee();
+	}
+
+	function validateOutputAmount(){
+		$("#recipients .amount").unbind('');
+		$("#recipients .amount").keyup(function(){
+			if(isNaN($(this).val())){
+				$(this).parent().addClass('has-error');
+			} else {
+				$(this).parent().removeClass('has-error');
+				var f = 0;
+				$.each($("#recipients .amount"),function(i,o){
+					if(!isNaN($(o).val())){
+						f += $(o).val()*1;
+					}
+				});
+				$("#totalOutput").html((f).toFixed(coinjs.decimalPlaces));
+			}
+			totalFee();
+		}).keyup();
+	}
+
+	function totalFee(){
+		var fee = (($("#totalInput").html()*1) - ($("#totalOutput").html()*1)).toFixed(coinjs.decimalPlaces);
+		$("#transactionFee").val((fee>0)?fee:'0.00');
+	}
+
+	function decodeRedeemScript(){
+		var script = coinjs.script();
+		var decode = script.decodeRedeemScript($("#verifyScript").val());
+		if(decode){
+			$("#verifyRsData .multisigAddress").val(decode['address']);
+			$("#verifyRsData .multisigScriptHash").val(decode['scriptHash']);
+			$("#verifyRsData .multisigScriptHashKnown").val((known.scriptHash[decode['scriptHash']])?known.scriptHash[decode['scriptHash']].name:'');
+			$("#verifyRsData .signaturesRequired").html(decode['signaturesRequired']);
+			$("#verifyRsData table tbody").html("");
+			for(var i=0;i<decode.pubkeys.length;i++){
+				var pubkey = decode.pubkeys[i];
+				
+				identity = "";
+				if (known.pubKey[pubkey]) {
+					identity = known.pubKey[pubkey].name;
+				}
+				
+				var address = coinjs.pubkey2address(pubkey);
+				$('<tr><td width="30%"><input type="text" class="form-control" value="'+address+'" readonly></td><td><input type="text" class="form-control" value="'+pubkey+'" readonly></td><td><input type="text" class="form-control" value="'+identity+'" readonly></td></tr>').appendTo("#verifyRsData table tbody");
+			}
+			$("#verifyRsData").removeClass("hidden");
+			$("#verify .verifyLink").val(document.location.origin+''+document.location.pathname+'?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	function decodeTransactionScript(){
+		var tx = coinjs.transaction();
+		try {
+			var decode = tx.deserialize($("#verifyScript").val());
+			$("#verifyTransactionData .transactionVersion").html(decode['version']);
+			$("#verifyTransactionData .transactionTime").html(new Date(decode['nTime']*1000).toUTCString());
+			$("#verifyTransactionData .transactionSize").html(decode.size()+' <i>bytes</i>');
+			$("#verifyTransactionData .transactionLockTime").html((decode['lock_time'] >= 500000000)?new Date(decode['nTime']*1000).toUTCString():"Block height "+decode['lock_time']);
+			$("#verifyTransactionData .transactionUnit").html(String.fromCharCode(decode['nUnit']));
+			$("#verifyTransactionData .verifyToSign").on( "click", function() {
+				$("#signTransaction").val(decode.serialize()).fadeOut().fadeIn();
+				window.location.hash = "#sign";
+			});
+			$("#verifyTransactionData").removeClass("hidden");
+			$("#verifyTransactionData tbody").html("");
+
+			$("#verifyTransactionData .ins tbody").html("");
+			$("#verifyTransactionData .fee").addClass("hidden").attr("style", "");
+
+			var inAmountAvailable = 0;
+			var amountTotal = 0;
+			
+			var h = '';
+			$.each(decode.ins, function(i,o){
+				var s = decode.extractScriptKey(i);
+				h = '<tr>';
+				h += '<td class="col-xs-7 txid"><input class="form-control" type="text" value="'+o.outpoint.hash+'" readonly></td>';
+				h += '<td class="n" >'+o.outpoint.index+'</td>';
+				h += '<td class="ammount" data-inputid="'+(i)+'"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>';
+				//h += '<td class="script"><input class="form-control" type="text" value="'+Crypto.util.bytesToHex(o.script.buffer)+'" readonly></td>';
+				h += '<td class="script"><a href="#" data-index-inputscript="'+i+'">Analyze</a>';
+				h += '<td class="signed">';
+					h += '<span class="glyphicon glyphicon-'+((s.signed=='true')?'ok':'remove')+'-circle"></span>';
+					if(s['type']=='multisig' && s['signatures']>=1){
+						h += '<a href="#" data-index-multisig="'+i+'">';
+						h += ' '+s['signatures'];
+						h += '</a>';
+					}
+				h += '</td>';
+				h += '<td class="multisig">';
+				if(s['type']=='multisig'){
+					h += '<a href="#" data-index-multisig="'+i+'">';
+					var script = coinjs.script();
+					var rs = script.decodeRedeemScript(s.script);
+					h += rs['signaturesRequired']+' of '+rs['pubkeys'].length;
+					h += '</a>';
+				} else {
+					h += '<span class="glyphicon glyphicon-remove-circle"></span>';
+				}
+				h += '</td>';
+				h += '</tr>';
+				
+				$(h).appendTo("#verifyTransactionData .ins tbody");
+
+				$("#verifyTransactionData .ins tbody").data("tx", decode);
+				
+				if (toolkit.getInputAmount != "disabled") {
+					(function (inputid, total) {
+						providers[$("#coinSelector").val()].getInputAmount[toolkit.getInputAmount](o.outpoint.hash, o.outpoint.index, function(result) {
+							$("#verifyTransactionData .ins tbody td[data-inputid="+inputid+"]").html((result)?coinjs.formatAmount(result):'Not found');
+							if (result) {
+								amountTotal += result;
+								if (++inAmountAvailable == total) {
+									$.each(decode.outs, function(i,o){
+										amountTotal -= o.value;
+									});
+									
+									if ((amountTotal/("1e"+coinjs.decimalPlaces)) > 0.011) {
+										$("#verifyTransactionData .fee").attr("style", "color: red;")
+									}
+									$("#verifyTransactionData .fee").removeClass("hidden");
+									$("#verifyTransactionData .fee .amount").html(coinjs.formatAmount(amountTotal));
+								}
+							}
+						});
+					})(i, decode.ins.length);
+				} else {
+					$("#verifyTransactionData .ins tbody td[data-inputid="+i+"]").html("Not available");
+				}
+			});
+
+			h = '';
+			$.each(decode.outs, function(i,o){
+
+				if(o.script.chunks.length==2 && o.script.chunks[0]==106){ // OP_RETURN
+
+					var data = Crypto.util.bytesToHex(o.script.chunks[1]);
+					var dataascii = hex2ascii(data);
+
+					if(dataascii.match(/^[\s\d\w]+$/ig)){
+						data = dataascii;
+					}
+
+					h += '<tr>';
+					h += '<td><input type="text" class="form-control" value="(OP_RETURN) '+data+'" readonly></td>';
+					h += '<td></td>'; // to account for known address value
+					h += '<td class="col-xs-1">'+(o.value/("1e"+coinjs.decimalPlaces)).toFixed(coinjs.decimalPlaces)+'</td>';
+					h += '<td class="col-xs-2"><input class="form-control" type="text" value="'+Crypto.util.bytesToHex(o.script.buffer)+'" readonly></td>';
+					h += '</tr>';
+				} else {
+
+					var addr = '';
+					var identity = '';
+					if(o.script.chunks.length==5){
+						var pubKeyHash = Crypto.util.bytesToHex(o.script.chunks[2])
+						addr = coinjs.scripthash2address(pubKeyHash, coinjs.pub);
+						$.each(known.pubKey, function(pubkey, id) {
+							if (coinjs.pubkey2address(pubkey, coinjs.pub) == addr) {
+								identity = known.pubKey[pubkey].name;
+								return false;
+							}
+						});
+					} else {
+						var scriptHash = Crypto.util.bytesToHex(o.script.chunks[1]);
+						addr = coinjs.scripthash2address(scriptHash, coinjs.multisig);
+						if (known.scriptHash[scriptHash]) {
+							identity = known.scriptHash[scriptHash].name;
+						}
+					}
+					
+					
+					
+
+					h += '<tr>';
+					h += '<td class="col-xs-5"><input class="form-control" type="text" value="'+addr+'" readonly></td>';
+					h += '<td class="col-xs-5"><input class="form-control" type="text" value="'+identity+'" readonly></td>';
+					h += '<td class="">'+coinjs.formatAmount(o.value)+'</td>';
+					h += '<td class=""><a href="#" data-index-outputscript="'+i+'">Analyze</a></td>';
+					h += '</tr>';
+				}
+			});
+			$(h).appendTo("#verifyTransactionData .outs tbody");
+
+			$("#verify .verifyLink").val(document.location.origin+''+document.location.pathname+'?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
+			return true;
+		} catch(e) {
+			return false;
+		}
+	}
+	
+	function decodeMultiSig(tx, i) {
+		var html = '';
+		var list = tx.listMultiSignature(i);
+		
+		for (var pubkey in list) {
+			identity = "";
+			if (known.pubKey[pubkey]) {
+				identity = known.pubKey[pubkey].name;
+			}
+			
+			var address = coinjs.pubkey2address(pubkey);
+			var signature_position = '';
+			if (list[pubkey]) {
+				for (var x = 0; x < list[pubkey].length; x++) {
+					if (x > 0) {signature_position += ", "}
+					signature_position += '<abbr title="'+list[pubkey][x].sig+'">'+(list[pubkey][x].pos+1)+'</abbr>'
+				}
+			}
+			html += '<tr style="'+ ((list[pubkey]) ? 'background-color: rgb(223, 240, 216);':'') +'">\
+				<td class="sig_position">\
+					'+signature_position+'\
+				</td>\
+				<td>\
+					<input type="text" class="form-control" value="'+address+'" readonly>\
+				</td>\
+				<td>\
+					<input type="text" class="form-control" value="'+pubkey+'" readonly>\
+				</td>\
+				<td>\
+					<input type="text" class="form-control" value="'+identity+'" readonly>\
+				</td>\
+			</tr>';
+		}
+		
+		$("#modalMultisig table tbody").html(html);
+		$("#modalMultisig .combine .alert").addClass("hidden");
+		
+		$("#modalMultisig .combineTx").click(function() {
+			var newTx = tx.combineMultiSignature($("#modalMultisig .combine textarea").val());
+			if (newTx) {
+				if (coinjs.debug) {console.log(newTx, newTx.serialize())};
+				$("#verifyScript").val(newTx.serialize()).fadeOut().fadeIn();
+				$("#verifyBtn").click();
+				
+				$("#modalMultisig .combine .alert").addClass("hidden");
+				$("#modalMultisig").modal("hide");
+				
+				window.location.hash = "#verify";
+			} else {
+				$("#modalMultisig .combine .alert").removeClass("hidden");
+			}
+		});
+		$("#modalMultisig").modal("show");
+	}
+
+	function decodeScript(script) {
+		var asm = '';
+		var multisig = false;
+
+		var pieces = script.toASM().split(" ");
+		for (i = 0; i < pieces.length; i++) {
+			if (i == pieces.length-1) {
+				var maybemultisig = coinjs.script(pieces[i]);
+				if (maybemultisig.chunks[maybemultisig.chunks.length - 1] == coinjs.opcode.OP_CHECKMULTISIG) {
+					multisig = true;
+				}
+			}
+
+			asm += '<span style="display: inline-block;width: 100%;">';
+			
+
+			if (multisig) {
+				asm += '<span style="color: rgb(197, 197, 197);">'+pieces[i]+'</span>'
+
+				var inner_pieces = maybemultisig.toASM().split(" ");
+				for (x = 0; x < inner_pieces.length; x++) {
+					asm += '<span style="display: inline-block;width: 100%;margin-left: 20px;">'+inner_pieces[x];
+					console.log(known.scriptHash[inner_pieces[x]]);
+					if (known.pubKey[inner_pieces[x]]) {
+						asm += '<span style="color: #17AD0E;"> (Match with '+known.pubKey[inner_pieces[x]].name+')</span>';
+					} else if (known.scriptHash[inner_pieces[x]]) {
+						asm += '<span style="color: #17AD0E;"> (Match with '+known.scriptHash[inner_pieces[x]].name+')</span>';
+					}
+					asm += '</span></br>';
+				}
+			} else {
+				asm += pieces[i];
+				if (known.pubKey[pieces[i]]) {
+					asm += '<span style="color: #17AD0E;"> (Match with '+known.pubKey[pieces[i]].name+')</span>';
+				} else if (known.scriptHash[pieces[i]]) {
+					asm += '<span style="color: #17AD0E;"> (Match with '+known.scriptHash[pieces[i]].name+')</span>';
+				}
+			}
+
+			asm += '</span></br>';
+		}
+
+		$("#modalScript .asm").html(asm);
+
+		$("#modalScript").modal("show");
+	}
+
+	function hex2ascii(hex) {
+		var str = '';
+		for (var i = 0; i < hex.length; i += 2)
+			str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+		return str;
+	}
+
+	function decodePrivKey(){
+		var wif = $("#verifyScript").val();
+		if(wif.length==51 || wif.length==52){
+			try {
+				var w2address = coinjs.wif2address(wif);
+				var w2pubkey = coinjs.wif2pubkey(wif);
+				var w2privkey = coinjs.wif2privkey(wif);
+
+				$("#verifyPrivKey .address").val(w2address['address']);
+				$("#verifyPrivKey .pubkey").val(w2pubkey['pubkey']);
+				$("#verifyPrivKey .privkey").val(w2privkey['privkey']);
+				$("#verifyPrivKey .iscompressed").html(w2address['compressed']?'true':'false');
+
+				$("#verifyPrivKey").removeClass("hidden");
+				return true;
+			} catch (e) {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	function decodePubKey(){
+		var pubkey = $("#verifyScript").val();
+		if(pubkey.length==66 || pubkey.length==130){
+			try {
+				$("#verifyPubKey .address").val(coinjs.pubkey2address(pubkey));
+				$("#verifyPubKey").removeClass("hidden");
+				$("#verify .verifyLink").val(document.location.origin+''+document.location.pathname+'?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
+				return true;
+			} catch (e) {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	function decodeHDaddress(){
+		var s = $("#verifyScript").val();
+		try {
+			var hex = Crypto.util.bytesToHex((coinjs.base58decode(s)).slice(0,4));
+			var hex_cmp_prv = Crypto.util.bytesToHex((coinjs.numToBytes(coinjs.hdkey.prv,4)).reverse());
+			var hex_cmp_pub = Crypto.util.bytesToHex((coinjs.numToBytes(coinjs.hdkey.pub,4)).reverse());
+			if(hex == hex_cmp_prv || hex == hex_cmp_pub){
+				var hd = coinjs.hd(s);
+				$("#verifyHDaddress .hdKey").html(s);
+				$("#verifyHDaddress .chain_code").val(Crypto.util.bytesToHex(hd.chain_code));
+				$("#verifyHDaddress .depth").val(hd.depth);
+				$("#verifyHDaddress .version").val('0x'+(hd.version).toString(16));
+				$("#verifyHDaddress .child_index").val(hd.child_index);
+				$("#verifyHDaddress .hdwifkey").val((hd.keys.wif)?hd.keys.wif:'');
+				$("#verifyHDaddress .key_type").html((((hd.depth==0 && hd.child_index==0)?'Master':'Derived')+' '+hd.type).toLowerCase());
+				$("#verifyHDaddress .parent_fingerprint").val(Crypto.util.bytesToHex(hd.parent_fingerprint));
+				$("#verifyHDaddress .derived_data table tbody").html("");
+				deriveHDaddress();
+				// Not sharing private keys! $("#verify .verifyLink").val(document.location.origin+''+document.location.pathname+'?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
+				$("#verifyHDaddress").removeClass("hidden");
+				return true;
+			}
+		} catch (e) {
+			return false;
+		}
+	}
+
+	function deriveHDaddress() {
+		var hd = coinjs.hd($("#verifyHDaddress .hdKey").html());
+		var index_start = $("#verifyHDaddress .derivation_index_start").val()*1;
+		var index_end = $("#verifyHDaddress .derivation_index_end").val()*1;
+		var html = '';
+		$("#verifyHDaddress .derived_data table tbody").html("");
+		for(var i=index_start;i<=index_end;i++){
+			var derived = hd.derive(i);
+			html += '<tr>';
+			html += '<td>'+i+'</td>';
+			html += '<td><input type="text" class="form-control" value="'+derived.keys.address+'" readonly></td>';
+			html += '<td><input type="text" class="form-control" value="'+((derived.keys.wif)?derived.keys.wif:'')+'" readonly></td>';
+			html += '<td><input type="text" class="form-control" value="'+derived.keys_extended.pubkey+'" readonly></td>';
+			html += '<td><input type="text" class="form-control" value="'+((derived.keys_extended.privkey)?derived.keys_extended.privkey:'')+'" readonly></td>';
+			html += '</tr>';
+		}
+		$(html).appendTo("#verifyHDaddress .derived_data table tbody");
+	}
+
+	function getMouseXY(e) {
+		var tempX = 0;
+		var tempY = 0;
+		if (IE) { // If browser is IE
+			tempX = event.clientX + document.body.scrollLeft;
+			tempY = event.clientY + document.body.scrollTop;
+		} else {
+			tempX = e.pageX;
+			tempY = e.pageY;
+		};
+
+		if (tempX < 0){tempX = 0};
+		if (tempY < 0){tempY = 0};
+		var xEnt = Crypto.util.bytesToHex([tempX]).slice(-2);
+		var yEnt = Crypto.util.bytesToHex([tempY]).slice(-2);
+		var addEnt = xEnt.concat(yEnt);
+
+		if ($("#entropybucket").html().indexOf(xEnt) == -1 && $("#entropybucket").html().indexOf(yEnt) == -1) {
+			$("#entropybucket").html(addEnt + $("#entropybucket").html());
+		};
+
+		if ($("#entropybucket").html().length > 128) {
+			$("#entropybucket").html($("#entropybucket").html().slice(0, 128))
+		};
+
+		return true;
+	};
+	
+	function _get(value) {
+		var dataArray = (document.location.search).match(/(([a-z0-9\_\[\]]+\=[a-z0-9\_\.\%\@]+))/gi);
+		var r = [];
+		if(dataArray) {
+			for(var x in dataArray) {
+				if((dataArray[x]) && typeof(dataArray[x])=='string') {
+					if((dataArray[x].split('=')[0].toLowerCase()).replace(/\[\]$/ig,'') == value.toLowerCase()) {
+						r.push(unescape(dataArray[x].split('=')[1]));
+					}
+				}
+			}
+		}
+		return r;
+	}
+	
+	/* external providers */
+	
+	var listunspent_blockexplorer_nu = function(redeem){
+		var msgSucess = '<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="//blockexplorer.nu/address/'+redeem.addr+'/1/newest" target="_blank">'+redeem.addr+'</a>'		
+		var msgError = '<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs! Is <a href="https://blockexplorer.nu/">https://blockexplorer.nu/</a> down?';
+		$.ajax ({
+			type: "GET",
+			url: "//crossorigin.me/https://blockexplorer.nu/api/v1/addressUnspent/"+redeem.addr,
+			dataType: "json",
+			error: function(data) {
+				$("#redeemFromStatus").removeClass('hidden').html(msgError);
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+			},
+			success: function(data) {
+				if (coinjs.debug) {console.log(data)};
+				if (data.length == 0) {
+					$("#redeemFromStatus").removeClass('hidden').html(msgError);
+					$("#redeemFromBtn").html("Load").attr('disabled',false);
+				} else {
+					for(var i=0;i<data.length;i++){						
+						if (redeem.isMultisig==true) {
+							var script = $("#redeemFrom").val();
+						} else {
+							var script = data[i].outScript;
+							script = script.replace('OP_DUP OP_HASH160 ', '76a914');
+							script = script.replace(' OP_EQUALVERIFY OP_CHECKSIG', '88ac');
+						}
+						
+						addOutput(data[i].txHash, data[i].outNum, script, data[i].val);
+					}
+					$("#redeemFromAddress").removeClass('hidden').html(msgSucess);
+				}
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+			}
+		});
+	};
+	
+	var getinputamount_blockexplorer_nu = function(txid, index, callback) {
+		$.ajax ({
+			type: "GET",
+			url: "//crossorigin.me/https://blockexplorer.nu/api/v1/txDetails/"+txid,
+			dataType: "json",
+			error: function(data) {
+				callback(false);
+			},
+			success: function(data) {
+				if (coinjs.debug) {console.log(data)};
+				if (data.exists && data.outputs[index]) {
+					callback(data.outputs[index].outValInt*("1e"+coinjs.decimalPlaces));
+				} else {
+					callback(false);
+				}
+			}
+		});
+	};
+
+	var gitmultisig_listunspent = function(redeem, github_repository) {
+		if (!redeem.isMultisig) {
+			$("#redeemFromStatus").removeClass('hidden').html('This provider does not store scripts of unspent transactions, so transactions from single-signature addresses are impossible to create. Please <a href="#settings">select another provider</a>');
+			$("#redeemFromBtn").html("Load").attr('disabled',false);
+			return;
+		}
+
+		var msgSucess = '<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://raw.githubusercontent.com/'+github_repository+'/master/'+redeem.addr+'/unspent" target="_blank">'+redeem.addr+'</a>'		
+		var msgError = '<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs! This provider only store unspent outputs for FLOT addresses <a href="https://github.com/'+github_repository+'">https://github.com/'+github_repository+'</a>. Please <a href="#settings">select another provider</a>';
+		$.ajax ({
+			type: "GET",
+			url: "https://raw.githubusercontent.com/"+github_repository+"/master/"+redeem.addr+"/unspent",
+			dataType: "json",
+			error: function(data) {
+				$("#redeemFromStatus").removeClass('hidden').html(msgError);
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+			},
+			success: function(data) {
+				if (coinjs.debug) {console.log(data)};
+				if (typeof(data.unspent) != "object") {
+					$("#redeemFromStatus").removeClass('hidden').html(msgError);
+					$("#redeemFromBtn").html("Load").attr('disabled',false);
+				} else {
+					console.log(1);
+					for(var i=0;i<data.unspent.length;i++){						
+						var script = $("#redeemFrom").val();
+						addOutput(data.unspent[i].txid, data.unspent[i].vout, script, data.unspent[i].value);
+					}
+					$("#redeemFromAddress").removeClass('hidden').html(msgSucess);
+				}
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+			}
+		});
+	};
+
+	/* bit(coinb.in) api vars */
+	coinjs.host = '//coinb.in/api/';
+	coinjs.uid = '1';
+	coinjs.key = '12345678901234567890123456789012';
+	
+	var providers = {
+		bitcoin: {
+			listUnspent: {
+				"blockr.io": function(redeem){
+					$.ajax ({
+						type: "GET",
+						url: "//btc.blockr.io/api/v1/address/unspent/"+redeem.addr+"?unconfirmed=1",
+						dataType: "json",
+						error: function(data) {
+							$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+						},
+						success: function(data) {
+							if (coinjs.debug) {console.log(data)};
+							if (data.status && data.data && data.status=='success'){
+								$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="//btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+								for(var i in data.data.unspent){
+									var o = data.data.unspent[i];
+									var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script;
+									
+									addOutput(o.tx, o.n, script, o.amount);
+								}
+							} else {
+								$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+							}
+						},
+						complete: function(data, status) {
+							$("#redeemFromBtn").html("Load").attr('disabled',false);
+							totalInputAmount();
+						}
+					});
+				},
+				"coinb.in": function(redeem){
+					$.ajax ({
+						type: "GET",
+						url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=addresses&request=unspent&address='+redeem.addr+'&r='+Math.random(),
+						dataType: "xml",
+						error: function(data) {
+							if (coinjs.debug) {console.log(data)};
+							$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+						},
+						success: function(data) {
+							if (coinjs.debug) {console.log(data)};
+							if ($(data).children("request").children("result").text()){
+								$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address '+redeem.addr+'');
+								$.each($(data).children("request").children("unspent").children(), function(i,o){
+									var tx = (($(o).find("tx_hash").text()).match(/.{1,2}/g).reverse()).join("")+'';
+									var n = $(o).find("tx_output_n").text();
+									var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : $(o).find("script").text();
+									var amount = (($(o).find("value").text()*1)/("1e"+coinjs.decimalPlaces)).toFixed(coinjs.decimalPlaces);
+
+									addOutput(tx, n, script, amount);
+								});
+							} else {
+								$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+							}
+						},
+						complete: function(data, status) {
+							$("#redeemFromBtn").html("Load").attr('disabled',false);
+							totalInputAmount();
+						}
+					});
+				}
+			},
+			broadcast: {
+				"blockr.io": function(thisbtn){ 
+					$(thisbtn).val('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
+					$.ajax ({
+						type: "POST",
+						url: "//btc.blockr.io/api/v1/tx/push",
+						data: {"hex":$("#rawTransaction").val()},
+						dataType: "json",
+						error: function(data) {
+							var r = ' ';
+							r += (data.data) ? data.data : '';
+							r += (data.message) ? ' '+data.message : '';
+							r = (r!='') ? r : ' Failed to broadcast'; // build response 
+							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+						},
+						success: function(data) {
+							if((data.status && data.data) && data.status=='success'){
+								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data);
+							} else {
+								$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+							}				
+						},
+						complete: function(data, status) {
+							$("#rawTransactionStatus").fadeOut().fadeIn();
+							$(thisbtn).val('Submit').attr('disabled',false);				
+						}
+					});
+				},
+				"coinb.in": function(btn){ 
+					var thisbtn = btn;		
+					$(thisbtn).val('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
+					$.ajax ({
+						type: "G",
+						url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction',
+						data: {'rawtx':$("#rawTransaction").val()},
+						dataType: "xml",
+						error: function(data) {
+							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(" There was an error submitting your request, please try again").prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+						},
+						success: function(data) {
+							$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
+							if($(data).find("result").text()==1){
+								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger');
+								$("#rawTransactionStatus").html('txid: '+$(data).find("txid").text());
+							} else {
+								$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
+							}
+						},
+						complete: function(data, status) {
+							$("#rawTransactionStatus").fadeOut().fadeIn();
+							$(thisbtn).val('Submit').attr('disabled',false);				
+						}
+					});
+				}
+			},
+			getInputAmount: {
+				"blockr.io": function(txid, index, callback) {
+					$.ajax ({
+						type: "GET",
+						url: "https://btc.blockr.io/api/v1/tx/info/"+txid,
+						dataType: "json",
+						error: function(data) {
+							callback(false);
+						},
+						success: function(data) {
+							if (coinjs.debug) {console.log(data)};
+							if (data.status && data.data && data.status=='success' && data.data.vouts[index]){
+								callback(data.data.vouts[index].amount*("1e"+coinjs.decimalPlaces));
+							} else {
+								callback(false);
+							}
+						}
+					});
+				}
+			}
+		},
+		litecoin: {
+			listUnspent: {
+				"chain.so": function(redeem){
+					$.ajax ({
+						type: "GET",
+						url: "//chain.so/api/v2/get_tx_unspent/ltc/"+redeem.addr,
+						dataType: "json",
+						error: function(data) {
+							$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+						},
+						success: function(data) {
+							if (coinjs.debug) {console.log(data)};
+							if((data.status && data.data) && data.status=='success'){
+								$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="//btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+								for(var i in data.data.txs){
+									var o = data.data.txs[i];
+									var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script_hex;
+
+									addOutput(o.txid, o.output_no, script, o.value);
+								}
+							} else {
+								$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+							}
+						},
+						complete: function(data, status) {
+							$("#redeemFromBtn").html("Load").attr('disabled',false);
+							totalInputAmount();
+						}
+					});
+				}
+			},
+			broadcast: {
+				"blockr.io": function(thisbtn){
+					$(thisbtn).val('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
+					$.ajax ({
+						type: "POST",
+						url: "//ltc.blockr.io/api/v1/tx/push",
+						data: {"hex":$("#rawTransaction").val()},
+						dataType: "json",
+						error: function(data) {
+							var r = ' ';
+							r += (data.data) ? data.data : '';
+							r += (data.message) ? ' '+data.message : '';
+							r = (r!='') ? r : ' Failed to broadcast'; // build response 
+							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+						},
+						success: function(data) {
+							if (coinjs.debug) {console.log(data)};
+							if((data.status && data.data) && data.status=='success'){
+								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data);
+							} else {
+								$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+							}
+						},
+						complete: function(data, status) {
+							$("#rawTransactionStatus").fadeOut().fadeIn();
+							$(thisbtn).val('Submit').attr('disabled',false);				
+						}
+					});
+				}
+			}
+		},
+		nubits: {
+			listUnspent: {
+				"blockexplorer.nu": listunspent_blockexplorer_nu,
+				"FLOT @dysconnect git-multisig repository": function(redeem) {
+					gitmultisig_listunspent(redeem, "dc-tcs/flot-operations");
+				},
+				"FLOT @masterOfDisaster git-multisig repository": function(redeem) {
+					gitmultisig_listunspent(redeem, "Lamz0rNewb/flot-operations");
+				},
+				"FLOT @jooize git-multisig repository": function(redeem) {
+					gitmultisig_listunspent(redeem, "jooize/flot-operations");
+				},
+			},
+			broadcast: {
+			},
+			getInputAmount: {
+				"blockexplorer.nu": getinputamount_blockexplorer_nu
+			}
+		},
+		nushares: {
+			listUnspent: {
+				"blockexplorer.nu": listunspent_blockexplorer_nu
+			},
+			broadcast: {
+			},
+			getInputAmount: {
+				"blockexplorer.nu": getinputamount_blockexplorer_nu
+			}
+		}
+	}
+	
+	/* page load code */
+
+		/* open wallet code */
 
 	$("#openBtn").click(function(){
 		var email = $("#openEmail").val().toLowerCase();
@@ -228,41 +1133,8 @@ $(document).ready(function() {
 			$(this).parent().fadeOut().remove();
 		});
 	});
-	
-	function updateQueryStringParameter(uri, key, value) {
-		var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
-		var separator = uri.indexOf('?') !== -1 ? "&" : "?";
-		if (uri.match(re)) {
-			return uri.replace(re, '$1' + key + "=" + value + '$2');
-		}
-		else {
-			return uri + separator + key + "=" + value;
-		}
-	}
 
-	function walletBalance(){
-		var tx = coinjs.transaction();
-		$("#walletLoader").removeClass("hidden");
-		coinjs.addressBalance($("#walletAddress").html(),function(data){
-			if($(data).find("result").text()==1){
-				var v = $(data).find("balance").text()/("1e"+coinjs.decimalPlaces);
-				$("#walletBalance").html(v+" BTC").attr('rel',v).fadeOut().fadeIn();
-			} else {
-				$("#walletBalance").html("0.00 BTC").attr('rel',v).fadeOut().fadeIn();
-			}
-
-			$("#walletLoader").addClass("hidden");
-		});
-	}
-
-	function checkBalanceLoop(){
-		setTimeout(function(){
-			walletBalance();
-			checkBalanceLoop();
-		},45000);
-	}
-
-	/* new -> address code */
+		/* new -> address code */
 
 	$("#newKeysBtn").click(function(){
 		coinjs.compressed = false;
@@ -588,41 +1460,34 @@ $(document).ready(function() {
 		$("#qrcode-scanner-callback-to").html($(this).attr('forward-result'));
 	});
 
-	function scannerStart(){
-		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || false;
-		if(navigator.getUserMedia){
-			if (!!window.stream) {
-				$("video").attr('src',null);
-				window.stream.stop();
-  			}
+	/* code for the script decoder */
 
-			var videoSource = $("select#videoSource").val();
-			var constraints = {
-				video: {
-					optional: [{sourceId: videoSource}]
-				}
-			};
-
-			navigator.getUserMedia(constraints, function(stream){
-				window.stream = stream; // make stream available to console
-				var videoElement = document.querySelector('video');
-				videoElement.src = window.URL.createObjectURL(stream);
-				videoElement.play();
-			}, function(error){ });
-
-			QCodeDecoder().decodeFromCamera(document.getElementById('videoReader'), function(er,data){
-				if(!er){
-					var match = data.match(/^(bitcoin|nu|Nu|bcexchange|B\&C\ Exchange|ppcoin|peercoin)\:([a-z0-9]{27,34})/i);
-					var result = match ? match[2] : data;
-					$(""+$("#qrcode-scanner-callback-to").html()).val(result);
-					$("#qrScanClose").click();
+	$(".scriptDecoder").click(function(){
+		if ((typeof MediaStreamTrack === 'function') && typeof MediaStreamTrack.getSources === 'function'){
+			MediaStreamTrack.getSources(function(sourceInfos){
+				var f = 0;
+				$("select#videoSource").html("");
+				for (var i = 0; i !== sourceInfos.length; ++i) {
+					var sourceInfo = sourceInfos[i];
+					var option = document.createElement('option');
+					option.value = sourceInfo.id;
+					if (sourceInfo.kind === 'video') {
+						option.text = sourceInfo.label || 'camera ' + ($("select#videoSource options").length + 1);
+						$(option).appendTo("select#videoSource");
+ 					}
 				}
 			});
+
+			$("#videoSource").unbind("change").change(function(){
+				scannerStart()
+			});
+
 		} else {
-			$("#videoReaderError").removeClass("hidden");
-			$("#videoReader, #videoSource").addClass("hidden");
+			$("#videoSource").addClass("hidden");
 		}
-	}
+		scannerStart();
+		$("#qrcode-scanner-callback-to").html($(this).attr('forward-result'));
+	});
 	
 	/* broadcast code */
 	$("#rawSubmitBtn").click(function(){
@@ -656,99 +1521,6 @@ $(document).ready(function() {
 		providers[$("#coinSelector").val()].listUnspent[host](redeem);
 	});
 
-	/* function to determine what we are redeeming from */
-	function redeemingFrom(string){
-		var r = {};
-		var decode = coinjs.addressDecode(string);
-		if(decode.version == coinjs.pub){ // regular address
-			r.addr = string;
-			r.from = 'address';
-			r.isMultisig = false;
-		} else if (decode.version == coinjs.priv){ // wif key
-			var a = coinjs.wif2address(string);
-			r.addr = a['address'];
-			r.from = 'wif';
-			r.isMultisig = false;
-		} else if (decode.version == coinjs.multisig){ // mulisig address
-			r.addr = '';
-			r.from = 'multisigAddress';
-			r.isMultisig = false;
-		} else {
-			var script = coinjs.script();
-			var decodeRs = script.decodeRedeemScript(string);
-			if(decodeRs){ // redeem script
-				r.addr = decodeRs['address'];
-				r.from = 'redeemScript';
-				r.decodedRs = decodeRs;
-				r.isMultisig = true;
-			} else { // something else
-				r.addr = '';
-				r.from = 'other';
-				r.isMultisig = false;
-			}
-		}
-		return r;
-	}
-
-	/* global function to add outputs to page */
-	function addOutput(tx, n, script, amount) {
-		if(tx){
-			if($("#inputs .txId:last").val()!=""){
-				$("#inputs .txidAdd").click();
-			}
-
-			$("#inputs .row:last input").attr('disabled',true);
-
-			$("#inputs .txId:last").val(tx);
-			$("#inputs .txIdN:last").val(n);
-			$("#inputs .txIdAmount:last").val(amount);
-			$("#inputs .txIdScript:last").val(script);
-		}
-	}
-
-	/* math to calculate the inputs and outputs */
-
-	function totalInputAmount(){
-		$("#totalInput").html('0.00');
-		$.each($("#inputs .txIdAmount"), function(i,o){
-			if(isNaN($(o).val())){
-				$(o).parent().addClass('has-error');
-			} else {
-				$(o).parent().removeClass('has-error');
-				var f = 0;
-				if(!isNaN($(o).val())){
-					f += $(o).val()*1;
-				}
-				$("#totalInput").html((($("#totalInput").html()*1) + (f*1)).toFixed(coinjs.decimalPlaces));
-			}
-		});
-		totalFee();
-	}
-
-	function validateOutputAmount(){
-		$("#recipients .amount").unbind('');
-		$("#recipients .amount").keyup(function(){
-			if(isNaN($(this).val())){
-				$(this).parent().addClass('has-error');
-			} else {
-				$(this).parent().removeClass('has-error');
-				var f = 0;
-				$.each($("#recipients .amount"),function(i,o){
-					if(!isNaN($(o).val())){
-						f += $(o).val()*1;
-					}
-				});
-				$("#totalOutput").html((f).toFixed(coinjs.decimalPlaces));
-			}
-			totalFee();
-		}).keyup();
-	}
-
-	function totalFee(){
-		var fee = (($("#totalInput").html()*1) - ($("#totalOutput").html()*1)).toFixed(coinjs.decimalPlaces);
-		$("#transactionFee").val((fee>0)?fee:'0.00');
-	}
-
 	$("#optionsCollapse").click(function(){
 		if($("#optionsAdvanced").hasClass('hidden')){
 			$("#glyphcollapse").removeClass('glyphicon-collapse-down').addClass('glyphicon-collapse-up');
@@ -777,316 +1549,6 @@ $(document).ready(function() {
 		}
 
 	});
-
-	function decodeRedeemScript(){
-		var script = coinjs.script();
-		var decode = script.decodeRedeemScript($("#verifyScript").val());
-		if(decode){
-			$("#verifyRsData .multisigAddress").val(decode['address']);
-			$("#verifyRsData .multisigScriptHash").val(decode['scriptHash']);
-			$("#verifyRsData .multisigScriptHashKnown").val((known.scriptHash[decode['scriptHash']])?known.scriptHash[decode['scriptHash']].name:'');
-			$("#verifyRsData .signaturesRequired").html(decode['signaturesRequired']);
-			$("#verifyRsData table tbody").html("");
-			for(var i=0;i<decode.pubkeys.length;i++){
-				var pubkey = decode.pubkeys[i];
-				
-				identity = "";
-				if (known.pubKey[pubkey]) {
-					identity = known.pubKey[pubkey].name;
-				}
-				
-				var address = coinjs.pubkey2address(pubkey);
-				$('<tr><td width="30%"><input type="text" class="form-control" value="'+address+'" readonly></td><td><input type="text" class="form-control" value="'+pubkey+'" readonly></td><td><input type="text" class="form-control" value="'+identity+'" readonly></td></tr>').appendTo("#verifyRsData table tbody");
-			}
-			$("#verifyRsData").removeClass("hidden");
-			$("#verify .verifyLink").val(document.location.origin+''+document.location.pathname+'?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	function decodeTransactionScript(){
-		var tx = coinjs.transaction();
-		try {
-			var decode = tx.deserialize($("#verifyScript").val());
-			$("#verifyTransactionData .transactionVersion").html(decode['version']);
-			$("#verifyTransactionData .transactionTime").html(new Date(decode['nTime']*1000).toUTCString());
-			$("#verifyTransactionData .transactionSize").html(decode.size()+' <i>bytes</i>');
-			$("#verifyTransactionData .transactionLockTime").html((decode['lock_time'] >= 500000000)?new Date(decode['nTime']*1000).toUTCString():"Block height "+decode['lock_time']);
-			$("#verifyTransactionData .transactionUnit").html(String.fromCharCode(decode['nUnit']));
-			$("#verifyTransactionData .verifyToSign").on( "click", function() {
-				$("#signTransaction").val(decode.serialize()).fadeOut().fadeIn();
-				window.location.hash = "#sign";
-			});
-			$("#verifyTransactionData").removeClass("hidden");
-			$("#verifyTransactionData tbody").html("");
-
-			$("#verifyTransactionData .ins tbody").html("");
-			$("#verifyTransactionData .fee").addClass("hidden").attr("style", "");
-
-			var inAmountAvailable = 0;
-			var amountTotal = 0;
-			
-			var h = '';
-			$.each(decode.ins, function(i,o){
-				var s = decode.extractScriptKey(i);
-				h = '<tr>';
-				h += '<td class="col-xs-7 txid"><input class="form-control" type="text" value="'+o.outpoint.hash+'" readonly></td>';
-				h += '<td class="col-xs-1 n" >'+o.outpoint.index+'</td>';
-				h += '<td class="col-xs-2 ammount" data-inputid="'+(i)+'"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>';
-				h += '<td class="col-xs-2 script"><input class="form-control" type="text" value="'+Crypto.util.bytesToHex(o.script.buffer)+'" readonly></td>';
-				h += '<td class="col-xs-1 signed">';
-					h += '<span class="glyphicon glyphicon-'+((s.signed=='true')?'ok':'remove')+'-circle"></span>';
-					if(s['type']=='multisig' && s['signatures']>=1){
-						h += '<a href="#" data-index="'+i+'">';
-						h += ' '+s['signatures'];
-						h += '</a>';
-					}
-				h += '</td>';
-				h += '<td class="col-xs-1 multisig">';
-				if(s['type']=='multisig'){
-					h += '<a href="#" data-index="'+i+'">';
-					var script = coinjs.script();
-					var rs = script.decodeRedeemScript(s.script);
-					h += rs['signaturesRequired']+' of '+rs['pubkeys'].length;
-					h += '</a>';
-				} else {
-					h += '<span class="glyphicon glyphicon-remove-circle"></span>';
-				}
-				h += '</td>';
-				h += '</tr>';
-				
-				$(h).appendTo("#verifyTransactionData .ins tbody");
-				
-				if (toolkit.getInputAmount != "disabled") {
-					(function (inputid, total) {
-						providers[$("#coinSelector").val()].getInputAmount[toolkit.getInputAmount](o.outpoint.hash, o.outpoint.index, function(result) {
-							$("#verifyTransactionData .ins tbody td[data-inputid="+inputid+"]").html((result)?coinjs.formatAmount(result):'Not found');
-							if (result) {
-								amountTotal += result;
-								if (++inAmountAvailable == total) {
-									$.each(decode.outs, function(i,o){
-										amountTotal -= o.value;
-									});
-									
-									if ((amountTotal/("1e"+coinjs.decimalPlaces)) > 0.011) {
-										$("#verifyTransactionData .fee").attr("style", "color: red;")
-									}
-									$("#verifyTransactionData .fee").removeClass("hidden");
-									$("#verifyTransactionData .fee .amount").html(coinjs.formatAmount(amountTotal));
-								}
-							}
-						});
-					})(i, decode.ins.length);
-				} else {
-					$("#verifyTransactionData .ins tbody td[data-inputid="+i+"]").html("Not available");
-				}
-			});
-			
-			$("#verifyTransactionData .ins tbody").on( "click", "a[data-index]", function(e) {
-				e.preventDefault();
-				decodeMultiSig(decode, $(this).attr("data-index"));
-			});
-
-			h = '';
-			$.each(decode.outs, function(i,o){
-
-				if(o.script.chunks.length==2 && o.script.chunks[0]==106){ // OP_RETURN
-
-					var data = Crypto.util.bytesToHex(o.script.chunks[1]);
-					var dataascii = hex2ascii(data);
-
-					if(dataascii.match(/^[\s\d\w]+$/ig)){
-						data = dataascii;
-					}
-
-					h += '<tr>';
-					h += '<td><input type="text" class="form-control" value="(OP_RETURN) '+data+'" readonly></td>';
-					h += '<td></td>'; // to account for known address value
-					h += '<td class="col-xs-1">'+(o.value/("1e"+coinjs.decimalPlaces)).toFixed(coinjs.decimalPlaces)+'</td>';
-					h += '<td class="col-xs-2"><input class="form-control" type="text" value="'+Crypto.util.bytesToHex(o.script.buffer)+'" readonly></td>';
-					h += '</tr>';
-				} else {
-
-					var addr = '';
-					var identity = '';
-					if(o.script.chunks.length==5){
-						var pubKeyHash = Crypto.util.bytesToHex(o.script.chunks[2])
-						addr = coinjs.scripthash2address(pubKeyHash, coinjs.pub);
-						$.each(known.pubKey, function(pubkey, id) {
-							if (coinjs.pubkey2address(pubkey, coinjs.pub) == addr) {
-								identity = known.pubKey[pubkey].name;
-								return false;
-							}
-						});
-					} else {
-						var scriptHash = Crypto.util.bytesToHex(o.script.chunks[1]);
-						addr = coinjs.scripthash2address(scriptHash, coinjs.multisig);
-						if (known.scriptHash[scriptHash]) {
-							identity = known.scriptHash[scriptHash].name;
-						}
-					}
-					
-					
-					
-
-					h += '<tr>';
-					h += '<td class="col-xs-4"><input class="form-control" type="text" value="'+addr+'" readonly></td>';
-					h += '<td class="col-xs-4"><input class="form-control" type="text" value="'+identity+'" readonly></td>';
-					h += '<td class="col-xs-1">'+coinjs.formatAmount(o.value)+'</td>';
-					h += '<td class="col-xs-3"><input class="form-control" type="text" value="'+Crypto.util.bytesToHex(o.script.buffer)+'" readonly></td>';
-					h += '</tr>';
-				}
-			});
-			$(h).appendTo("#verifyTransactionData .outs tbody");
-
-			$("#verify .verifyLink").val(document.location.origin+''+document.location.pathname+'?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
-			return true;
-		} catch(e) {
-			return false;
-		}
-	}
-	
-	function decodeMultiSig(tx, i) {
-		var html = '';
-		var list = tx.listMultiSignature(i);
-		
-		for (var pubkey in list) {
-			identity = "";
-			if (known.pubKey[pubkey]) {
-				identity = known.pubKey[pubkey].name;
-			}
-			
-			if (coinjs.debug) {console.log(list, pubkey)};
-			
-			var address = coinjs.pubkey2address(pubkey);
-			html += '<tr style="'+ ((list[pubkey]) ? 'background-color: rgb(223, 240, 216);':'') +'">\
-				<td>\
-					<input type="text" class="form-control" value="'+address+'" readonly>\
-				</td>\
-				<td>\
-					<input type="text" class="form-control" value="'+pubkey+'" readonly>\
-				</td>\
-				<td>\
-					<input type="text" class="form-control" value="'+identity+'" readonly>\
-				</td>\
-			</tr>';
-		}
-		
-		$("#modalMultisig table tbody").html(html);
-		$("#modalMultisig .combine .alert").addClass("hidden");
-		
-		$("#modalMultisig .combineTx").click(function() {
-			var newTx = tx.combineMultiSignature($("#modalMultisig .combine textarea").val());
-			if (newTx) {
-				if (coinjs.debug) {console.log(newTx, newTx.serialize())};
-				$("#verifyScript").val(newTx.serialize()).fadeOut().fadeIn();
-				$("#verifyBtn").click();
-				
-				$("#modalMultisig .combine .alert").addClass("hidden");
-				$("#modalMultisig").modal("hide");
-				
-				window.location.hash = "#verify";
-			} else {
-				$("#modalMultisig .combine .alert").removeClass("hidden");
-			}
-		});
-		$("#modalMultisig").modal("show");
-	}
-
-	function hex2ascii(hex) {
-		var str = '';
-		for (var i = 0; i < hex.length; i += 2)
-			str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-		return str;
-	}
-
-	function decodePrivKey(){
-		var wif = $("#verifyScript").val();
-		if(wif.length==51 || wif.length==52){
-			try {
-				var w2address = coinjs.wif2address(wif);
-				var w2pubkey = coinjs.wif2pubkey(wif);
-				var w2privkey = coinjs.wif2privkey(wif);
-
-				$("#verifyPrivKey .address").val(w2address['address']);
-				$("#verifyPrivKey .pubkey").val(w2pubkey['pubkey']);
-				$("#verifyPrivKey .privkey").val(w2privkey['privkey']);
-				$("#verifyPrivKey .iscompressed").html(w2address['compressed']?'true':'false');
-
-				$("#verifyPrivKey").removeClass("hidden");
-				return true;
-			} catch (e) {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
-
-	function decodePubKey(){
-		var pubkey = $("#verifyScript").val();
-		if(pubkey.length==66 || pubkey.length==130){
-			try {
-				$("#verifyPubKey .address").val(coinjs.pubkey2address(pubkey));
-				$("#verifyPubKey").removeClass("hidden");
-				$("#verify .verifyLink").val(document.location.origin+''+document.location.pathname+'?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
-				return true;
-			} catch (e) {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
-
-	function decodeHDaddress(){
-		var s = $("#verifyScript").val();
-		try {
-			var hex = Crypto.util.bytesToHex((coinjs.base58decode(s)).slice(0,4));
-			var hex_cmp_prv = Crypto.util.bytesToHex((coinjs.numToBytes(coinjs.hdkey.prv,4)).reverse());
-			var hex_cmp_pub = Crypto.util.bytesToHex((coinjs.numToBytes(coinjs.hdkey.pub,4)).reverse());
-			if(hex == hex_cmp_prv || hex == hex_cmp_pub){
-				var hd = coinjs.hd(s);
-				$("#verifyHDaddress .hdKey").html(s);
-				$("#verifyHDaddress .chain_code").val(Crypto.util.bytesToHex(hd.chain_code));
-				$("#verifyHDaddress .depth").val(hd.depth);
-				$("#verifyHDaddress .version").val('0x'+(hd.version).toString(16));
-				$("#verifyHDaddress .child_index").val(hd.child_index);
-				$("#verifyHDaddress .hdwifkey").val((hd.keys.wif)?hd.keys.wif:'');
-				$("#verifyHDaddress .key_type").html((((hd.depth==0 && hd.child_index==0)?'Master':'Derived')+' '+hd.type).toLowerCase());
-				$("#verifyHDaddress .parent_fingerprint").val(Crypto.util.bytesToHex(hd.parent_fingerprint));
-				$("#verifyHDaddress .derived_data table tbody").html("");
-				deriveHDaddress();
-				// Not sharing private keys! $("#verify .verifyLink").val(document.location.origin+''+document.location.pathname+'?mode='+$("#coinSelector").val()+'&verify='+$("#verifyScript").val());
-				$("#verifyHDaddress").removeClass("hidden");
-				return true;
-			}
-		} catch (e) {
-			return false;
-		}
-	}
-
-	function deriveHDaddress() {
-		var hd = coinjs.hd($("#verifyHDaddress .hdKey").html());
-		var index_start = $("#verifyHDaddress .derivation_index_start").val()*1;
-		var index_end = $("#verifyHDaddress .derivation_index_end").val()*1;
-		var html = '';
-		$("#verifyHDaddress .derived_data table tbody").html("");
-		for(var i=index_start;i<=index_end;i++){
-			var derived = hd.derive(i);
-			html += '<tr>';
-			html += '<td>'+i+'</td>';
-			html += '<td><input type="text" class="form-control" value="'+derived.keys.address+'" readonly></td>';
-			html += '<td><input type="text" class="form-control" value="'+((derived.keys.wif)?derived.keys.wif:'')+'" readonly></td>';
-			html += '<td><input type="text" class="form-control" value="'+derived.keys_extended.pubkey+'" readonly></td>';
-			html += '<td><input type="text" class="form-control" value="'+((derived.keys_extended.privkey)?derived.keys_extended.privkey:'')+'" readonly></td>';
-			html += '</tr>';
-		}
-		$(html).appendTo("#verifyHDaddress .derived_data table tbody");
-	}
-
 
 	/* sign code */
 
@@ -1322,343 +1784,29 @@ $(document).ready(function() {
 		}
 	});
 
+	/* verify page code*/
+
+	$("#verifyTransactionData .ins tbody").on( "click", "a[data-index-multisig]", function(e) {
+		e.preventDefault();
+		decodeMultiSig($("#verifyTransactionData .ins tbody").data("tx"), $(this).attr("data-index-multisig"));
+	});
+
+	$("#verifyTransactionData .ins tbody").on( "click", "a[data-index-inputscript]", function(e) {
+		e.preventDefault();
+		decodeScript($("#verifyTransactionData .ins tbody").data("tx").ins[$(this).attr("data-index-inputscript")].script);
+	});
+
+	$("#verifyTransactionData .outs tbody").on( "click", "a[data-index-outputscript]", function(e) {
+		e.preventDefault();
+		decodeScript($("#verifyTransactionData .ins tbody").data("tx").outs[$(this).attr("data-index-outputscript")].script);
+	});
+
 	/* capture mouse movement to add entropy */
 	var IE = document.all?true:false // Boolean, is browser IE?
 	if (!IE) document.captureEvents(Event.MOUSEMOVE)
 	document.onmousemove = getMouseXY;
-	function getMouseXY(e) {
-		var tempX = 0;
-		var tempY = 0;
-		if (IE) { // If browser is IE
-			tempX = event.clientX + document.body.scrollLeft;
-			tempY = event.clientY + document.body.scrollTop;
-		} else {
-			tempX = e.pageX;
-			tempY = e.pageY;
-		};
-
-		if (tempX < 0){tempX = 0};
-		if (tempY < 0){tempY = 0};
-		var xEnt = Crypto.util.bytesToHex([tempX]).slice(-2);
-		var yEnt = Crypto.util.bytesToHex([tempY]).slice(-2);
-		var addEnt = xEnt.concat(yEnt);
-
-		if ($("#entropybucket").html().indexOf(xEnt) == -1 && $("#entropybucket").html().indexOf(yEnt) == -1) {
-			$("#entropybucket").html(addEnt + $("#entropybucket").html());
-		};
-
-		if ($("#entropybucket").html().length > 128) {
-			$("#entropybucket").html($("#entropybucket").html().slice(0, 128))
-		};
-
-		return true;
-	};
 	
-	function _get(value) {
-		var dataArray = (document.location.search).match(/(([a-z0-9\_\[\]]+\=[a-z0-9\_\.\%\@]+))/gi);
-		var r = [];
-		if(dataArray) {
-			for(var x in dataArray) {
-				if((dataArray[x]) && typeof(dataArray[x])=='string') {
-					if((dataArray[x].split('=')[0].toLowerCase()).replace(/\[\]$/ig,'') == value.toLowerCase()) {
-						r.push(unescape(dataArray[x].split('=')[1]));
-					}
-				}
-			}
-		}
-		return r;
-	}
-	
-	/* external providers */
-	
-	var listunspent_blockexplorer_nu = function(redeem){
-		var msgSucess = '<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="//blockexplorer.nu/address/'+redeem.addr+'/1/newest" target="_blank">'+redeem.addr+'</a>'		
-		var msgError = '<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs! Is <a href="https://blockexplorer.nu/">https://blockexplorer.nu/</a> down?';
-		$.ajax ({
-			type: "GET",
-			url: "//crossorigin.me/https://blockexplorer.nu/api/v1/addressUnspent/"+redeem.addr,
-			dataType: "json",
-			error: function(data) {
-				$("#redeemFromStatus").removeClass('hidden').html(msgError);
-				$("#redeemFromBtn").html("Load").attr('disabled',false);
-			},
-			success: function(data) {
-				if (coinjs.debug) {console.log(data)};
-				if (data.length == 0) {
-					$("#redeemFromStatus").removeClass('hidden').html(msgError);
-					$("#redeemFromBtn").html("Load").attr('disabled',false);
-				} else {
-					for(var i=0;i<data.length;i++){						
-						if (redeem.isMultisig==true) {
-							var script = $("#redeemFrom").val();
-						} else {
-							var script = data[i].outScript;
-							script = script.replace('OP_DUP OP_HASH160 ', '76a914');
-							script = script.replace(' OP_EQUALVERIFY OP_CHECKSIG', '88ac');
-						}
-						
-						addOutput(data[i].txHash, data[i].outNum, script, data[i].val);
-					}
-					$("#redeemFromAddress").removeClass('hidden').html(msgSucess);
-				}
-			},
-			complete: function(data, status) {
-				$("#redeemFromBtn").html("Load").attr('disabled',false);
-				totalInputAmount();
-			}
-		});
-	};
-	
-	var getinputamount_blockexplorer_nu = function(txid, index, callback) {
-		$.ajax ({
-			type: "GET",
-			url: "//crossorigin.me/https://blockexplorer.nu/api/v1/txDetails/"+txid,
-			dataType: "json",
-			error: function(data) {
-				callback(false);
-			},
-			success: function(data) {
-				if (coinjs.debug) {console.log(data)};
-				if (data.exists && data.outputs[index]) {
-					callback(data.outputs[index].outValInt*("1e"+coinjs.decimalPlaces));
-				} else {
-					callback(false);
-				}
-			}
-		});
-	}
-
-	/* bit(coinb.in) api vars */
-	coinjs.host = '//coinb.in/api/';
-	coinjs.uid = '1';
-	coinjs.key = '12345678901234567890123456789012';
-	
-	var providers = {
-		bitcoin: {
-			listUnspent: {
-				blockr_io: function(redeem){
-					$.ajax ({
-						type: "GET",
-						url: "//btc.blockr.io/api/v1/address/unspent/"+redeem.addr+"?unconfirmed=1",
-						dataType: "json",
-						error: function(data) {
-							$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
-						},
-						success: function(data) {
-							if (coinjs.debug) {console.log(data)};
-							if (data.status && data.data && data.status=='success'){
-								$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="//btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
-								for(var i in data.data.unspent){
-									var o = data.data.unspent[i];
-									var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script;
-									
-									addOutput(o.tx, o.n, script, o.amount);
-								}
-							} else {
-								$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
-							}
-						},
-						complete: function(data, status) {
-							$("#redeemFromBtn").html("Load").attr('disabled',false);
-							totalInputAmount();
-						}
-					});
-				},
-				coinb_in: function(redeem){
-					$.ajax ({
-						type: "GET",
-						url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=addresses&request=unspent&address='+redeem.addr+'&r='+Math.random(),
-						dataType: "xml",
-						error: function(data) {
-							if (coinjs.debug) {console.log(data)};
-							$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
-						},
-						success: function(data) {
-							if (coinjs.debug) {console.log(data)};
-							if ($(data).children("request").children("result").text()){
-								$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address '+redeem.addr+'');
-								$.each($(data).children("request").children("unspent").children(), function(i,o){
-									var tx = (($(o).find("tx_hash").text()).match(/.{1,2}/g).reverse()).join("")+'';
-									var n = $(o).find("tx_output_n").text();
-									var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : $(o).find("script").text();
-									var amount = (($(o).find("value").text()*1)/("1e"+coinjs.decimalPlaces)).toFixed(coinjs.decimalPlaces);
-
-									addOutput(tx, n, script, amount);
-								});
-							} else {
-								$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
-							}
-						},
-						complete: function(data, status) {
-							$("#redeemFromBtn").html("Load").attr('disabled',false);
-							totalInputAmount();
-						}
-					});
-				}
-			},
-			broadcast: {
-				blockr_io: function(thisbtn){ 
-					$(thisbtn).val('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
-					$.ajax ({
-						type: "POST",
-						url: "//btc.blockr.io/api/v1/tx/push",
-						data: {"hex":$("#rawTransaction").val()},
-						dataType: "json",
-						error: function(data) {
-							var r = ' ';
-							r += (data.data) ? data.data : '';
-							r += (data.message) ? ' '+data.message : '';
-							r = (r!='') ? r : ' Failed to broadcast'; // build response 
-							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-						},
-						success: function(data) {
-							if((data.status && data.data) && data.status=='success'){
-								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data);
-							} else {
-								$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-							}				
-						},
-						complete: function(data, status) {
-							$("#rawTransactionStatus").fadeOut().fadeIn();
-							$(thisbtn).val('Submit').attr('disabled',false);				
-						}
-					});
-				},
-				coinb_in: function(btn){ 
-					var thisbtn = btn;		
-					$(thisbtn).val('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
-					$.ajax ({
-						type: "G",
-						url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction',
-						data: {'rawtx':$("#rawTransaction").val()},
-						dataType: "xml",
-						error: function(data) {
-							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(" There was an error submitting your request, please try again").prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-						},
-						success: function(data) {
-							$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
-							if($(data).find("result").text()==1){
-								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger');
-								$("#rawTransactionStatus").html('txid: '+$(data).find("txid").text());
-							} else {
-								$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
-							}
-						},
-						complete: function(data, status) {
-							$("#rawTransactionStatus").fadeOut().fadeIn();
-							$(thisbtn).val('Submit').attr('disabled',false);				
-						}
-					});
-				}
-			},
-			getInputAmount: {
-				blockr_io: function(txid, index, callback) {
-					$.ajax ({
-						type: "GET",
-						url: "https://btc.blockr.io/api/v1/tx/info/"+txid,
-						dataType: "json",
-						error: function(data) {
-							callback(false);
-						},
-						success: function(data) {
-							if (coinjs.debug) {console.log(data)};
-							if (data.status && data.data && data.status=='success' && data.data.vouts[index]){
-								callback(data.data.vouts[index].amount*("1e"+coinjs.decimalPlaces));
-							} else {
-								callback(false);
-							}
-						}
-					});
-				}
-			}
-		},
-		litecoin: {
-			listUnspent: {
-				chain_so: function(redeem){
-					$.ajax ({
-						type: "GET",
-						url: "//chain.so/api/v2/get_tx_unspent/ltc/"+redeem.addr,
-						dataType: "json",
-						error: function(data) {
-							$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
-						},
-						success: function(data) {
-							if (coinjs.debug) {console.log(data)};
-							if((data.status && data.data) && data.status=='success'){
-								$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="//btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
-								for(var i in data.data.txs){
-									var o = data.data.txs[i];
-									var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script_hex;
-
-									addOutput(o.txid, o.output_no, script, o.value);
-								}
-							} else {
-								$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
-							}
-						},
-						complete: function(data, status) {
-							$("#redeemFromBtn").html("Load").attr('disabled',false);
-							totalInputAmount();
-						}
-					});
-				}
-			},
-			broadcast: {
-				blockr_io: function(thisbtn){
-					$(thisbtn).val('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
-					$.ajax ({
-						type: "POST",
-						url: "//ltc.blockr.io/api/v1/tx/push",
-						data: {"hex":$("#rawTransaction").val()},
-						dataType: "json",
-						error: function(data) {
-							var r = ' ';
-							r += (data.data) ? data.data : '';
-							r += (data.message) ? ' '+data.message : '';
-							r = (r!='') ? r : ' Failed to broadcast'; // build response 
-							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-						},
-						success: function(data) {
-							if (coinjs.debug) {console.log(data)};
-							if((data.status && data.data) && data.status=='success'){
-								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data);
-							} else {
-								$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-							}
-						},
-						complete: function(data, status) {
-							$("#rawTransactionStatus").fadeOut().fadeIn();
-							$(thisbtn).val('Submit').attr('disabled',false);				
-						}
-					});
-				}
-			}
-		},
-		nubits: {
-			listUnspent: {
-				blockexplorer_nu: listunspent_blockexplorer_nu
-			},
-			broadcast: {
-			},
-			getInputAmount: {
-				blockexplorer_nu: getinputamount_blockexplorer_nu
-			}
-		},
-		nushares: {
-			listUnspent: {
-				blockexplorer_nu: listunspent_blockexplorer_nu
-			},
-			broadcast: {
-			},
-			getInputAmount: {
-				blockexplorer_nu: getinputamount_blockexplorer_nu
-			}
-		}
-	}
-	
-	/* page load code */
-	
-	$('input[readonly]').click(function () {
+	$("html").on( "click", "input[readonly]", function () {
 		this.select();
 	});
 	
