@@ -1590,7 +1590,7 @@ $(document).ready(function() {
 					window.location.hash = "#broadcast";
 				});
 			} catch(e) {
-				if (coinjs.debug) {console.log(e)};
+				if (coinjs.debug) {console.log(e.stack)};
 			}
 		} else {
 			$("#signedDataError").removeClass('hidden').delay(2000).queue(function(){

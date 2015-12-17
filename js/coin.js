@@ -393,7 +393,7 @@
 				return false;
 			}
 		} catch(e) {
-			if (coinjs.debug) {console.log(e)};
+			if (coinjs.debug) {console.log(e.stack)};
 			return false;
 		}
 	}
@@ -411,7 +411,7 @@
 			publicKeyBytes.unshift(0x04);
 			return Crypto.util.bytesToHex(publicKeyBytes);
 		} catch (e) {
-			if (coinjs.debug) {console.log(e)};
+			if (coinjs.debug) {console.log(e.stack)};
 			return false;
 		}
 	}
@@ -804,7 +804,7 @@
 					r.scriptHash = multi['scriptHash'];
 				}
 			} catch(e) {
-				if (coinjs.debug) {console.log(e)};
+				if (coinjs.debug) {console.log(e.stack)};
 				r = false;
 			}
 			return r;
@@ -1254,7 +1254,7 @@
 			s.writeOp(0);
 
 			if(this.ins[index].script.chunks[this.ins[index].script.chunks.length-1]==174){
-				s.writeBytes(signature);
+				s.writeBytes(newSignature);
 
 			}  else if (this.ins[index].script.chunks[0]==0 && this.ins[index].script.chunks[this.ins[index].script.chunks.length-1][this.ins[index].script.chunks[this.ins[index].script.chunks.length-1].length-1]==174){
 				var pubkeyList = this.scriptListPubkey(coinjs.script(redeemScript));
