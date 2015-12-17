@@ -1532,7 +1532,7 @@
 			r = sig.r;
 			s = sig.s;
 		} else {
-			throw "Invalid value for signature";
+			return false;
 		}
 
 		var pubkey;
