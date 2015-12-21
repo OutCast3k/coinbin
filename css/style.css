@@ -24,3 +24,27 @@ body {
 	background-color: #f5f5f5;
 	padding-top: 20px;
 }
+
+
+.form-horizontal .progress-form {
+  margin: 20px 0px 20px 0px;
+} 
+.progress-form {
+  background-color: #eee;
+}
+.progress-form .bar {
+  background-color:#f8f8f8;
+  border-right:20px solid #6f6;
+  width:10%;
+  color:#f90;
+  overflow:hidden;
+  white-space: nowrap;
+  padding:3px 0 3px 10px;
+  font-family: 'courier new',courier,fixed;
+}
+.progress-scrypt {
+  color:#090;
+}
+.progress-pbkdf2 {
+  color:#f90;
+}

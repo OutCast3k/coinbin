@@ -29,6 +29,8 @@
 		<script type="text/javascript" src="js/jsbn.js"></script>
 		<script type="text/javascript" src="js/ellipticcurve.js"></script>
 
+		<script type="text/javascript" src="js/warpwallet.js"></script>
+        
 		<script type="text/javascript" src="js/coin.js"></script>
 		<script type="text/javascript" src="js/coinbin.js"></script>
 	</head>
@@ -271,7 +273,37 @@
 							<label><input type="checkbox" id="newBrainwallet" class="checkbox-inline"> Custom Seed or Brain Wallet</label>
 							<input type="text" class="form-control hidden" id="brainwallet">
 						</div>
-
+						<div class="checkbox">
+							<label><input type="checkbox" id="warpwallet" class="checkbox-inline"> Warp Wallet</label>
+							<div class="row hidden" id="warpgen">
+								<div class="col-md-12">
+                                	<div class="input-group">
+                                        <input type="password" class="form-control" id="warpphrase" placeholder="Enter Passphrase">
+                                        <span class="input-group-btn">
+                                            <button class="showKey btn btn-default" type="button">Show</button>
+                                        </span>
+                                    </div>
+                                    <div class="alert alert-danger hidden" id="warpwarning">
+                                        <span class="glyphicon glyphicon-exclamation-sign"></span> You must enter a passphrase
+                                    </div>
+								</div>
+                                <hr>
+								<div class="col-md-12">
+                                	<div class="input-group">
+                                        <input type="password" class="form-control" id="warpsalt" placeholder="Enter email address for salt (optional)">
+                                        <span class="input-group-btn">
+                                            <button class="showKey btn btn-default" type="button">Show</button>
+                                        </span>
+                                    </div>
+                                    <div class="form-group progress-form" style="display:none;">
+                                      <div class="bar" style="width:10%;">
+                                        <span class="progress-scrypt"></span>
+                                        <span class="progress-pbkdf2"></span>
+                                      </div>
+                                    </div>
+								</div>
+							</div>
+						</div>
 						<div class="checkbox">
 							<label><input type="checkbox" id="encryptKey" class="checkbox-inline"> Encrypt Private Key with AES-256 Password</label>
 							<div id="aes256passform" class="row hidden">
@@ -743,6 +775,17 @@
 								</div>
 							</div>
 						</div>
+						<div class="row hidden" id="brainkey">
+                        	<div class="col-md-12">
+                        		<p><button type="button" class="btn btn-success keybrain"><span class="glyphicon glyphicon-refresh"></span> Brain Wallet (Compressed)</button> <button type="button" class="btn btn-success keybrain2"><span class="glyphicon glyphicon-refresh"></span> Brain Wallet (Uncompressed)</button> <button type="button" class="btn btn-success keywarp"><span class="glyphicon glyphicon-refresh"></span> Warp Wallet</button></p>
+                                <div class="form-group progress-form" style="display:none;">
+                                  <div class="bar" style="width:10%;">
+                                    <span class="progress-scrypt"></span>
+                                    <span class="progress-pbkdf2"></span>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
 						<div class="row">
 							<div class="col-md-12">
                                 <label for="signTransaction">Transaction</label>

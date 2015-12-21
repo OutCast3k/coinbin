@@ -241,6 +241,20 @@ $(document).ready(function() {
 	/* new -> address code */
 
 	$("#newKeysBtn").click(function(){
+		// Handle warp wallet
+		if($('#warpwallet:checked').length){
+			if($('#warpphrase').val() == ''){
+				$('#warpwarning').removeClass('hidden');
+				$('#warpphrase').closest('.input-group').addClass('has-error');
+				return false;
+			}
+			
+			$("#newBitcoinAddress, #newPubKey, #newPrivKey").val('Loading...');
+			runwarp('#warpgen',$('#warpphrase').val(),$('#warpsalt').val(), '#newPrivKey');
+			
+			return;
+		}
+		
 		coinjs.compressed = false;
 		if($("#newCompressed").is(":checked")){
 			coinjs.compressed = true;
@@ -440,6 +454,60 @@ $(document).ready(function() {
 		totalInputAmount();
 	}).keyup(function(){
 		totalInputAmount();
+	});
+	
+	// Warp wallet keys
+	$('#signPrivateKey').keyup(function(){
+		var wif = $(this).val();
+
+		if(wif.length==51 || wif.length==52){
+			try {
+				var w2address = coinjs.wif2address(wif);
+				var w2pubkey = coinjs.wif2pubkey(wif);
+				var w2privkey = coinjs.wif2privkey(wif);
+
+				$('#brainkey').addClass("hidden");
+			} catch (e) {
+				$('#brainkey').removeClass("hidden");
+			}
+		} else {
+			$('#brainkey').removeClass("hidden");
+		}
+	});
+	
+	$('#brainkey button').click(function(){
+		var value = $('#signPrivateKey').val();
+		if($(this).hasClass('keybrain') || $(this).hasClass('keybrain2')){
+			coinjs.compressed = $(this).hasClass('keybrain');
+			var coin = coinjs.newKeys(value);
+			value = coin.wif;
+			$('#signPrivateKey').val(value).trigger('keyup');
+		}else{
+		  var salt = '';
+		  var x;
+		  if(x = prompt('If you have a salt enter it here','')){
+			salt = x;  
+		  }
+		  runwarp('#brainkey',value,salt, '#signPrivateKey');
+		}
+	});
+	
+	$('#newAddress input:checkbox').click(function(){
+		if($(this).attr('id') == 'warpwallet'){
+			$('#newAddress input:checked:not("#warpwallet")').each(function(){
+				$(this).attr('checked',false);
+				$('input[type="text"], .row',$(this).closest('.checkbox')).addClass('hidden');
+			});
+			$('.row',$('#warpwallet').closest('.checkbox')).removeClass('hidden');
+		}else{
+			$('.row',$('#warpwallet').closest('.checkbox')).addClass('hidden');
+			$('#warpwallet').attr('checked', false);
+		}
+	});
+	
+	$('#warpphrase,#warpsalt').keyup(function(){
+		$(this).closest('.input-group').removeClass('has-error');
+		$('#warpwarning').addClass('hidden');
 	});
 
 	/* code for the qr code scanner */
