@@ -459,8 +459,9 @@ $(document).ready(function() {
 	// Warp wallet keys
 	$('#signPrivateKey').keyup(function(){
 		var wif = $(this).val();
-
-		if(wif.length==51 || wif.length==52){
+		if(wif == ''){
+			$('#brainkey').addClass("hidden");
+		}else if(wif.length==51 || wif.length==52){
 			try {
 				var w2address = coinjs.wif2address(wif);
 				var w2pubkey = coinjs.wif2pubkey(wif);
