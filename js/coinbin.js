@@ -1019,7 +1019,13 @@ $(document).ready(function() {
 	}
 
 	$(".showKey").click(function(){
-		$("input[type='password']",$(this).parent().parent()).attr('type','text');
+		if($(this).text() == 'Show'){
+			$(this).text('Hide');
+			$("input[type='password']",$(this).parent().parent()).attr('type','text');
+		}else{
+			$(this).text('Show');
+			$("input[type='text']",$(this).parent().parent()).attr('type','password');
+		}
 	});
 
 	$("#homeBtn").click(function(e){
