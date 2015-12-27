@@ -631,6 +631,15 @@ $(document).ready(function() {
 		} else {
 			listUnspentDefault(redeem);
 		}
+
+		if($("#redeemFromStatus").hasClass("hidden")) {
+			// An ethical dilemma: Should we automatically set nLockTime?
+			if(redeem.from == 'redeemScript' && redeem.decodedRs.type == "hodl__") {
+				$("#nLockTime").val(redeem.decodedRs.locktime);
+			} else {
+				$("#nLockTime").val(0);
+			}
+		}
 	});
 
 	/* function to determine what we are redeeming from */
@@ -657,7 +666,7 @@ $(document).ready(function() {
 				r.addr = decodeRs['address'];
 				r.from = 'redeemScript';
 				r.decodedRs = decodeRs;
-				r.isMultisig = true;
+				r.isMultisig = true; // not quite, may be hodl
 			} else { // something else
 				r.addr = '';
 				r.from = 'other';
