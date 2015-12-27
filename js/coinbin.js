@@ -360,6 +360,43 @@ $(document).ready(function() {
 		}
 	});
 
+	/* new -> time locked code */
+
+	$('#timeLockedDateTimePicker').datetimepicker({
+		format: "MM/DD/YYYY HH:mm",
+	});
+	
+    $("#newTimeLockedAddress").click(function(){
+
+        $("#timeLockedData").removeClass('show').addClass('hidden').fadeOut();
+        $("#timeLockedPubKey").parent().removeClass('has-error');
+        $("#timeLockedDateTimePicker").parent().removeClass('has-error');
+        $("#timeLockedErrorMsg").hide();
+
+        if(!coinjs.pubkeydecompress($("#timeLockedPubKey").val())) {
+        	$('#timeLockedPubKey').parent().addClass('has-error');
+        }
+
+        var date = $('#timeLockedDateTimePicker').data("DateTimePicker").date();
+        if(!date || !date.isValid()) {
+        	$('#timeLockedDateTimePicker').parent().addClass('has-error');
+        }
+
+        if(($("#timeLockedPubKey").parent().hasClass('has-error')==false) && $("#timeLockedDateTimePicker").parent().hasClass('has-error')==false){
+        	try {
+	            var hodl = coinjs.simpleHodlAddress($("#timeLockedPubKey").val(), date.unix());
+	            $("#timeLockedData .address").val(hodl['address']);
+	            $("#timeLockedData .script").val(hodl['redeemScript']);
+	            $("#timeLockedData .scriptUrl").val(document.location.origin+''+document.location.pathname+'?verify='+hodl['redeemScript']+'#verify');
+	            $("#timeLockedData").removeClass('hidden').addClass('show').fadeIn();
+	        } catch(e) {
+	        	$("#timeLockedErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> ' + e).fadeIn();
+	        }
+        } else {
+            $("#timeLockedErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> Public key and/or date is invalid!').fadeIn();
+        }
+    });
+
 	/* new -> Hd address code */
 
 	$(".deriveHDbtn").click(function(){
@@ -941,20 +978,34 @@ $(document).ready(function() {
 		var script = coinjs.script();
 		var decode = script.decodeRedeemScript($("#verifyScript").val());
 		if(decode){
-			$("#verifyRsData .multisigAddress").val(decode['address']);
-			$("#verifyRsData .signaturesRequired").html(decode['signaturesRequired']);
-			$("#verifyRsData table tbody").html("");
-			for(var i=0;i<decode.pubkeys.length;i++){
-				var pubkey = decode.pubkeys[i];
-				var address = coinjs.pubkey2address(pubkey);
-				$('<tr><td width="30%"><input type="text" class="form-control" value="'+address+'" readonly></td><td><input type="text" class="form-control" value="'+pubkey+'" readonly></td></tr>').appendTo("#verifyRsData table tbody");
+			$("#verifyRsDataMultisig").addClass('hidden');
+			$("#verifyRsDataHodl").addClass('hidden');
+
+			if(decode.type == "multisig__") {
+				$("#verifyRsDataMultisig .multisigAddress").val(decode['address']);
+				$("#verifyRsDataMultisig .signaturesRequired").html(decode['signaturesRequired']);
+				$("#verifyRsDataMultisig table tbody").html("");
+				for(var i=0;i<decode.pubkeys.length;i++){
+					var pubkey = decode.pubkeys[i];
+					var address = coinjs.pubkey2address(pubkey);
+					$('<tr><td width="30%"><input type="text" class="form-control" value="'+address+'" readonly></td><td><input type="text" class="form-control" value="'+pubkey+'" readonly></td></tr>').appendTo("#verifyRsDataMultisig table tbody");
+				}
+				$("#verifyRsData").removeClass("hidden");
+				$("#verifyRsDataMultisig").removeClass('hidden');
+				$(".verifyLink").attr('href','?verify='+$("#verifyScript").val());
+				return true;
+			} else if(decode.type == "hodl__") {
+				var d = $("#verifyRsDataHodl .date").data("DateTimePicker");
+				$("#verifyRsDataHodl .address").val(decode['address']);
+				$("#verifyRsDataHodl .pubkey").val(coinjs.pubkey2address(decode['pubkey']));
+				$("#verifyRsDataHodl .date").val(decode['locktime'] >= 500000000? moment.unix(decode['locktime']).format("MM/DD/YYYY HH:mm") : decode['locktime']);
+				$("#verifyRsData").removeClass("hidden");
+				$("#verifyRsDataHodl").removeClass('hidden');
+				$(".verifyLink").attr('href','?verify='+$("#verifyScript").val());
+				return true;
 			}
-			$("#verifyRsData").removeClass("hidden");
-			$(".verifyLink").attr('href','?verify='+$("#verifyScript").val());
-			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	function decodeTransactionScript(){

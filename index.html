@@ -12,10 +12,15 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 		<link rel="stylesheet" href="css/bootstrap.min.css" media="screen">
+        <link rel="stylesheet" href="css/bootstrap-datetimepicker.min.css">
 		<link rel="stylesheet" href="css/style.css" media="screen">
 		
 		<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/transition.js"></script>
+        <script type="text/javascript" src="js/collapse.js"></script>
 		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap-datetimepicker.min.js"></script>
 
 		<script type="text/javascript" src="js/crypto-min.js"></script>
 		<script type="text/javascript" src="js/crypto-sha256.js"></script>
@@ -54,6 +59,7 @@
 								<ul class="dropdown-menu">
 									<li><a href="#newAddress" data-toggle="tab">New Address</a></li>
 									<li><a href="#newMultiSig" data-toggle="tab">MultiSig Address</a></li>
+                                    <li><a href="#newTimeLocked" data-toggle="tab">New Time Locked Address</a></li>
 									<li><a href="#newHDaddress" data-toggle="tab">HD Address</a></li>
 									<li class="divider"></li>
 									<li><a href="#newTransaction" data-toggle="tab">Transaction</a></li>
@@ -377,6 +383,73 @@
 						<br>
 					</div>
 
+                    <div class="tab-pane tab-content" id="newTimeLocked">
+                        <h2>New Time Locked Address <small>Coins can be released only after a certain date</small></h2>
+
+                        <div class="row">
+
+                            <div class="col-md-11">
+                                <p>Public keys can be <a href="#newAddress">generated in your browser</a> or from your bitcoin client</a>.</p>
+                                <p>Enter the public key that will be able to unlock the funds after the a certain date.
+                            </div>
+
+                            <div class="col-md-1">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-horizontal">
+                                <div class="col-xs-11">
+                                    <input id="timeLockedPubKey" type="text" class="form-control pubkey">
+                                </div>
+                            </div>
+                        </div>
+
+                        <p>Enter the date and time required to release the coins</p>
+                        <div class="row">
+                            <div class='col-xs-3'>
+                                <div class="form-group">
+                                    <div class='input-group date' id='timeLockedDateTimePicker'>
+                                        <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='col-xs-3'>
+                                <small>System Local Time</small>
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <div id="timeLockedErrorMsg" class="alert alert-danger" style="display:none;"></div>
+
+                        <div class="alert alert-success hidden" id="timeLockedData">
+                            <label>Address</label>
+                            <p>Payment should be made to this address:</p>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control address" value="" readonly>
+                                        <span class="input-group-btn">
+                                            <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <label>Redeem Script</label>
+                            <p>This script should be <i>saved and should be shared with all the participants before a payment is made</i>, so they may validate the authenticity of the address, it will also be used later to release the bitcoins.</p>
+                            <textarea class="form-control script" style="height:160px" readonly></textarea>
+                            <label>Shareable URL</label>
+                            <input type="text" class="scriptUrl form-control" readonly>
+                        </div>
+
+                        <input type="button" class="btn btn-primary" value="Submit" id="newTimeLockedAddress">
+                        <br>
+                    </div>
+
 					<div class="tab-pane tab-content" id="newHDaddress">
 						<h2>New HD Address <small>making bip32 even easier</small></h2>
 						<p>Use the form below to generate a <i>master</i> hierarchical deterministic address.</p>
@@ -585,24 +658,64 @@
 						<div class="hidden verifyData" id="verifyRsData">
 							<h4>Redeem Script</h4>
 							<p><span style="float:right"><a href="javascript:;" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above redeem script has been decoded</p>
-							<label>Multi Signature Address</label>
-							<div class="row">
-								<div class="col-lg-6">
-									<div class="input-group">
-										<input type="text" class="form-control address multisigAddress" value="" readonly>
-										<span class="input-group-btn">
-											<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
-										</span>
-									</div>
-								</div>
-							</div>
-							<label>Required Signatures</label>
-							<p class="signaturesRequired">?</p>
-							<label>Signatures Required from</label>
-							<table class="table table-striped table-hover">
-								<tbody>
-								</tbody>
-							</table>
+
+							<div class="hidden" id="verifyRsDataMultisig">
+                                <label>Multi Signature Address</label>
+    							<div class="row">
+    								<div class="col-lg-6">
+    									<div class="input-group">
+    										<input type="text" class="form-control address multisigAddress" value="" readonly>
+    										<span class="input-group-btn">
+    											<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+    										</span>
+    									</div>
+    								</div>
+    							</div>
+    							<label>Required Signatures</label>
+    							<p class="signaturesRequired">?</p>
+    							<label>Signatures Required from</label>
+    							<table class="table table-striped table-hover">
+    								<tbody>
+    								</tbody>
+    							</table>
+                            </div>
+
+                            <div class="hidden" id="verifyRsDataHodl">
+                                <label>Hodl Address</label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control address" value="" readonly>
+                                            <span class="input-group-btn">
+                                                <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <label>Required Signature</label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control pubkey" value="" readonly>
+                                            <span class="input-group-btn">
+                                                <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <label>Unlock Time</label>
+                                <div class="row">
+                                    <div class='col-lg-6'>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control date" value="" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <br>
+                            </div>
 						</div>
 
 						<div class="hidden verifyData" id="verifyTransactionData">
