@@ -12,15 +12,16 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 		<link rel="stylesheet" href="css/bootstrap.min.css" media="screen">
-        <link rel="stylesheet" href="css/bootstrap-datetimepicker.min.css">
+		<link rel="stylesheet" href="css/bootstrap-datetimepicker.min.css">
 		<link rel="stylesheet" href="css/style.css" media="screen">
 		
 		<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
-        <script type="text/javascript" src="js/moment.min.js"></script>
-        <script type="text/javascript" src="js/transition.js"></script>
-        <script type="text/javascript" src="js/collapse.js"></script>
+		<script type="text/javascript" src="js/moment.min.js"></script>
+		<script type="text/javascript" src="js/transition.js"></script>
+		<script type="text/javascript" src="js/collapse.js"></script>
+
 		<script type="text/javascript" src="js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="js/bootstrap-datetimepicker.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap-datetimepicker.min.js"></script>
 
 		<script type="text/javascript" src="js/crypto-min.js"></script>
 		<script type="text/javascript" src="js/crypto-sha256.js"></script>
@@ -59,7 +60,7 @@
 								<ul class="dropdown-menu">
 									<li><a href="#newAddress" data-toggle="tab">New Address</a></li>
 									<li><a href="#newMultiSig" data-toggle="tab">MultiSig Address</a></li>
-                                    <li><a href="#newTimeLocked" data-toggle="tab">New Time Locked Address</a></li>
+									<li><a href="#newTimeLocked" data-toggle="tab">Time Locked Address</a></li>
 									<li><a href="#newHDaddress" data-toggle="tab">HD Address</a></li>
 									<li class="divider"></li>
 									<li><a href="#newTransaction" data-toggle="tab">Transaction</a></li>
@@ -389,6 +390,7 @@
                         <div class="row">
 
                             <div class="col-md-11">
+				<p>Use <i><a href="https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki" target="_blank">OP_CHECKLOCKTIMEVERIFY</a></i> (OP_HODL) to create a time locked address where the funds are unspendable before a set date and time has passed.</p>
                                 <p>Public keys can be <a href="#newAddress">generated in your browser</a> or from your bitcoin client</a>.</p>
                                 <p>Enter the public key that will be able to unlock the funds after the a certain date.
                             </div>
@@ -399,15 +401,15 @@
 
                         <div class="row">
                             <div class="form-horizontal">
-                                <div class="col-xs-11">
+                                <div class="col-xs-12">
                                     <input id="timeLockedPubKey" type="text" class="form-control pubkey">
                                 </div>
                             </div>
                         </div>
 
-                        <p>Enter the date and time required to release the coins</p>
+                        <p>Enter the date and time required to release the coins: </p>
                         <div class="row">
-                            <div class='col-xs-3'>
+                            <div class='col-md-6'>
                                 <div class="form-group">
                                     <div class='input-group date' id='timeLockedDateTimePicker'>
                                         <input type='text' class="form-control" />
@@ -416,9 +418,6 @@
                                         </span>
                                     </div>
                                 </div>
-                            </div>
-                            <div class='col-xs-3'>
-                                <small>System Local Time</small>
                             </div>
                         </div>
 
