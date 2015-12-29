@@ -635,7 +635,7 @@ $(document).ready(function() {
 		if($("#redeemFromStatus").hasClass("hidden")) {
 			// An ethical dilemma: Should we automatically set nLockTime?
 			if(redeem.from == 'redeemScript' && redeem.decodedRs.type == "hodl__") {
-				$("#nLockTime").val(redeem.decodedRs.locktime);
+				$("#nLockTime").val(redeem.decodedRs.checklocktimeverify);
 			} else {
 				$("#nLockTime").val(0);
 			}
@@ -1007,7 +1007,7 @@ $(document).ready(function() {
 				var d = $("#verifyRsDataHodl .date").data("DateTimePicker");
 				$("#verifyRsDataHodl .address").val(decode['address']);
 				$("#verifyRsDataHodl .pubkey").val(coinjs.pubkey2address(decode['pubkey']));
-				$("#verifyRsDataHodl .date").val(decode['locktime'] >= 500000000? moment.unix(decode['locktime']).format("MM/DD/YYYY HH:mm") : decode['locktime']);
+				$("#verifyRsDataHodl .date").val(decode['checklocktimeverify'] >= 500000000? moment.unix(decode['checklocktimeverify']).format("MM/DD/YYYY HH:mm") : decode['checklocktimeverify']);
 				$("#verifyRsData").removeClass("hidden");
 				$("#verifyRsDataHodl").removeClass('hidden');
 				$(".verifyLink").attr('href','?verify='+$("#verifyScript").val());

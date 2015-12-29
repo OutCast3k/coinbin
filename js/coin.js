@@ -141,14 +141,14 @@
 
 	   may throw a string on failure!
 	*/
-	coinjs.simpleHodlAddress = function(pubkey, locktime) {
+	coinjs.simpleHodlAddress = function(pubkey, checklocktimeverify) {
 
-		if(locktime < 0) {
-			throw "Locktime is negative.";
+		if(checklocktimeverify < 0) {
+			throw "Parameter for OP_CHECKLOCKTIMEVERIFY is negative.";
 		}
 
 		var s = coinjs.script();
-		s.writeBytes(Crypto.util.hexToBytes(locktime.toString(16)));
+		s.writeBytes(Crypto.util.hexToBytes(checklocktimeverify.toString(16)).reverse());
 		s.writeOp(177);//OP_CHECKLOCKTIMEVERIFY
 		s.writeOp(117);//OP_DROP
 		s.writeBytes(Crypto.util.hexToBytes(pubkey));
@@ -681,11 +681,11 @@
 					r.address = multi['address'];
 					r.type = 'multisig__'; // using __ for now to differentiat from the other object .type == "multisig"
 				} else if(s.chunks.length == 5 && s.chunks[1] == 177 && s.chunks[2] == 117 && s.chunks[4] == 172){
-					// ^ <locktime> OP_CHECKLOCKTIMEVERIFY OP_DROP <pubkey> OP_CHECKSIG ^
+					// ^ <unlocktime> OP_CHECKLOCKTIMEVERIFY OP_DROP <pubkey> OP_CHECKSIG ^
 					r = {}
 					r.pubkey = Crypto.util.bytesToHex(s.chunks[3]);
-					r.locktime = parseInt(Crypto.util.bytesToHex(s.chunks[0]), 16); // TODO is this endian safe?
-					r.address = coinjs.simpleHodlAddress(r.pubkey, r.locktime).address;
+					r.checklocktimeverify = parseInt(Crypto.util.bytesToHex(s.chunks[0].slice().reverse()), 16);
+					r.address = coinjs.simpleHodlAddress(r.pubkey, r.checklocktimeverify).address;
 					r.type = "hodl__";
 				}
 			} catch(e) {
