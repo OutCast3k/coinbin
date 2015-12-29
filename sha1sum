@@ -1,22 +1,18 @@
----- Version 1.2 2015.12.29 ----
-77e4519962e2f6a9fc93342137dbb31c33b76b04  ./js/aes.js
-3a09a8fc0cfe828b57fc798d668234d0490ee1a6  ./js/bootstrap-datetimepicker.min.js
-253711c6d825de55a8360552573be950da180614  ./js/bootstrap.min.js
-94398a7228981141d65543240f76078c36e2bb1e  ./js/coin.js
-ba8ad0b792413d84da95a493dab3e8bf3fe7da8a  ./js/coinbin.js
-988565bc2cb402d63ed5c5fd7ff47c4278efc2c5  ./js/collapse.js
-9ba5ede3d7f9d4c8fd623395f196adfdcf7e970f  ./js/crypto-min.js
-f7c09f2f5a721371e7d478050119f7e2d58e3ef9  ./js/crypto-sha256-hmac.js
-0700fc9ad2e39adeca0b50614bb3d327fb49f609  ./js/crypto-sha256.js
+---- Version 1.2 2015.09.12 ----
 e6810907c901e6bd34a28735a68850936f0823b8  ./js/ellipticcurve.js
-ae49e56999d82802727455f0ba83b63acd90a22b  ./js/jquery-1.9.1.min.js
-be17ca7c834204bff711f582e41f76c06d472bac  ./js/jsbn.js
-ce4fa351a2e62accf7fad77110fa4ddb09a324bf  ./js/moment.min.js
+9ba5ede3d7f9d4c8fd623395f196adfdcf7e970f  ./js/crypto-min.js
+77e4519962e2f6a9fc93342137dbb31c33b76b04  ./js/aes.js
 0ce26da5ef686d4ece91acd6cb6506559e11ab07  ./js/qcode-decoder.min.js
+be17ca7c834204bff711f582e41f76c06d472bac  ./js/jsbn.js
+0700fc9ad2e39adeca0b50614bb3d327fb49f609  ./js/crypto-sha256.js
+253711c6d825de55a8360552573be950da180614  ./js/bootstrap.min.js
+f7c09f2f5a721371e7d478050119f7e2d58e3ef9  ./js/crypto-sha256-hmac.js
 ad038e1f39646b68ae666324ed4c2882a8c42474  ./js/qrcode.js
 64eb4ea5c882f8bce3e1885bf00728455f1c2f4c  ./js/ripemd160.js
 114089ef2a3feb6d4db4f9cabcb186d7750d5884  ./js/sha512.js
-506c40035e0d22560478629434d0fea27643b77a  ./js/transition.js
+8c2654113866b4a57fec302665ca2187a3eb7614  ./js/coin.js
+a66f8bf8f33048eeeceaf2741679d797d707f12b  ./js/coinbin.js
+ae49e56999d82802727455f0ba83b63acd90a22b  ./js/jquery-1.9.1.min.js
 5f570018ed044eafd464f7e0ab1783b966224055  ./LICENCE
 ed29315e0ffb3f14382431f2724235bf67f44eb3  ./css/bootstrap.min.css
 fc6b4268fbd57ad95d2b41a1d4d6866f222fbdb2  ./css/bootstrap-theme.min.css
@@ -29,4 +25,4 @@ de51a8494180a6db074af2dee2383f0a363c5b08  ./fonts/glyphicons-halflings-regular.s
 278e49a86e634da6f2a02f3b47dd9d2a8f26210f  ./fonts/glyphicons-halflings-regular.woff
 44bc1850f570972267b169ae18f1cb06b611ffa2  ./fonts/glyphicons-halflings-regular.ttf
 48ff08f459ff55ae54e594b4ae307d1d8e6f74b3  ./README.md
-d177fa420801a3216e312f9364e3fa2ad24c866e  ./index.html
+01536c12f3764ee4394c580390bc79c265c6ebe1  ./index.html
