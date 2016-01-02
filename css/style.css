@@ -53,3 +53,17 @@ body {
 .sig_position {
     text-align: center;
 }
+
+#multisigPubKeys .item {
+	margin-bottom: 5px;
+}
+
+.glyphicon-minus:before {
+    content: "\2212";
+    margin-left: -1px;
+}
+
+.handle {
+    padding-left: 15px;
+    font-size: 20px;
+}

@@ -1214,23 +1214,39 @@ $(document).ready(function() {
 			$("#multiSigErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> One or more public key is invalid!').fadeIn();
 		}
 	});
+
+	$("#newMultiSigAddressSort").click(function(){
+		var mylist = $("#multisigPubKeys .sort");
+		var listitems = mylist.children();
+		listitems.sort(function(a, b) {
+		   var compA = $(a).find('.pubkey').val().toUpperCase();
+		   var compB = $(b).find('.pubkey').val().toUpperCase();
+		   return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+		})
+		$.each(listitems, function(idx, itm) {
+			console.log(itm);
+			mylist.append(itm);
+		});
+		$("#multiSigData").addClass("hidden");
+	});
 	
-	$("#multisigPubKeys .list").on('change', '.pubkey', function() {
+	$("#multisigPubKeys .list").on('input change', '.pubkey', function() {
 		var val = (known.pubKey[$(this).val()])?known.pubKey[$(this).val()].name:'';
 		$(this).parent().parent().find('.id').val(val)
 	});
 
-	$("#multisigPubKeys .list .pubkeyAdd").click(function(){
+	$("#multisigPubKeys .list")
+	.on('click', '.pubkeyAdd', function(){
 		if($("#multisigPubKeys .list .pubkeyRemove").length<14){
-			var clone = '<div class="form-horizontal col-xs-12"><div class="row">'+$(this).parent().html()+'</div></div>';
-			$("#multisigPubKeys .list").append(clone);
-			$("#multisigPubKeys .list .glyphicon-plus:last").removeClass('glyphicon-plus').addClass('glyphicon-minus');
-			$("#multisigPubKeys .list .glyphicon-minus:last").parent().removeClass('pubkeyAdd').addClass('pubkeyRemove');
-			$("#multisigPubKeys .list .pubkeyRemove").unbind("");
-			$("#multisigPubKeys .list .pubkeyRemove").click(function(){
-				$(this).parent().fadeOut().remove();
-			});
+			var clone = $(this).parent().parent().clone();
+			$(this).parent().parent().after(clone);
+			$(clone).find('.pubkey').val('').change();
 		}
+		$("#multiSigData").addClass("hidden");
+	})
+	.on('click', '.pubkeyRemove', function(){
+		$(this).parent().parent().remove();
+		$("#multiSigData").addClass("hidden");
 	});
 
 	$("#mediatorList").change(function(){
@@ -1289,7 +1305,7 @@ $(document).ready(function() {
 
 	/* new -> transaction code */
 	
-	$("#recipients").on('change', '.address', function() {
+	$("#recipients").on('input change', '.address', function() {
 		var addr = $(this).val();
 		var identity = '';
 		var details = coinjs.addressDecode(addr);
@@ -1677,12 +1693,16 @@ $(document).ready(function() {
 	
 
 	// clear results when data changed
-	$("#verify #verifyScript").on('input', function(){
+	$("#verify #verifyScript").on('input change', function(){
 		$("#verify .verifyData").addClass("hidden");
 	});
 
-	$("#sign #signTransaction, #sign #signPrivateKey").on('input', function(){
+	$("#sign #signTransaction, #sign #signPrivateKey").on('input change', function(){
 		$("#sign #signedData").addClass("hidden");
+	});
+
+	$("#multisigPubKeys .list").on('input change', '.pubkey', function(){
+		$("#multiSigData").addClass("hidden");
 	});
 
 
@@ -1919,6 +1939,11 @@ $(document).ready(function() {
 	for(i=1;i<3;i++){
 		$(".pubkeyAdd").click();
 	}
+
+	$( ".sort" ).sortable({
+		handle: '.handle',
+		change: function() {$("#multiSigData").addClass("hidden")}
+	});
 
 	validateOutputAmount();
 	

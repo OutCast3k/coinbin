@@ -11,10 +11,12 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+		<link rel="stylesheet" href="css/jquery-ui-sort-only.min.css" media="screen">
 		<link rel="stylesheet" href="css/bootstrap.min.css" media="screen">
 		<link rel="stylesheet" href="css/style.css" media="screen">
 		
 		<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-sort-only.min.js"></script>
 		<script type="text/javascript" src="js/bootstrap.min.js"></script>
 
 		<script type="text/javascript" src="js/crypto-min.js"></script>
@@ -358,27 +360,37 @@
 						</div>
 
 						<div id="multisigPubKeys">
-							<div class="row headers">
-								<div class="col-xs-7">
-									<label>Public key</label>
-								</div>
-								<div class="col-xs-4">
-									<label>Identity <span class="text-muted">(if <a href="known-pubkeys.js" target="_blank">known</a>)</span></label>
-								</div>
-							</div>
-							<div class="row list">
-								<div class="form-horizontal col-xs-12">
-									<div class="row">
-										<div class="col-xs-7">
+							<table style="width: 100%; border-collapse: separate; border-spacing: 0 1em;">
+								<thead>
+									<tr>
+										<td></td>
+										<td class="col-xs-7">
+											<label>Public key</label>
+										</td>
+										<td class="col-xs-4">
+											<label>Identity <span class="text-muted">(if <a href="known-pubkeys.js" target="_blank">known</a>)</span></label>
+										</td>
+										<td></td>
+									</tr>
+								</thead>
+								<tbody class="list sort">
+									<tr class="item" style="width: 100%;">
+										<td>
+											<a class="handle"><span class="glyphicon glyphicon-move"></span></a>
+										</td>
+										<td class="col-sm-7">
 											<input type="text" class="form-control pubkey">
-										</div>
-										<div class="col-xs-4">
+										</td>
+										<td class="col-sm-4">
 											<input type="text" class="form-control id" readonly>	
-										</div>
-										<a href="javascript:;" class="pubkeyAdd"><span class="glyphicon glyphicon-plus"></span></a>
-									</div>
-								</div>
-							</div>
+										</td>
+										<td>
+											<a class="pubkeyAdd"><span class="glyphicon glyphicon-plus"></span></a>
+											<a class="pubkeyRemove"><span class="glyphicon glyphicon-minus"></span></a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 
 						<p>Enter the amount of signatures required to release the coins</p>
@@ -429,6 +441,8 @@
 						</div>
 
 						<input type="button" class="btn btn-primary" value="Submit" id="newMultiSigAddress">
+						Or
+						<button class="btn btn-info" type="button" id="newMultiSigAddressSort">Sort by pubkey</span></button>
 						<br>
 					</div>
 
