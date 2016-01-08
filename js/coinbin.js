@@ -1335,13 +1335,6 @@ $(document).ready(function() {
 	$(".qrcodeBtn").click(function(){
 		$("#qrcode").html("");
 		var thisbtn = $(this).parent().parent();
-<<<<<<< HEAD
-		
-		if($('textarea',$(this).closest('.input-group')).length){
-			var qrcode = new QRCode("qrcode",{width:Math.min(512,$(window).width()-60),height:Math.min(512,$(window).width()-60)});
-			var qrstr = $('textarea',$(this).closest('.input-group')).val();
-			if(qrstr.length > 2000){
-=======
 		var qrstr = false;
 		var ta = $("textarea",thisbtn);
 
@@ -1350,7 +1343,6 @@ $(document).ready(function() {
 			var qrcode = new QRCode("qrcode", {width:w, height:w});
 			qrstr = $(ta).val();
 			if(qrstr.length > 1024){
->>>>>>> refs/remotes/OutCast3k/master
 				$("#qrcode").html("<p>Sorry the data is too long for the QR generator.</p>");
 			}
 		} else {
