@@ -135,6 +135,36 @@
 		return {'address':address, 'redeemScript':redeemScript};
 	}
 
+	/* new time locked address, provide the pubkey and time necessary to unlock the funds.
+	   when time is greater than 500000000, it should be a unix timestamp (seconds since epoch),
+	   otherwise it should be the block height required before this transaction can be released. 
+
+	   may throw a string on failure!
+	*/
+	coinjs.simpleHodlAddress = function(pubkey, checklocktimeverify) {
+
+		if(checklocktimeverify < 0) {
+			throw "Parameter for OP_CHECKLOCKTIMEVERIFY is negative.";
+		}
+
+		var s = coinjs.script();
+		s.writeBytes(Crypto.util.hexToBytes(checklocktimeverify.toString(16)).reverse());
+		s.writeOp(177);//OP_CHECKLOCKTIMEVERIFY
+		s.writeOp(117);//OP_DROP
+		s.writeBytes(Crypto.util.hexToBytes(pubkey));
+		s.writeOp(172);//OP_CHECKSIG
+
+		var x = ripemd160(Crypto.SHA256(s.buffer, {asBytes: true}), {asBytes: true});
+		x.unshift(coinjs.multisig);
+		var r = x;
+		r = Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
+		var checksum = r.slice(0,4);
+		var redeemScript = Crypto.util.bytesToHex(s.buffer);
+		var address = coinjs.base58encode(x.concat(checksum));
+
+		return {'address':address, 'redeemScript':redeemScript};
+	}
+
 	/* provide a privkey and return an WIF  */
 	coinjs.privkey2wif = function(h){
 		var r = Crypto.util.hexToBytes(h);
@@ -649,6 +679,14 @@
 					r.pubkeys = pubkeys;
 					var multi = coinjs.pubkeys2MultisigAddress(pubkeys, r.signaturesRequired);
 					r.address = multi['address'];
+					r.type = 'multisig__'; // using __ for now to differentiat from the other object .type == "multisig"
+				} else if(s.chunks.length == 5 && s.chunks[1] == 177 && s.chunks[2] == 117 && s.chunks[4] == 172){
+					// ^ <unlocktime> OP_CHECKLOCKTIMEVERIFY OP_DROP <pubkey> OP_CHECKSIG ^
+					r = {}
+					r.pubkey = Crypto.util.bytesToHex(s.chunks[3]);
+					r.checklocktimeverify = parseInt(Crypto.util.bytesToHex(s.chunks[0].slice().reverse()), 16);
+					r.address = coinjs.simpleHodlAddress(r.pubkey, r.checklocktimeverify).address;
+					r.type = "hodl__";
 				}
 			} catch(e) {
 				// console.log(e);
@@ -898,9 +936,15 @@
 				if((this.ins[index].script.chunks.length==5) && this.ins[index].script.chunks[4]==172 && coinjs.isArray(this.ins[index].script.chunks[2])){ //OP_CHECKSIG
 					// regular scriptPubkey (not signed)
 					return {'type':'scriptpubkey', 'signed':'false', 'signatures':0, 'script': Crypto.util.bytesToHex(this.ins[index].script.buffer)};
+				} else if((this.ins[index].script.chunks.length==2) && this.ins[index].script.chunks[0][0]==48 && this.ins[index].script.chunks[1].length == 5 && this.ins[index].script.chunks[1][1]==177){//OP_CHECKLOCKTIMEVERIFY
+					// hodl script (signed)
+					return {'type':'hodl', 'signed':'true', 'signatures':1, 'script': Crypto.util.bytesToHex(this.ins[index].script.buffer)};
 				} else if((this.ins[index].script.chunks.length==2) && this.ins[index].script.chunks[0][0]==48){ 
 					// regular scriptPubkey (probably signed)
 					return {'type':'scriptpubkey', 'signed':'true', 'signatures':1, 'script': Crypto.util.bytesToHex(this.ins[index].script.buffer)};
+				} else if(this.ins[index].script.chunks.length == 5 && this.ins[index].script.chunks[1] == 177){//OP_CHECKLOCKTIMEVERIFY
+					// hodl script (not signed)
+					return {'type':'hodl', 'signed':'false', 'signatures': 0, 'script': Crypto.util.bytesToHex(this.ins[index].script.buffer)};
 				} else if (this.ins[index].script.chunks[0]==0 && this.ins[index].script.chunks[this.ins[index].script.chunks.length-1][this.ins[index].script.chunks[this.ins[index].script.chunks.length-1].length-1]==174) { // OP_CHECKMULTISIG
 					// multisig script, with signature(s) included
 					return {'type':'multisig', 'signed':'true', 'signatures':this.ins[index].script.chunks.length-2, 'script': Crypto.util.bytesToHex(this.ins[index].script.chunks[this.ins[index].script.chunks.length-1])};
@@ -1048,6 +1092,17 @@
 			this.ins[index].script = s;
 			return true;
 		}
+
+		/* signs a time locked / hodl input */
+		r.signhodl = function(index, wif){
+			var signature = this.transactionSig(index, wif);
+			var redeemScript = this.ins[index].script.buffer
+			var s = coinjs.script();
+			s.writeBytes(Crypto.util.hexToBytes(signature));
+			s.writeBytes(redeemScript);
+			this.ins[index].script = s;
+			return true;
+		}
 		
 		/* sign a multisig input */
 		r.signmultisig = function(index, wif){
@@ -1111,6 +1166,8 @@
 
 				if(((d['type'] == 'scriptpubkey' && d['script']==Crypto.util.bytesToHex(pubkeyHash.buffer)) || d['type'] == 'empty') && d['signed'] == "false"){
 					this.signinput(i, wif);
+				} else if (d['type'] == 'hodl' && d['signed'] == "false") {
+					this.signhodl(i, wif);
 				} else if (d['type'] == 'multisig') {
 					this.signmultisig(i, wif);
 				} else {
