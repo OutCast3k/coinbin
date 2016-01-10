@@ -110,7 +110,7 @@ $(document).ready(function() {
 	function addOutput(tx, n, script, amount) {
 		if(tx){
 			if($("#inputs .txId:last").val()!=""){
-				$("#inputs .txidAdd").click();
+				$("#inputs .txidAdd:last").click();
 			}
 
 			$("#inputs .row:last input").attr('disabled',true);
@@ -1343,25 +1343,22 @@ $(document).ready(function() {
 		}
 	});
 
-	$("#inputs .txidAdd").click(function(){
-		var clone = '<div class="row inputs"><br>'+$(this).parent().parent().html()+'</div>';
-		$("#inputs").append(clone);
-		$("#inputs .txidClear:last").remove();
-		$("#inputs .glyphicon-plus:last").removeClass('glyphicon-plus').addClass('glyphicon-minus');
-		$("#inputs .glyphicon-minus:last").parent().removeClass('txidAdd').addClass('txidRemove');
-		$("#inputs .txidRemove").unbind("");
-		$("#inputs .txidRemove").click(function(){
-			$(this).parent().parent().fadeOut().remove();
-			totalInputAmount();
-		});
-		$("#inputs .row:last input").attr('disabled',false);
+	$("#inputs").on('click', '.txidAdd', function(){
+		var clone = $(this).parent().parent().clone();
+		$("input", clone).attr('disabled', false).val("");
+		$(this).parent().parent().after(clone);
+	});
 
-		$("#inputs .txIdAmount").unbind("").change(function(){
-			totalInputAmount();
-		}).keyup(function(){
-			totalInputAmount();
-		});
+	$("#inputs").on('click', '.txidRemove', function(){
+		if ($("#inputs .txidRemove").length < 2) return;
+		$(this).parent().parent().fadeOut().remove();
+		totalInputAmount();
+	});
 
+	$("#inputs").on('input change', ".txIdAmount", function(){
+		totalInputAmount();
+	}).keyup(function(){
+		totalInputAmount();
 	});
 
 	$("#transactionBtn").click(function(){
@@ -1433,12 +1430,6 @@ $(document).ready(function() {
 		} else {
 			$("#transactionCreateStatus").removeClass("hidden").html("One or more input or output is invalid").fadeOut().fadeIn();
 		}
-	});
-
-	$(".txidClear").click(function(){
-		$("#inputs .row:first input").attr('disabled',false);
-		$("#inputs .row:first input").val("");
-		totalInputAmount();
 	});
 
 	$("#inputs .txIdAmount").unbind("").change(function(){
@@ -1528,7 +1519,8 @@ $(document).ready(function() {
 		}
 
 		if($("#clearInputsOnLoad").is(":checked")){
-			$("#inputs .txidRemove, #inputs .txidClear").click();
+			$("#inputs .txidAdd:last").click();
+			$("#inputs .txidRemove:not(:last)").click();
 		}
 
 		$("#redeemFromBtn").html('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
