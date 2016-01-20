@@ -210,6 +210,10 @@ $(document).ready(function() {
 				$("#signTransaction").val(decode.serialize()).fadeOut().fadeIn();
 				window.location.hash = "#sign";
 			});
+			$("#verifyTransactionData .verifyToBroadcast").on( "click", function() {
+				$("#broadcast #rawTransaction").val(decode.serialize()).fadeOut().fadeIn();
+				window.location.hash = "#broadcast";
+			});
 			$("#verifyTransactionData").removeClass("hidden");
 			$("#verifyTransactionData tbody").html("");
 
