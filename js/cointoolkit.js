@@ -260,7 +260,7 @@ $(document).ready(function() {
 										amountTotal -= o.value;
 									});
 									
-									if ((amountTotal/("1e"+coinjs.decimalPlaces)) > 0.011) {
+									if ((amountTotal/("1e"+coinjs.decimalPlaces)).toFixed(coinjs.decimalPlaces) > 0.011) {
 										$("#verifyTransactionData .fee").attr("style", "color: red;")
 									}
 									$("#verifyTransactionData .fee").removeClass("hidden");
@@ -621,7 +621,7 @@ $(document).ready(function() {
 			success: function(data) {
 				if (coinjs.debug) {console.log(data)};
 				if (data.exists && data.outputs[index]) {
-					callback(data.outputs[index].outValInt*("1e"+coinjs.decimalPlaces));
+					callback(parseInt(data.outputs[index].outValInt*("1e"+coinjs.decimalPlaces), 10));
 				} else {
 					callback(false);
 				}
@@ -802,7 +802,7 @@ $(document).ready(function() {
 						success: function(data) {
 							if (coinjs.debug) {console.log(data)};
 							if (data.status && data.data && data.status=='success' && data.data.vouts[index]){
-								callback(data.data.vouts[index].amount*("1e"+coinjs.decimalPlaces));
+								callback(parseInt(data.data.vouts[index].amount*("1e"+coinjs.decimalPlaces), 10));
 							} else {
 								callback(false);
 							}
