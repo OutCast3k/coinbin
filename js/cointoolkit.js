@@ -1,5 +1,9 @@
 $(document).ready(function() {
 
+	if(window.location.hostname == "ttutdxh-nubits.github.io" && window.location.protocol != 'https:') {
+		window.location.protocol = "https:";
+	}
+
 	var toolkit = {};
 	
 	function updateQueryStringParameter(uri, key, value) {
