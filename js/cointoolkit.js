@@ -744,18 +744,19 @@ $(document).ready(function() {
 				}
 			},
 			broadcast: {
-				"blockr.io": function(thisbtn){ 
-					$(thisbtn).val('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
+				"blockr.io": function(thisbtn){
+					var orig_html = $(thisbtn).html();
+					$(thisbtn).html('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
 					$.ajax ({
 						type: "POST",
 						url: "//btc.blockr.io/api/v1/tx/push",
 						data: {"hex":$("#rawTransaction").val()},
 						dataType: "json",
 						error: function(data) {
-							var r = ' ';
+							var r = '';
 							r += (data.data) ? data.data : '';
 							r += (data.message) ? ' '+data.message : '';
-							r = (r!='') ? r : ' Failed to broadcast'; // build response 
+							r = (r!='') ? r : ' Failed to broadcast. Internal server error';
 							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 						},
 						success: function(data) {
@@ -767,13 +768,13 @@ $(document).ready(function() {
 						},
 						complete: function(data, status) {
 							$("#rawTransactionStatus").fadeOut().fadeIn();
-							$(thisbtn).val('Submit').attr('disabled',false);				
+							$(thisbtn).html(orig_html).attr('disabled',false);				
 						}
 					});
 				},
-				"coinb.in": function(btn){ 
-					var thisbtn = btn;		
-					$(thisbtn).val('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
+				"coinb.in": function(thisbtn){ 
+					var orig_html = $(thisbtn).html();		
+					$(thisbtn).html('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
 					$.ajax ({
 						type: "G",
 						url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction',
@@ -793,7 +794,7 @@ $(document).ready(function() {
 						},
 						complete: function(data, status) {
 							$("#rawTransactionStatus").fadeOut().fadeIn();
-							$(thisbtn).val('Submit').attr('disabled',false);				
+							$(thisbtn).html(orig_html).attr('disabled',false);				
 						}
 					});
 				}
@@ -852,17 +853,18 @@ $(document).ready(function() {
 			},
 			broadcast: {
 				"blockr.io": function(thisbtn){
-					$(thisbtn).val('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
+					var orig_html = $(thisbtn).html();
+					$(thisbtn).html('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
 					$.ajax ({
 						type: "POST",
 						url: "//ltc.blockr.io/api/v1/tx/push",
 						data: {"hex":$("#rawTransaction").val()},
 						dataType: "json",
 						error: function(data) {
-							var r = ' ';
+							var r = '';
 							r += (data.data) ? data.data : '';
 							r += (data.message) ? ' '+data.message : '';
-							r = (r!='') ? r : ' Failed to broadcast'; // build response 
+							r = (r!='') ? r : ' Failed to broadcast. Internal server error';
 							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 						},
 						success: function(data) {
@@ -875,7 +877,7 @@ $(document).ready(function() {
 						},
 						complete: function(data, status) {
 							$("#rawTransactionStatus").fadeOut().fadeIn();
-							$(thisbtn).val('Submit').attr('disabled',false);				
+							$(thisbtn).hmtl(orig_html).attr('disabled',false);				
 						}
 					});
 				}
