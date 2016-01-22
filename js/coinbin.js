@@ -1196,7 +1196,18 @@ $(document).ready(function() {
 
 	$("#signBtn").click(function(){
 		var wifkey = $("#signPrivateKey");
+		var passphrase = $("#signPrivateKeyPassphrase");
 		var script = $("#signTransaction");
+		
+		if(passphrase.val()!=""){
+			var decrypted = CryptoJS.AES.decrypt(wifkey.val(), passphrase.val()).toString(CryptoJS.enc.Utf8);
+			if(coinjs.addressDecode(decrypted)){
+				$(passphrase).parent().removeClass('has-error');
+				wifkey.val(decrypted);
+			} else {
+				$(passphrase).parent().addClass('has-error');
+			}
+		}
 
 		if(coinjs.addressDecode(wifkey.val())){
 			$(wifkey).parent().removeClass('has-error');
