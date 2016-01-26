@@ -79,7 +79,7 @@
 			},
 			"mhps": {
 				"03a5fc09a5de595e4758bfbc3a932e2c448cc49a557dd6e64788cee530a7622521": {
-				deprecated: true, //https://discuss.nubits.com/t/flot-operations-buy-side-btc-related/3117/168
+				deprecated: true, // https://discuss.nubits.com/t/flot-operations-buy-side-btc-related/3117/168
 				member: [
 						memberOf.Nu.FLOT_BTC  // https://discuss.nubits.com/t/via-quote/3098/14
 					]
