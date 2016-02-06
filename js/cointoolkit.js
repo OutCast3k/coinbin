@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
 	if(window.location.hostname == "ttutdxh-nubits.github.io" && window.location.protocol != 'https:') {
-		window.location.protocol = "https:";
+		window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
 	}
 
 	var toolkit = {};
