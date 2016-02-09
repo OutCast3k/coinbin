@@ -278,20 +278,23 @@
 
 	/* decompress an compressed public key */
 	coinjs.pubkeydecompress = function(pubkey) {
-		var curve = EllipticCurve.getSECCurveByName("secp256k1");
-		try {
-			var pt = curve.curve.decodePointHex(pubkey);
-			var x = pt.getX().toBigInteger();
-			var y = pt.getY().toBigInteger();
+		if((typeof(pubkey) == 'string') && pubkey.match(/^[a-f0-9]+$/i)){
+			var curve = EllipticCurve.getSECCurveByName("secp256k1");
+			try {
+				var pt = curve.curve.decodePointHex(pubkey);
+				var x = pt.getX().toBigInteger();
+				var y = pt.getY().toBigInteger();
 
-			var publicKeyBytes = EllipticCurve.integerToBytes(x, 32);
-			publicKeyBytes = publicKeyBytes.concat(EllipticCurve.integerToBytes(y,32));
-			publicKeyBytes.unshift(0x04);
-			return Crypto.util.bytesToHex(publicKeyBytes);
-		} catch (e) {
-			// console.log(e);
-			return false;
+				var publicKeyBytes = EllipticCurve.integerToBytes(x, 32);
+				publicKeyBytes = publicKeyBytes.concat(EllipticCurve.integerToBytes(y,32));
+				publicKeyBytes.unshift(0x04);
+				return Crypto.util.bytesToHex(publicKeyBytes);
+			} catch (e) {
+				// console.log(e);
+				return false;
+			}
 		}
+		return false;
 	}
 
 	coinjs.testdeterministicK = function() {
