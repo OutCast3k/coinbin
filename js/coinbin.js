@@ -126,6 +126,8 @@ $(document).ready(function() {
 						$("#walletSendConfirmStatus").removeClass('hidden').addClass('alert-success').html("txid: "+$(data).find("txid").text());
 					} else {
 						$("#walletSendConfirmStatus").removeClass('hidden').addClass('alert-danger').html(unescape($(data).find("response").text()).replace(/\+/g,' '));
+						$("#walletSendFailTransaction").removeClass('hidden');
+						$("#walletSendFailTransaction textarea").val(signed);
 						thisbtn.attr('disabled',false);
 					}
 
@@ -144,6 +146,7 @@ $(document).ready(function() {
 
 	$("#walletSendBtn").click(function(){
 
+		$("#walletSendFailTransaction").addClass('hidden');
 		$("#walletSendStatus").addClass("hidden").html("");
 
 		var thisbtn = $(this);
