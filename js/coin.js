@@ -1,6 +1,6 @@
 /*
  Coinjs 0.01 beta by OutCast3k{at}gmail.com
- A bitcoin frameworkcoinjs.
+ A bitcoin framework.
 
  http://github.com/OutCast3k/coinjs or http://coinb.in/coinjs
 */
@@ -620,7 +620,7 @@
 		} else if (coinjs.isArray(data)) {
 			r.buffer = data;
 		} else if (data instanceof coinjs.script) {
-			r.buffer = r.buffer;
+			r.buffer = data.buffer;
 		} else {
 			r.buffer = data;
 		}
@@ -1042,12 +1042,10 @@
 			// hash is a byteArray of the message digest. so h1 == hash in our case
 
 			// Step: b
-			var v = new Uint8Array(32);
-			v = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+			var v = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
 			// Step: c
-			var k = new Uint8Array(32);
-			k = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+			var k = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 			// Step: d
 			k = Crypto.HMAC(Crypto.SHA256, v.concat([0]).concat(x).concat(hash), k, { asBytes: true });
@@ -1120,9 +1118,13 @@
 	
 			function scriptListSigs(scriptSig){
 				var r = {};
+				var c = 0;
 				if (scriptSig.chunks[0]==0 && scriptSig.chunks[scriptSig.chunks.length-1][scriptSig.chunks[scriptSig.chunks.length-1].length-1]==174){
 					for(var i=1;i<scriptSig.chunks.length-1;i++){				
-						r[i] = scriptSig.chunks[i];
+						if (scriptSig.chunks[i] != 0){
+							c++;
+							r[c] = scriptSig.chunks[i];
+						}
 					}
 				}
 				return r;
@@ -1433,7 +1435,7 @@
 	/* clone an object */
 	coinjs.clone = function(obj) {
 		if(obj == null || typeof(obj) != 'object') return obj;
-		var temp = obj.constructor();
+		var temp = new obj.constructor();
 
 		for(var key in obj) {
 			if(obj.hasOwnProperty(key)) {
@@ -1460,7 +1462,7 @@
 		} else if (num < 4294967296) {
 			return [254].concat(coinjs.numToBytes(num,4));
 		} else {
-			return [253].concat(coinjs.numToBytes(num,8));
+			return [255].concat(coinjs.numToBytes(num,8));
 		}
 	}
 
