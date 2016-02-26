@@ -1446,7 +1446,7 @@
 	}
 
 	coinjs.numToBytes = function(num,bytes) {
-		if (typeof bytes === undefined) bytes = 8;
+		if (typeof bytes === "undefined") bytes = 8;
 		if (bytes == 0) { 
 			return [];
 		} else {
