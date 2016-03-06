@@ -100,7 +100,7 @@
 
 						<div class="jumbotron">
 							<h1>Cointoolkit</h1>
-							<p>Be your own bank, take control of your own money and start using <a href="https://nubits.com/">NuBits</a> today!</p>
+							<p>Be your own bank, take control of your own money and start using <a href="https://dash.org/">DASH</a> today!</p>
 							<p><a class="btn btn-primary btn-lg" href="#newAddress" role="button">Create new address &raquo;</a></p>
 						</div>
 
@@ -136,7 +136,7 @@
 
 							<div class="col-md-4">
 								<h3><span class="glyphicon glyphicon-wrench"></span>  Development</h3>
-								<p>Use what we've built to write your own projects! See our documention (coming soon), or contribute at <a href="https://github.com/ttutdxh-nubits/cointoolkit">github</a>.</p>
+								<p>Use what we've built to write your own projects! See our documention (coming soon), or contribute at <a href="https://github.com/triplexfw/coinbin">github</a>.</p>
 							</div>
 						</div>
 					</div>
@@ -1020,15 +1020,15 @@
 					<div class="tab-pane tab-content" id="about">
 						<h2>About <small>open source toolkit</small></h2>
 						<p>Version 1.2</p>
-						<p>Github <a href="https://github.com/ttutdxh-nubits/cointoolkit">https://github.com/ttutdxh-nubits/cointoolkit</a></p>
+						<p>Github <a href="https://github.com/triplexfw/coinbin">https://github.com/triplexfw/coinbin</a></p>
 						<h3>What is Bitcoin?</h3>
 						<p>Bitcoin is a type of digital currency in which encryption techniques are used to regulate the generation of units of currency and verify the transfer of funds, operating independently of a central bank. See <a href="http://www.weusecoins.com/" target="_blank">weusecoins.com</a> for more information.</p>
-						<p>If you are looking to buy some Bitcoin try <a href="https://localbitcoins.com/?ch=4g53" target="_blank">LocalBitcoins.com</a>.</p>
+						<p>If you are looking to buy some Bitcoin try <a href="https://localbitcoins.com/" target="_blank">LocalBitcoins.com</a>.</p>
 						<p>This toolkit supports multiple cryptoassets other than bitcoin</p>
 						<h3>Information</h3>
-						<p>Cointoolkit is a free and open source project released under the MIT license, originally released by <a href="https://bitcointalk.org/index.php?action=profile;u=34834" target="_blank">OutCast3k</a> as Coinb.in in 2013, and modified to work with Peershares assets by ttutdxh.nubits@gmail.com</p>
+						<p>Cointoolkit is a free and open source project released under the MIT license, originally released by <a href="https://bitcointalk.org/index.php?action=profile;u=34834" target="_blank">OutCast3k</a> as Coinb.in in 2013, and modified to work with Peershares assets by Triplex</p>
 						<h3>Donate</h3>
-						<p>Please donate to <a href="bitcoin:1JbsRVvU93PXN2JovuDE2NJTVNWkGEFrvx">1JbsRVvU93PXN2JovuDE2NJTVNWkGEFrvx</a> if you found this project useful or want to see more features!</p>
+						<p>Please donate to <a href="bitcoin:1J9Lfaz9poYrNSRH1vccd9qeYxBzwZ1Pq7">BTC: 1J9Lfaz9poYrNSRH1vccd9qeYxBzwZ1Pq7</a> or <a href="dash:XdR8hW2ac1MtRKNpfBaCzkKJM6P23qju6N">DASH: XdR8hW2ac1MtRKNpfBaCzkKJM6P23qju6N</a> if you found this project useful or want to see more features!</p>
 					</div>
 
 					<div class="tab-pane tab-content" id="settings">
@@ -1041,20 +1041,15 @@
 								<p class="text-muted">Select which network you'd like to use for key pair generation.</p>
 								<select class="form-control" id="coinjs_coin">
 									<!-- pubPrefix, scriptPrefix, privPrefix, hdPubPrefix, hdPrivPrefix, broadcastProvider, unspentProvider, getInputAmountProvider, extraTimeField, extraUnitFieldValue, decimalPlaces, symbol -->
-									<option value="DASH" rel="0x4c;0x10;0xcc;0x02fe52f8;0x02fe52cc;false;false;true;false;0x42;8;DASH;">Dash</option>
-									<option value="nubits" rel="0x19;0x1a;0x96;0x0488b21e;0x0488ade4;false;false;false;true;0x42;4;NBT;">NuBits</option>
-									<option value="Dogecoin" rel="0x1e;0x16;0x9e;0x02facafd;0x02fac398;false;false;true;false;0x42;8;DOGE;">Dogecoin</option>
-									<option value="blockcredits" rel="0x1c;0x1e;0x9a;0x0488b21e;0x0488ade4;false;false;false;true;0x43;4;BKC;">BlockCredits</option>
-									<option value="blockshares" rel="0x12;0x14;0x99;0x0488b21e;0x0488ade4;false;false;false;true;0x38;4;BKS;">BlockShares</option>
+									<option value="DASH" rel="0x4c;0x10;0xcc;0x02fe52f8;0x02fe52cc;false;false;false;false;false;8;DASH;">Dash</option>
+									<option value="bitcoin" rel="0x00;0x05;0x80;0x0488b21e;0x0488ade4;false;blockr_io;false;false;false;8;BTC;">Bitcoin</option>
+									<option value="Dogecoin" rel="0x1e;0x16;0x9e;0x02facafd;0x02fac398;false;blockr_io;false;false;false;8;DOGE;">Dogecoin</option>
+									<option value="litecoin" rel="0x30;0x05;0xb0;0x0488b21e;0x0488ade4;false;blockr_io;false;false;false;8;LTC;">Litecoin</option>
 									<option value="peercoin" rel="0x37;0x75;0xb7;0x0488b21e;0x0488ade4;false;false;false;true;false;6;PPC;">Peercoin</option>
-									<option value="bitcoin" rel="0x00;0x05;0x80;0x0488b21e;0x0488ade4;false;blockr_io;blockr_io;false;false;8;BTC;">Bitcoin</option>
-									
-									<option value="nubits_testnet" rel="0x55;0x56;0xe0;0x043587cf;0x04358394;false;false;false;true;0x42;4;tNBT;">NuBits (testnet)</option>
+									<option value="bitcoin_testnet" rel="0x6f;0xc4;0xef;0x043587cf;0x04358394;false;blockrio_bitcointestnet;false;false;false;8;tBTC">Bitcoin (testnet)</option>
 									<option value="blockcredits_testnet" rel="0x57;0x5a;0xe4;0x043587cf;0x04358394;false;false;false;true;0x43;4;tBKC;">BlockCredits (testnet)</option>
 									<option value="blockshares_testnet" rel="0x7f;0x82;0xe3;0x043587cf;0x04358394;false;false;false;true;0x38;4;tBKS;">BlockShares (testnet)</option>
 									<option value="peercoin_testnet" rel="0x6f;0xc4;0xef;0x043587cf;0x04358394;false;false;false;true;false;6;tPPC;">Peercoin (testnet)</option>
-									<option value="bitcoin_testnet" rel="0x6f;0xc4;0xef;0x043587cf;0x04358394;false;blockrio_bitcointestnet;false;false;false;8;tBTC">Bitcoin (testnet)</option>
-									
 									<option value="peershares_default" rel="0x3f;0x7d;0xbf;0x0488b21e;0x0488ade4;false;false;false;true;0x53;4;PSR">Peershares default</option>
 									<option value="peershares_default_test" rel="0x20;0xd4;0xa0;0x043587cf;0x04358394;false;false;false;true;0x53;4;tPSR">Peershares default (testnet)</option>
 
@@ -1171,7 +1166,7 @@
 					</div>
 
 					<br>
-					<p class="text-muted">This page uses javascript to generate your addresses and sign your transactions within your browser, this means we <i>never</i> receive your private keys, this can be independently verified by reviewing the source code on <a href="https://github.com/ttutdxh-nubits/cointoolkit" target="_blank">github</a>. You can even <a href="https://github.com/ttutdxh-nubits/cointoolkit/archive/gh-pages.zip">download</a> this page and host it yourself or run it offline!</p>
+					<p class="text-muted">This page uses javascript to generate your addresses and sign your transactions within your browser, this means we <i>never</i> receive your private keys, this can be independently verified by reviewing the source code on <a href="https://github.com/triplexfw/coinbin" target="_blank">github</a>. You can even <a href="https://github.com/triplexfw/coinbin/archive/patch-2.zip">download</a> this page and host it yourself or run it offline!</p>
 					<br>
 
 				</div>
