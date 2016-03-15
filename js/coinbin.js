@@ -936,6 +936,36 @@ $(document).ready(function() {
 		});
 	}
 
+	// broadcast transaction via blockr.io (mainnet)
+	function rawSubmitChainso_BitcoinMainnet(thisbtn){ 
+		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
+		$.ajax ({
+			type: "POST",
+			url: "https://chain.so/api/v2/send_tx/BTC/",
+			data: {"tx_hex":$("#rawTransaction").val()},
+			dataType: "json",
+			error: function(data) {
+				var obj = $.parseJSON(data.responseText);
+				var r = ' ';
+				r += (obj.data.tx_hex) ? obj.data.tx_hex : '';
+				r = (r!='') ? r : ' Failed to broadcast'; // build response 
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+			},
+                        success: function(data) {
+				var obj = $.parseJSON(data.responseText);
+				if(obj.status && obj.txid){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+obj.txid);
+				} else {
+					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+				}				
+			},
+			complete: function(data, status) {
+				$("#rawTransactionStatus").fadeOut().fadeIn();
+				$(thisbtn).val('Submit').attr('disabled',false);				
+			}
+		});
+	}
+
 	// broadcast transaction via blockr.io for litecoin
 	function rawSubmitBlockrio_litecoin(thisbtn){ 
 		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
@@ -1416,6 +1446,10 @@ $(document).ready(function() {
 		} else if(host=="blockr.io_bitcoinmainnet"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitBlockrio_BitcoinMainnet(this);
+			});
+		} else if(host=="chain.so_bitcoinmainnet"){
+			$("#rawSubmitBtn").click(function(){
+				rawSubmitChainso_BitcoinMainnet(this);
 			});
 		} else {
 			$("#rawSubmitBtn").click(function(){
