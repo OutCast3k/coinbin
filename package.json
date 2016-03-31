@@ -1,0 +1,29 @@
+{
+  "name": "coinbin",
+  "authors": [
+    "OutCast3k"
+  ],
+  "description": "A Open Source Browser Based Bitcoin Wallet.",
+  "contributors": [
+    {
+      "name": "Bitcoin Co. Ltd.",
+      "email": "contact@bitcoin.co.th"
+    },
+    {
+      "name": "David Apple",
+      "email": "davidapple@protonmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/davidapple/coinbin"
+  },
+  "main": "Gruntfile.js",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-coffee": "^1.0.0",
+    "grunt-contrib-concat": "^1.0.0",
+    "grunt-contrib-uglify": "^1.0.1"
+  }
+}

@@ -242,17 +242,56 @@ $(document).ready(function() {
 	/* new -> address code */
 
 	$("#newKeysBtn").click(function(){
+
 		// Handle warp wallet
+		function addCommas(n){
+			while (/(\d+)(\d{3})/.test(n.toString())) {
+				n = n.toString().replace(/(\d+)(\d{3})/, '$1,$2');
+			}
+			return n;
+		}
+
+		function runwarp(parent,value, salt, result){
+			$('.progress-pbkdf2, .progress-scrypt',$(parent)).html('');
+			$('.progress-form',$(parent)).show();
+			return warpwallet.run({
+				passphrase: value,
+				salt: salt,
+				progress_hook: (function() {
+					return function(o) {
+						var w;
+						if (o.what === 'scrypt') {
+							w = (o.i / o.total) * 50;
+							$('.progress-form .bar',$(parent)).css('width', "" + w + "%");
+							return $('.progress-form .bar .progress-scrypt',$(parent)).html("scrypt " + (addCommas(o.i)) + " of " + (addCommas(o.total)));
+						} else if (o.what === 'pbkdf2') {
+							w = 50 + (o.i / o.total) * 50;
+							$('.progress-form .bar',$(parent)).css('width', "" + w + "%");
+							return $('.progress-form .bar .progress-pbkdf2',$(parent)).html("&nbsp; pbkdf2 " + (addCommas(o.i)) + " of " + (addCommas(o.total)));
+						}
+					};
+				})(this)
+			}, (function(_this) {
+				return function(res) {
+					$('.progress-form',$(parent)).hide();
+					$(result).val(res["private"]).trigger('keyup');
+					if(result == '#newPrivKey'){
+						$("#newBitcoinAddress").val(res["public"]);
+						var w2pubkey = coinjs.wif2pubkey(res["private"]);
+						$("#newPubKey").val(w2pubkey['pubkey']);
+					}
+				};
+			})(this));
+		}
+
 		if($('#warpwallet:checked').length){
 			if($('#warpphrase').val() == ''){
 				$('#warpwarning').removeClass('hidden');
 				$('#warpphrase').closest('.input-group').addClass('has-error');
 				return false;
 			}
-			
 			$("#newBitcoinAddress, #newPubKey, #newPrivKey").val('Loading...');
 			runwarp('#warpgen',$('#warpphrase').val(),$('#warpsalt').val(), '#newPrivKey');
-			
 			return;
 		}
 		
