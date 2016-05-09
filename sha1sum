@@ -1,9 +1,9 @@
----- Version 1.2 2016.03.15 ----
+---- Version 1.2 2016.05.09 ----
 77e4519962e2f6a9fc93342137dbb31c33b76b04  ./js/aes.js
 3a09a8fc0cfe828b57fc798d668234d0490ee1a6  ./js/bootstrap-datetimepicker.min.js
 253711c6d825de55a8360552573be950da180614  ./js/bootstrap.min.js
 ca3f654f247fef67de2cf6e01c3aa80db1812e5d  ./js/coin.js
-d109119cae40e0fb7d1c95d01069ce81d19b45ec  ./coinbin.js
+5f9639a17f1ba88e06a48cccd2b4b1f970bdf2e2  ./js/coinbin.js
 988565bc2cb402d63ed5c5fd7ff47c4278efc2c5  ./js/collapse.js
 9ba5ede3d7f9d4c8fd623395f196adfdcf7e970f  ./js/crypto-min.js
 f7c09f2f5a721371e7d478050119f7e2d58e3ef9  ./js/crypto-sha256-hmac.js
