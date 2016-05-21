@@ -529,6 +529,13 @@
 								<hr>
 
 
+								<label>Replace By Fee (RBF)</label>
+								<p class="checkbox">
+									<label><input type="checkbox" id="txRBF" class="checkbox-inline"> Make this a <a href="https://en.bitcoin.it/wiki/Transaction_replacement" target="_blank">RBF transaction</a>.</label>
+								</p>
+
+								<hr>
+
 								<label>Network</label>
 								<p>The <a href="#settings">settings</a> page can be used to select alternative networks of which you can retrieve your unspent outputs and broadcast a signed transaction into.</p>
 
@@ -724,6 +731,7 @@
 							<div><b>Version</b>: <span class="transactionVersion"></span></div>
 							<div><b>Transaction Size</b>: <span class="transactionSize"></span></div>
 							<div><b>Lock time</b>: <span class="transactionLockTime"></span></div>
+							<div class="transactionRBF"><b>RBF</b>: This is a <a href="https://en.bitcoin.it/wiki/Transaction_replacement">replace by fee</a> transaction!</div>
 
 							<hr>
 
