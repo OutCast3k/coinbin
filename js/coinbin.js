@@ -466,6 +466,7 @@ $(document).ready(function() {
 
 	$("#transactionBtn").click(function(){
 		var tx = coinjs.transaction();
+		var estimatedTxSize = 10; // <4:version><1:txInCount><1:txOutCount><4:nLockTime>
 
 		$("#transactionCreate, #transactionCreateStatus").addClass("hidden");
 
@@ -492,6 +493,19 @@ $(document).ready(function() {
 					seq = 0xffffffff-2;
 				}
 
+				var currentScript = $(".txIdScript",o).val();
+				if (currentScript.match(/^76a914[0-9a-f]{40}88ac$/)) {
+					estimatedTxSize += 147
+				} else if (currentScript.match(/^5[1-9a-f](?:210[23][0-9a-f]{64}){1,15}5[1-9a-f]ae$/)) {
+					// <74:persig <1:push><72:sig><1:sighash> ><34:perpubkey <1:push><33:pubkey> > <32:prevhash><4:index><4:nSequence><1:m><1:n><1:OP>
+					var scriptSigSize = (parseInt(currentScript.slice(1,2),16) * 74) + (parseInt(currentScript.slice(-3,-2),16) * 34) + 43
+					// varint 2 bytes if scriptSig is > 252
+					estimatedTxSize += scriptSigSize + (scriptSigSize > 252 ? 2 : 1)
+				} else {
+					// underestimating won't hurt. Just showing a warning window anyways.
+					estimatedTxSize += 147
+				}
+
 				tx.addinput($(".txId",o).val(), $(".txIdN",o).val(), $(".txIdScript",o).val(), seq);
 			} else {
 				$('#putTabs a[href="#txinputs"]').attr('style','color:#a94442;');
@@ -504,10 +518,15 @@ $(document).ready(function() {
 			var a = ($(".address",o).val());
 			var ad = coinjs.addressDecode(a);
 			if(((a!="") && (ad.version == coinjs.pub || ad.version == coinjs.multisig)) && $(".amount",o).val()!=""){ // address
+				// P2SH output is 32, P2PKH is 34
+				estimatedTxSize += (ad.version == coinjs.pub ? 34 : 32)
 				tx.addoutput(a, $(".amount",o).val());
 			} else if (((a!="") && ad.version === 42) && $(".amount",o).val()!=""){ // stealth address
+				// 1 P2PKH and 1 OP_RETURN with 36 bytes, OP byte, and 8 byte value
+				estimatedTxSize += 78
 				tx.addstealth(ad, $(".amount",o).val());
 			} else if (((($("#opReturn").is(":checked")) && a.match(/^[a-f0-9]+$/ig)) && a.length<160) && (a.length%2)==0) { // data
+				estimatedTxSize += (a.length / 2) + 1 + 8
 				tx.adddata(a);
 			} else { // neither address nor data
 				$(o).addClass('has-error');
@@ -522,7 +541,8 @@ $(document).ready(function() {
 
 			$("#transactionCreate").removeClass("hidden");
 
-			if($("#transactionFee").val()>=0.01){
+			// Check fee against hard 0.01 as well as fluid 200 satoshis per byte calculation.
+			if($("#transactionFee").val()>=0.01 || $("#transactionFee").val()>= estimatedTxSize * 200 * 1e-8){
 				$("#modalWarningFeeAmount").html($("#transactionFee").val());
 				$("#modalWarningFee").modal("show");
 			}
