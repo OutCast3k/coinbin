@@ -408,7 +408,16 @@
                             </div>
                         </div>
 
-                        <p>Enter the date and time required to release the coins: </p>
+                        <p id="timeLockedRbTypeBox">
+                        	Enter the 
+                        		<input type="radio" id="timeLockedRbTypeDate" name="timeLockedRbType" value="date" checked="checked"> 
+                        		<label for="timeLockedRbTypeDate">date and time</label> 
+                        		or                         		
+                        		<input type="radio" id="timeLockedRbTypeBlockHeight" name="timeLockedRbType" value="blockheight">
+                        		<label for="timeLockedRbTypeBlockHeight">blockheight</label>
+
+                        		required to release the coins: 
+                        </p>
                         <div class="row">
                             <div class='col-md-6'>
                                 <div class="form-group">
@@ -417,6 +426,9 @@
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
+                                    </div>
+                                    <div class='input-group hidden' id='timeLockedBlockHeight'>
+                                        <input type='text' id='timeLockedBlockHeightVal' class="form-control" placeholder="Blockheight" />
                                     </div>
                                 </div>
                             </div>
