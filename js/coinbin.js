@@ -26,11 +26,12 @@ $(document).ready(function() {
 					var keys = coinjs.newKeys(s);
 
 					$("#walletAddress").html(keys.address);
-					$("#walletHistory").attr('href','https://btc.blockr.io/address/info/'+keys.address);
+					$("#walletHistory").attr('href',coinjs.explorer+'/address/'+keys.address);
+                                        $("#walletBuyLink").attr('href',coinjs.buyLink);
 
 					$("#walletQrCode").html("");
 					var qrcode = new QRCode("walletQrCode");
-					qrcode.makeCode("bitcoin:"+keys.address);
+					qrcode.makeCode(coinjs.urischeme+keys.address);
 
 					$("#walletKeys .privkey").val(keys.wif);
 					$("#walletKeys .pubkey").val(keys.pubkey);
@@ -67,7 +68,7 @@ $(document).ready(function() {
 
 		$("#walletQrCode").html("");
 		var qrcode = new QRCode("walletQrCode");
-		qrcode.makeCode("bitcoin:");
+		qrcode.makeCode(coinjs.urischeme);
 
 		$("#walletKeys .privkey").val("");
 		$("#walletKeys .pubkey").val("");
@@ -136,7 +137,7 @@ $(document).ready(function() {
 
 				}, signed);
 			} else {
-				$("#walletSendConfirmStatus").removeClass("hidden").addClass('alert-danger').html("You have a confirmed balance of "+data.value+" BTC unable to send "+total+" BTC").fadeOut().fadeIn();
+				$("#walletSendConfirmStatus").removeClass("hidden").addClass('alert-danger').html("You have a confirmed balance of "+data.value+" "+coinjs.ticker+" unable to send "+total+" "+coinjs.ticker).fadeOut().fadeIn();
 				thisbtn.attr('disabled',false);
 			}
 
@@ -223,12 +224,12 @@ $(document).ready(function() {
 	function walletBalance(){
 		var tx = coinjs.transaction();
 		$("#walletLoader").removeClass("hidden");
-		coinjs.addressBalance($("#walletAddress").html(),function(data){
+		coinjs.addressBalance($("#walletAddress").html(),function(data){                   
 			if($(data).find("result").text()==1){
 				var v = $(data).find("balance").text()/100000000;
-				$("#walletBalance").html(v+" BTC").attr('rel',v).fadeOut().fadeIn();
+				$("#walletBalance").html(v+" "+coinjs.ticker).attr('rel',v).fadeOut().fadeIn();
 			} else {
-				$("#walletBalance").html("0.00 BTC").attr('rel',v).fadeOut().fadeIn();
+				$("#walletBalance").html("0.00 "+coinjs.ticker).attr('rel',v).fadeOut().fadeIn();
 			}
 
 			$("#walletLoader").addClass("hidden");
@@ -1351,7 +1352,7 @@ $(document).ready(function() {
 			}
 		} else {
 			var qrcode = new QRCode("qrcode");
-			qrstr = "bitcoin:"+$('.address',thisbtn).val();
+			qrstr = coinjs.urischeme+$('.address',thisbtn).val();
 		}
 
 		if(qrstr){

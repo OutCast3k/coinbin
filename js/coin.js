@@ -10,10 +10,14 @@
 	var coinjs = window.coinjs = function () { };
 
 	/* public vars */
-	coinjs.pub = 0x00;
-	coinjs.priv = 0x80;
-	coinjs.multisig = 0x05;
+        coinjs.pub = 0x3f;
+        coinjs.priv = 0x80;
+        coinjs.multisig = 0x28;
 	coinjs.hdkey = {'prv':0x0488ade4, 'pub':0x0488b21e};
+        coinjs.ticker = 'SIB';
+        coinjs.urischeme = 'sibcoin:';
+        coinjs.explorer = 'https://chain.sibcoin.net';
+        coinjs.buyLink = 'https://yobit.net/en/trade/SIB/RUR';
 
 	coinjs.compressed = false;
 
@@ -21,7 +25,7 @@
 	coinjs.developer = '1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg'; // bitcoin
 
 	/* bit(coinb.in) api vars */
-	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+'coinb.in/api/';
+	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+'sibcoinb.in/api/';
 	coinjs.uid = '1';
 	coinjs.key = '12345678901234567890123456789012';
 
