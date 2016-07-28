@@ -99,17 +99,20 @@ $(document).ready(function() {
 		$.each($("#walletSpendTo .output"), function(i,o){
 			var addr = $('.addressTo',o);
 			var amount = $('.amount',o);
-			total += amount.val()*1;
-			tx.addoutput(addr.val(), amount.val()*1);
+			if(amount.val()*1>0){
+				total += amount.val()*1;
+				tx.addoutput(addr.val(), amount.val()*1);
+			}
 		});
 
 		thisbtn.attr('disabled',true);
 
 		tx.addUnspent($("#walletAddress").html(), function(data){
-			var dvalue = data.value/100000000
+			var dvalue = (data.value/100000000).toFixed(8);
+			total = total.toFixed(8);
 			if(dvalue>=total){
 				var change = dvalue-total;
-				if(change>0){
+				if((change*1)>0){
 					tx.addoutput($("#walletAddress").html(), change);
 				}
 
