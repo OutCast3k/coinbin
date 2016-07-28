@@ -369,6 +369,16 @@ $(document).ready(function() {
 		format: "MM/DD/YYYY HH:mm",
 	});
 	
+	$('#timeLockedRbTypeBox input').change(function(){
+		if ($('#timeLockedRbTypeDate').is(':checked')){
+			$('#timeLockedDateTimePicker').show();
+			$('#timeLockedBlockHeight').hide();
+		} else {
+			$('#timeLockedDateTimePicker').hide();
+			$('#timeLockedBlockHeight').removeClass('hidden').show();
+		}
+	});
+
     $("#newTimeLockedAddress").click(function(){
 
         $("#timeLockedData").removeClass('show').addClass('hidden').fadeOut();
@@ -380,14 +390,28 @@ $(document).ready(function() {
         	$('#timeLockedPubKey').parent().addClass('has-error');
         }
 
-        var date = $('#timeLockedDateTimePicker').data("DateTimePicker").date();
-        if(!date || !date.isValid()) {
-        	$('#timeLockedDateTimePicker').parent().addClass('has-error');
+        var nLockTime = -1;
+
+        if ($('#timeLockedRbTypeDate').is(':checked')){
+        	// by date
+	        var date = $('#timeLockedDateTimePicker').data("DateTimePicker").date();
+	        if(!date || !date.isValid()) {
+	        	$('#timeLockedDateTimePicker').parent().addClass('has-error');
+	        }
+	        nLockTime = date.unix()
+	        if (nLockTime < 500000000) {
+	        	$('#timeLockedDateTimePicker').parent().addClass('has-error');
+	        }
+        } else {
+			nLockTime = parseInt($('#timeLockedBlockHeightVal').val(), 10);
+	        if (nLockTime >= 500000000) {
+	        	$('#timeLockedDateTimePicker').parent().addClass('has-error');
+	        }
         }
 
         if(($("#timeLockedPubKey").parent().hasClass('has-error')==false) && $("#timeLockedDateTimePicker").parent().hasClass('has-error')==false){
         	try {
-	            var hodl = coinjs.simpleHodlAddress($("#timeLockedPubKey").val(), date.unix());
+	            var hodl = coinjs.simpleHodlAddress($("#timeLockedPubKey").val(), nLockTime);
 	            $("#timeLockedData .address").val(hodl['address']);
 	            $("#timeLockedData .script").val(hodl['redeemScript']);
 	            $("#timeLockedData .scriptUrl").val(document.location.origin+''+document.location.pathname+'?verify='+hodl['redeemScript']+'#verify');
