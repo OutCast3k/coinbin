@@ -244,7 +244,60 @@ $(document).ready(function() {
 
 	/* new -> address code */
 
+	function addCommas(n){
+		while (/(\d+)(\d{3})/.test(n.toString())) {
+			n = n.toString().replace(/(\d+)(\d{3})/, '$1,$2');
+		}
+		return n;
+	}
+
+	function runwarp(parent,value, salt, result){
+		$('.progress-pbkdf2, .progress-scrypt',$(parent)).html('');
+		$('.progress-form',$(parent)).show();
+		return warpwallet.run({
+			passphrase: value,
+			salt: salt,
+			progress_hook: (function() {
+				return function(o) {
+					var w;
+					if (o.what === 'scrypt') {
+						w = (o.i / o.total) * 50;
+						$('.progress-form .bar',$(parent)).css('width', "" + w + "%");
+						return $('.progress-form .bar .progress-scrypt',$(parent)).html("scrypt " + (addCommas(o.i)) + " of " + (addCommas(o.total)));
+					} else if (o.what === 'pbkdf2') {
+						w = 50 + (o.i / o.total) * 50;
+						$('.progress-form .bar',$(parent)).css('width', "" + w + "%");
+						return $('.progress-form .bar .progress-pbkdf2',$(parent)).html("&nbsp; pbkdf2 " + (addCommas(o.i)) + " of " + (addCommas(o.total)));
+					}
+				};
+			})(this)
+		}, (function(_this) {
+			return function(res) {
+				$('.progress-form',$(parent)).hide();
+				$(result).val(res["private"]).trigger('keyup');
+				if(result == '#newPrivKey'){
+					$("#newBitcoinAddress").val(res["public"]);
+					var w2pubkey = coinjs.wif2pubkey(res["private"]);
+					$("#newPubKey").val(w2pubkey['pubkey']);
+				}
+			};
+		})(this));
+	}
+
 	$("#newKeysBtn").click(function(){
+
+		// Handle warp wallet
+		if($('#warpwallet:checked').length){
+			if($('#warpphrase').val() == ''){
+				$('#warpwarning').removeClass('hidden');
+				$('#warpphrase').closest('.input-group').addClass('has-error');
+				return false;
+			}
+			$("#newBitcoinAddress, #newPubKey, #newPrivKey").val('Loading...');
+			runwarp('#warpgen',$('#warpphrase').val(),$('#warpsalt').val(), '#newPrivKey');
+			return;
+		}
+		
 		coinjs.compressed = false;
 		if($("#newCompressed").is(":checked")){
 			coinjs.compressed = true;
@@ -585,6 +638,61 @@ $(document).ready(function() {
 		totalInputAmount();
 	}).keyup(function(){
 		totalInputAmount();
+	});
+	
+	// Warp wallet keys
+	$('#signPrivateKey').keyup(function(){
+		var wif = $(this).val();
+		if(wif == ''){
+			$('#brainkey').addClass("hidden");
+		}else if(wif.length==51 || wif.length==52){
+			try {
+				var w2address = coinjs.wif2address(wif);
+				var w2pubkey = coinjs.wif2pubkey(wif);
+				var w2privkey = coinjs.wif2privkey(wif);
+
+				$('#brainkey').addClass("hidden");
+			} catch (e) {
+				$('#brainkey').removeClass("hidden");
+			}
+		} else {
+			$('#brainkey').removeClass("hidden");
+		}
+	});
+	
+	$('#brainkey button').click(function(){
+		var value = $('#signPrivateKey').val();
+		if($(this).hasClass('keybrain') || $(this).hasClass('keybrain2')){
+			coinjs.compressed = $(this).hasClass('keybrain');
+			var coin = coinjs.newKeys(value);
+			value = coin.wif;
+			$('#signPrivateKey').val(value).trigger('keyup');
+		}else{
+		  var salt = '';
+		  var x;
+		  if(x = prompt('If you have a salt enter it here','')){
+			salt = x;  
+		  }
+		  runwarp('#brainkey',value,salt, '#signPrivateKey');
+		}
+	});
+	
+	$('#newAddress input:checkbox').click(function(){
+		if($(this).attr('id') == 'warpwallet'){
+			$('#newAddress input:checked:not("#warpwallet")').each(function(){
+				$(this).attr('checked',false);
+				$('input[type="text"], .row',$(this).closest('.checkbox')).addClass('hidden');
+			});
+			$('.row',$('#warpwallet').closest('.checkbox')).removeClass('hidden');
+		}else{
+			$('.row',$('#warpwallet').closest('.checkbox')).addClass('hidden');
+			$('#warpwallet').attr('checked', false);
+		}
+	});
+	
+	$('#warpphrase,#warpsalt').keyup(function(){
+		$(this).closest('.input-group').removeClass('has-error');
+		$('#warpwarning').addClass('hidden');
 	});
 
 	/* code for the qr code scanner */
@@ -1410,7 +1518,13 @@ $(document).ready(function() {
 	}
 
 	$(".showKey").click(function(){
-		$("input[type='password']",$(this).parent().parent()).attr('type','text');
+		if($(this).text() == 'Show'){
+			$(this).text('Hide');
+			$("input[type='password']",$(this).parent().parent()).attr('type','text');
+		}else{
+			$(this).text('Show');
+			$("input[type='text']",$(this).parent().parent()).attr('type','password');
+		}
 	});
 
 	$("#homeBtn").click(function(e){

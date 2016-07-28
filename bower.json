@@ -1,0 +1,18 @@
+{
+  "name": "coinbin",
+  "authors": [
+    "OutCast3k"
+  ],
+  "description": "A Open Source Browser Based Bitcoin Wallet.",
+  "main": "index.html",
+  "license": "MIT",
+  "homepage": "https://coinb.in/",
+  "ignore": [
+    "bower_components"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.2",
+    "qrcode.js": "qrcode-js#*",
+    "warpwallet": "https://github.com/davidapple/warpwallet-dismantled.git#^1.0.1"
+  }
+}
