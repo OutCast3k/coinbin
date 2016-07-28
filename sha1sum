@@ -2,7 +2,7 @@
 77e4519962e2f6a9fc93342137dbb31c33b76b04  ./js/aes.js
 3a09a8fc0cfe828b57fc798d668234d0490ee1a6  ./js/bootstrap-datetimepicker.min.js
 253711c6d825de55a8360552573be950da180614  ./js/bootstrap.min.js
-3ab10e60a8e6e660a574360ab6808bb0a3cebf85  ./js/coinbin.js
+97eff91b9b913dae9b25f5bb308a9599f2cbb16e  ./js/coinbin.js
 1bb89d9fc4147b53a963009af3e28d7928497947  ./js/coin.js
 988565bc2cb402d63ed5c5fd7ff47c4278efc2c5  ./js/collapse.js
 9ba5ede3d7f9d4c8fd623395f196adfdcf7e970f  ./js/crypto-min.js
@@ -21,7 +21,7 @@ ad038e1f39646b68ae666324ed4c2882a8c42474  ./js/qrcode.js
 255c58c17e63eb54adb3cd02b5c06224c67fc364  ./css/bootstrap-datetimepicker.min.css
 ed29315e0ffb3f14382431f2724235bf67f44eb3  ./css/bootstrap.min.css
 fc6b4268fbd57ad95d2b41a1d4d6866f222fbdb2  ./css/bootstrap-theme.min.css
-8297b8f4d686ec6c65981077514975e06ce41812  ./css/style.css
+4198ed869836ea5727ad6b80bf2df0a9c1a83244  ./css/style.css
 8ac24915d59cef71c542e7cb7d7e153f560cba1f  ./images/coinbin.gif
 f2af060f1cadbc9065c8c465c648dc01be67cc12  ./images/loader.gif
 86b6f62b7853e67d3e635f6512a5a5efc58ea3c3  ./fonts/glyphicons-halflings-regular.eot

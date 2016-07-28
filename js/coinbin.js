@@ -848,7 +848,6 @@ $(document).ready(function() {
 				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
 			},
 			success: function(data) {
-				console.log(data);
 				if((data.status && data.data) && data.status=='success'){
 					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 					for(var i in data.data.txs){
@@ -974,9 +973,8 @@ $(document).ready(function() {
 				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 			},
                         success: function(data) {
-				var obj = $.parseJSON(data.responseText);
-				if((obj.status && obj.data) && obj.status=='success'){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+obj.data);
+				if((data.status && data.data) && data.status=='success'){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data);
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 				}				
@@ -1004,9 +1002,8 @@ $(document).ready(function() {
 				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 			},
                         success: function(data) {
-				var obj = $.parseJSON(data.responseText);
-				if(obj.status && obj.txid){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+obj.txid);
+				if(data.status && data.data.txid){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data.txid);
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 				}				
@@ -1033,12 +1030,11 @@ $(document).ready(function() {
 				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 			},
                         success: function(data) {
-				var obj = $.parseJSON(data.responseText);
-				if((obj.tx) && obj.tx.hash){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+obj.tx.hash);
+				if((data.tx) && data.tx.hash){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.tx.hash);
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-				}				
+				}
 			},
 			complete: function(data, status) {
 				$("#rawTransactionStatus").fadeOut().fadeIn();
@@ -1064,9 +1060,8 @@ $(document).ready(function() {
 				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 			},
                         success: function(data) {
-				var obj = $.parseJSON(data.responseText);
-				if((obj.status && obj.data) && obj.status=='success'){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+obj.data);
+				if((data.status && data.data) && data.status=='success'){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data);
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 				}
