@@ -18,14 +18,15 @@
         coinjs.urischeme = 'sibcoin:';
         coinjs.explorer = 'https://chain.sibcoin.net';
         coinjs.buyLink = 'https://yobit.net/en/trade/SIB/RUR';
+        coinjs.opreturnmax = 40;
 
 	coinjs.compressed = false;
 
 	/* other vars */
-	coinjs.developer = '1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg'; // bitcoin
+	coinjs.developer = 'SMSdUsMnMyUt7tR7dR2cnQhS9wDSQ1Bv5d'; // sibcoin
 
 	/* bit(coinb.in) api vars */
-	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+'sibcoinb.in/api/';
+	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+'sibcoinbin.in/api/';
 	coinjs.uid = '1';
 	coinjs.key = '12345678901234567890123456789012';
 
@@ -841,7 +842,7 @@
 		/* add data to a transaction */
 		r.adddata = function(data){
 			var r = false;
-			if(((data.match(/^[a-f0-9]+$/gi)) && data.length<160) && (data.length%2)==0) {
+			if(((data.match(/^[a-f0-9]+$/gi)) && data.length<coinjs.opreturnmax*2) && (data.length%2)==0) {
 				var s = coinjs.script();
 				s.writeOp(106); // OP_RETURN
 				s.writeBytes(Crypto.util.hexToBytes(data));
@@ -881,7 +882,8 @@
 
 				for(i=1;i<=unspent.childElementCount;i++){
 					var u = xmlDoc.getElementsByTagName("unspent_"+i)[0]
-					var txhash = (u.getElementsByTagName("tx_hash")[0].childNodes[0].nodeValue).match(/.{1,2}/g).reverse().join("")+'';
+					//var txhash = (u.getElementsByTagName("tx_hash")[0].childNodes[0].nodeValue).match(/.{1,2}/g).reverse().join("")+'';
+                                        var txhash = (u.getElementsByTagName("tx_hash")[0].childNodes[0].nodeValue);
 					var n = u.getElementsByTagName("tx_output_n")[0].childNodes[0].nodeValue;
 					var script = u.getElementsByTagName("script")[0].childNodes[0].nodeValue;
 
