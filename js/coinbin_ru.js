@@ -4,7 +4,7 @@ $(document).ready(function() {
 
 	$("#openBtn").click(function(){
 		var email = $("#openEmail").val().toLowerCase();
-		if(email.match(/[\s\w\d]+@[\s\w\d]+/g)){
+		if(email.match(/[\s\w\d]+@[\s\w\d]+\.[\s\w\d]+/g)){
 			if($("#openPass").val().length>=10){
 				if($("#openPass").val()==$("#openPassConfirm").val()){
 					var email = $("#openEmail").val().toLowerCase();
@@ -43,13 +43,13 @@ $(document).ready(function() {
 					walletBalance();
 					checkBalanceLoop();
 				} else {
-					$("#openLoginStatus").html("Your passwords do not match!").removeClass("hidden").fadeOut().fadeIn();
+					$("#openLoginStatus").html("Пароли не совпадают!").removeClass("hidden").fadeOut().fadeIn();
 				}
 			} else {
-				$("#openLoginStatus").html("Your password must be at least 10 chars long").removeClass("hidden").fadeOut().fadeIn();
+				$("#openLoginStatus").html("Ваш пароль должен иметь длину не менее 10 символов").removeClass("hidden").fadeOut().fadeIn();
 			}
 		} else {
-			$("#openLoginStatus").html("Your email address doesn't appear to be valid").removeClass("hidden").fadeOut().fadeIn();
+			$("#openLoginStatus").html("Вы ввели некорректный e-mail адрес").removeClass("hidden").fadeOut().fadeIn();
 		}
 
 		$("#openLoginStatus").prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
@@ -137,7 +137,7 @@ $(document).ready(function() {
 
 				}, signed);
 			} else {
-				$("#walletSendConfirmStatus").removeClass("hidden").addClass('alert-danger').html("You have a confirmed balance of "+data.value+" "+coinjs.ticker+" unable to send "+total+" "+coinjs.ticker).fadeOut().fadeIn();
+				$("#walletSendConfirmStatus").removeClass("hidden").addClass('alert-danger').html("Ваш подтвержденный баланс "+data.value+" "+coinjs.ticker+" невозможно потратить "+total+" "+coinjs.ticker).fadeOut().fadeIn();
 				thisbtn.attr('disabled',false);
 			}
 
@@ -197,11 +197,11 @@ $(document).ready(function() {
 				$("#modalWalletConfirm").modal("show");
 				$("#walletConfirmSend").attr('disabled',false);
 			} else {
-				$("#walletSendStatus").removeClass("hidden").html("You are trying to spend "+total+' but have a balance of '+balance);
+				$("#walletSendStatus").removeClass("hidden").html("Вы пытаетесь потратить "+total+', но ваш баланс всего '+balance);
 			}
 		} else {
 			$("#walletSpend .has-error").fadeOut().fadeIn();
-			$("#walletSendStatus").removeClass("hidden").html('<span class="glyphicon glyphicon-exclamation-sign"></span> One or more input has an error');
+			$("#walletSendStatus").removeClass("hidden").html('<span class="glyphicon glyphicon-exclamation-sign"></span> Один или более входов содержат ошибку');
 		}
 	});
 
@@ -296,7 +296,7 @@ $(document).ready(function() {
 
 		if((isNaN($("#releaseCoins option:selected").html())) || ((!isNaN($("#releaseCoins option:selected").html())) && ($("#releaseCoins option:selected").html()>$("#multisigPubKeys .pubkey").length || $("#releaseCoins option:selected").html()*1<=0 || $("#releaseCoins option:selected").html()*1>8))){
 			$("#releaseCoins").parent().addClass('has-error');
-			$("#multiSigErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> Minimum signatures required is greater than the amount of public keys provided').fadeIn();
+			$("#multiSigErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> Минимальное количество необходимых подписей больше чем количество публичных ключей!').fadeIn();
 			return false;
 		}
 
@@ -319,7 +319,7 @@ $(document).ready(function() {
 			$("#multiSigData").removeClass('hidden').addClass('show').fadeIn();
 			$("#releaseCoins").removeClass('has-error');
 		} else {
-			$("#multiSigErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> One or more public key is invalid!').fadeIn();
+			$("#multiSigErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> Один или несколько публичных ключей содержат ошибку!').fadeIn();
 		}
 	});
 
@@ -397,7 +397,7 @@ $(document).ready(function() {
 	        	$("#timeLockedErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> ' + e).fadeIn();
 	        }
         } else {
-            $("#timeLockedErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> Public key and/or date is invalid!').fadeIn();
+            $("#timeLockedErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> Некорректная дата или публичный ключ!').fadeIn();
         }
     });
 
@@ -528,7 +528,7 @@ $(document).ready(function() {
 				$("#modalWarningFee").modal("show");
 			}
 		} else {
-			$("#transactionCreateStatus").removeClass("hidden").html("One or more input or output is invalid").fadeOut().fadeIn();
+			$("#transactionCreateStatus").removeClass("hidden").html("Один или несколько входов или выходов некорректны").fadeOut().fadeIn();
 		}
 	});
 
@@ -617,12 +617,12 @@ $(document).ready(function() {
 		$("#redeemFromStatus, #redeemFromAddress").addClass('hidden');
 
 		if(redeem.from=='multisigAddress'){
-			$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> You should use the redeem script, not the multisig address!');
+			$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Вы должны использовать скрипт погашения (redeem script), а не мультисиг адрес!');
 			return false;
 		}
 
 		if(redeem.from=='other'){
-			$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> The address or multisig redeem script you have entered is invalid');
+			$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Вы ввели некорректный адрес или скрипт погашения');
 			return false;
 		}
 
@@ -742,7 +742,7 @@ $(document).ready(function() {
 		var tx = coinjs.transaction();
 		tx.listUnspent(redeem.addr, function(data){
 			if(redeem.addr) {
-				$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+coinjs.explorer+'/address/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+				$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Загружены неиспользованные "выходы" для адреса <a href="'+coinjs.explorer+'/address/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 
 				$.each($(data).find("unspent").children(), function(i,o){
 					var tx = $(o).find("tx_hash").text();
@@ -754,7 +754,7 @@ $(document).ready(function() {
 				});
 			}
 
-			$("#redeemFromBtn").html("Load").attr('disabled',false);
+			$("#redeemFromBtn").html("Загрузить").attr('disabled',false);
 			totalInputAmount();
 
 			mediatorPayment(redeem);
@@ -768,11 +768,11 @@ $(document).ready(function() {
 			url: "https://btc.blockr.io/api/v1/address/unspent/"+redeem.addr+"?unconfirmed=1",
 			dataType: "json",
 			error: function(data) {
-				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Неожиданная ошибка, не удалось загрузить неиспользованные выходы!');
 			},
 			success: function(data) {
 				if((data.status && data.data) && data.status=='success'){
-					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Загружены неиспользованные "выходы" для адреса <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 					for(var i in data.data.unspent){
 						var o = data.data.unspent[i];
 						var tx = o.tx;
@@ -782,11 +782,11 @@ $(document).ready(function() {
 						addOutput(tx, n, script, amount);
 					}
 				} else {
-					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Неожиданная ошибка, не удалось загрузить неиспользованные выходы.');
 				}
 			},
 			complete: function(data, status) {
-				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				$("#redeemFromBtn").html("Загрузить").attr('disabled',false);
 				totalInputAmount();
 			}
 		});
@@ -799,12 +799,12 @@ $(document).ready(function() {
 			url: "https://chain.so/api/v2/get_tx_unspent/ltc/"+redeem.addr,
 			dataType: "json",
 			error: function(data) {
-				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Неожиданная ошибка, не удалось загрузить неиспользованные выходы!');
 			},
 			success: function(data) {
 				console.log(data);
 				if((data.status && data.data) && data.status=='success'){
-					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Загружены неиспользованные "выходы" для адреса <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 					for(var i in data.data.txs){
 						var o = data.data.txs[i];
 						var tx = ((o.txid).match(/.{1,2}/g).reverse()).join("")+'';
@@ -814,11 +814,11 @@ $(document).ready(function() {
 						addOutput(tx, n, script, amount);
 					}
 				} else {
-					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Неожиданная ошибка, не удалось загрузить неиспользованные выходы.');
 				}
 			},
 			complete: function(data, status) {
-				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				$("#redeemFromBtn").html("Загрузить").attr('disabled',false);
 				totalInputAmount();
 			}
 		});
@@ -893,7 +893,7 @@ $(document).ready(function() {
 			data: {'rawtx':$("#rawTransaction").val()},
 			dataType: "xml",
 			error: function(data) {
-				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(" There was an error submitting your request, please try again").prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(" Произошла ошибка при отправке вашего запроса, попробуйте еще раз").prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 			},
                         success: function(data) {
 				$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
@@ -1191,7 +1191,7 @@ $(document).ready(function() {
 				$("#verifyPrivKey .address").val(w2address['address']);
 				$("#verifyPrivKey .pubkey").val(w2pubkey['pubkey']);
 				$("#verifyPrivKey .privkey").val(w2privkey['privkey']);
-				$("#verifyPrivKey .iscompressed").html(w2address['compressed']?'true':'false');
+				$("#verifyPrivKey .iscompressed").html(w2address['compressed']?'да':'нет');
 
 				$("#verifyPrivKey").removeClass("hidden");
 				return true;
@@ -1348,7 +1348,7 @@ $(document).ready(function() {
 			var qrcode = new QRCode("qrcode", {width:w, height:w});
 			qrstr = $(ta).val();
 			if(qrstr.length > 1024){
-				$("#qrcode").html("<p>Sorry the data is too long for the QR generator.</p>");
+				$("#qrcode").html("<p>Извините, слишком большой размер данных для QR генератора.</p>");
 			}
 		} else {
 			var qrcode = new QRCode("qrcode");
@@ -1434,9 +1434,9 @@ $(document).ready(function() {
 			configureBroadcast();
 			configureGetUnspentTx();
 
-			$("#statusSettings").addClass("alert-success").removeClass("hidden").html("<span class=\"glyphicon glyphicon-ok\"></span> Settings updates successfully").fadeOut().fadeIn();	
+			$("#statusSettings").addClass("alert-success").removeClass("hidden").html("<span class=\"glyphicon glyphicon-ok\"></span> Настройки обновлены успешно").fadeOut().fadeIn();	
 		} else {
-			$("#statusSettings").addClass("alert-danger").removeClass("hidden").html("There is an error with one or more of your settings");	
+			$("#statusSettings").addClass("alert-danger").removeClass("hidden").html("Обнаружена одна или несколько ошибок в ваших настройках");	
 		}
 	});
 
