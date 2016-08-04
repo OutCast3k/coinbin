@@ -2,11 +2,11 @@
 <html lang="en">
 	<head>
 
-		<title>Bitcoin Wallet by Coinb.in</title>
+		<title>Кошелек "Сибирский Червонец"</title>
 
         	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-		<meta name="keywords" content="bitcoin, wallet, multisig, multisignature, address, browser, javascript, js, broadcast, transaction, verify, decode" />
-		<meta name="description" content="A Bitcoin Wallet written in Javascript. Supports Multisig, Custom Transactions, nLockTime and more!" />
+		<meta name="keywords" content="Сибирский червонец, кошелек, multisig, мультисиг, адрес, браузер, javascript, js, транзакция, верифицировать, декодировать" />
+		<meta name="description" content="Веб-кошелек сибирского червонца, реализованный на Javascript. Поддерживает мультисиг адреса, различные виды транзакций, nLockTime и многое другое!" />
 
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,7 +36,7 @@
 		<script type="text/javascript" src="js/ellipticcurve.js"></script>
 
 		<script type="text/javascript" src="js/coin.js"></script>
-		<script type="text/javascript" src="js/coinbin.js"></script>
+		<script type="text/javascript" src="js/coinbin_ru.js"></script>
 	</head>
 
 	<body>
@@ -51,84 +51,99 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a href="#home" class="navbar-brand" id="homeBtn"><img src="images/coinbin.gif" style="height:25px;margin-top:-5px"></a>
+                                                <a class="navbar-brand" href="/" style="padding: 5px 20px;">
+                                                    <img alt="Brand" src="/images/sib.png" width="40" height="40">
+                                                </a>
 					</div>
 					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav">
 							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span> New<b class="caret"></b></a>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span> Новый<b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									<li><a href="#newAddress" data-toggle="tab">New Address</a></li>
-									<li><a href="#newMultiSig" data-toggle="tab">MultiSig Address</a></li>
+									<li><a href="#newAddress" data-toggle="tab">Новый адрес</a></li>
+									<li><a href="#newMultiSig" data-toggle="tab">MultiSig адрес</a></li>
 									<li><a href="#newTimeLocked" data-toggle="tab">Time Locked Address</a></li>
-									<li><a href="#newHDaddress" data-toggle="tab">HD Address</a></li>
+									<li><a href="#newHDaddress" data-toggle="tab">HD адрес</a></li>
 									<li class="divider"></li>
-									<li><a href="#newTransaction" data-toggle="tab">Transaction</a></li>
+									<li><a href="#newTransaction" data-toggle="tab">Транзакция</a></li>
 								</ul>
 							</li>
-							<li><a href="#verify" data-toggle="tab"><span class="glyphicon glyphicon-ok"></span> Verify</a></li>
-							<li><a href="#sign" data-toggle="tab"><span class="glyphicon glyphicon-pencil"></span> Sign</a></li>
-							<li><a href="#broadcast" data-toggle="tab"><span class="glyphicon glyphicon-globe"></span> Broadcast</a></li>
-							<li><a href="#wallet" data-toggle="tab"><span class="glyphicon glyphicon-briefcase"></span> Wallet</a></li>
-							<li><a href="#about" data-toggle="tab"><span class="glyphicon glyphicon-info-sign"></span> About</a></li>
+							<li><a href="#verify" data-toggle="tab"><span class="glyphicon glyphicon-ok"></span> Проверить</a></li>
+							<li><a href="#sign" data-toggle="tab"><span class="glyphicon glyphicon-pencil"></span> Подписать</a></li>
+							<li><a href="#broadcast" data-toggle="tab"><span class="glyphicon glyphicon-globe"></span> Отправить в сеть</a></li>
+							<li><a href="#wallet" data-toggle="tab"><span class="glyphicon glyphicon-briefcase"></span> Кошелек</a></li>
+							<li><a href="#about" data-toggle="tab"><span class="glyphicon glyphicon-info-sign"></span> О нас</a></li>
 
-							<li class="hidden"><a href="#settings" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+							<li class="hidden"><a href="#settings" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span> Настройки</a></li>
 						</ul>
+                                                <ul class="nav navbar-nav navbar-right" style="margin-left:10px">
+                                                  <li class="dropdown">
+                                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                                        <img src="/images/lang/RU.png">
+                                                        <span class="caret"></span>
+                                                    </a>
+                                                    <ul class="dropdown-menu" role="menu" style="min-width: 0px !important">
+                                                                          <li><a href="/" title="Русский"><img src="/images/lang/RU.png"> Русский</a></li>
+                                                                          <li><a href="/en/" title="English"><img src="/images/lang/EN.png"> English</a></li>
+                                                                  </ul>
+                                                  </li>
+                                                </ul>                             
+
 					</div>
 				</div>
 			</div>
 
 			<div id="content" class="container">
 
-				<noscript class="alert alert-danger center-block"><span class="glyphicon glyphicon-exclamation-sign"></span> This page uses javascript, please enable it to continue!</noscript>
+				<noscript class="alert alert-danger center-block"><span class="glyphicon glyphicon-exclamation-sign"></span> Эта страница использует JavaScript. Пожалуйста, включите JavaScript в вашем браузере для работы с сайтом!</noscript>
 
 				<div class="tab-content">
 					<div class="tab-pane tab-content active" id="home">
 						<div class="row">
 							<div class="col-md-12">
-								<h2>Coinb.in <small>Welcome to the Blockchain</small></h2>
+								<h2>SibCoinb.in <small>Добро пожаловать в мир блокчейн!</small></h2>
 							</div>
 						</div>
 
 						<div class="jumbotron">
-							<h1>Bitcoin. It's your money!</h1>
-							<p>Be your own bank, take control of your own money and start using Bitcoin today!</p>
-							<p><a class="btn btn-primary btn-lg" href="#about" role="button">Learn more &raquo;</a></p>
+							<h1>Сибирский Червонец (SIB)</h1>
+							<p>Народная расчетная единица. Будь сам себе банком, начни использовать червонец сегодня!</p>
+							<p><a class="btn btn-primary btn-lg" href="#about" role="button">Узнать больше &raquo;</a></p>
 						</div>
 
 						<hr>
 
 						<div class="row">
 							<div class="col-md-4">
-								<h3><span class="glyphicon glyphicon-ok"></span> Open Source</h3>
-								<p>Coinbin is an open source web based wallet written in javascript and released under the <a href="LICENSE">MIT license</a> which means it's free to use and edit.</p>
+								<h3><span class="glyphicon glyphicon-ok"></span> Открытый исходный код</h3>
+								<p>SibCoinbin это веб-кошелек с открытым исходным кодом, реализованный на JavaScript и выпущенный под <a href="LICENSE.ru">лицензией MIT</a> ,что означает свободное использование кода.</p>
 							</div>
 
 							<div class="col-md-4">
-								<h3><span class="glyphicon glyphicon-fullscreen"></span> MultiSig</h3>
-								<p>We offer a fully transparent <a href="#newMultiSig">multisig</a> solution which works seamlessly offline and with other bitcoin clients.</p>
+								<h3><span class="glyphicon glyphicon-fullscreen"></span> Мультисиг</h3>
+								<p>Мы предлагаем полностью прозрачное <a href="#newMultiSig">мультисиг</a> решение, которое может работать как офлайн, так и совместно с другими клиентами Сибирского Червонца.</p>
 							</div>
 
 							<div class="col-md-4">
-								<h3><span class="glyphicon glyphicon-bitcoin"></span> Raw Transactions</h3>
-								<p><a href="#newTransaction">Create</a>, <a href="#verify">verify</a>, <a href="#sign">sign</a> and <a href="#broadcast">broadcast</a> custom raw transactions online with advanced features and minimal effort!</p>
+								<h3><span class="glyphicon glyphicon-transfer"></span> Транзакции</h3>
+								<p><a href="#newTransaction">Создавайте</a>, <a href="#verify">верифицируйте</a>, <a href="#sign">подписывайте</a> и <a href="#broadcast">отправляйте в сеть</a> свои собственные транзакции с дополнительными возможностями при минимальных усилиях!</p>
 							</div>
 						</div>
 
 						<div class="row">
 							<div class="col-md-4">
-								<h3><span class="glyphicon glyphicon-piggy-bank"></span> Wallet</h3>
-								<p>Quick access to an <a href="#wallet">online wallet</a> where only you have access to your own private keys!</p>
+								<h3><span class="glyphicon glyphicon-piggy-bank"></span> Кошелек</h3>
+								<p>Быстрый доступ к <a href="#wallet">онлайн кошельку</a>, в котором только вы имеете доступ к вашим приватным ключам!</p>
 							</div>
 
 							<div class="col-md-4">
-								<h3><span class="glyphicon glyphicon-globe"></span> Addresses</h3>
-								<p>We support <a href="#newAddress">regular addresses</a> but also <a href="#newMultiSig">multisig</a> and stealth, and access to your own private keys!</p>
+								<h3><span class="glyphicon glyphicon-globe"></span> Адреса</h3>
+								<p>Поддерживаются как <a href="#newAddress">обычные адреса</a>, так и <a href="#newMultiSig">мультисиг</a> и другие виды адресов с доступом к вашим приватным ключам!</p>
 							</div>
 
 							<div class="col-md-4">
-								<h3><span class="glyphicon glyphicon-wrench"></span>  Development</h3>
-								<p>Use what we've built to write your own projects! See our documention (coming soon), or contribute at <a href="https://github.com/OutCast3k/coinbin/">github</a>.</p>
+								<h3><span class="glyphicon glyphicon-wrench"></span>  Разработка</h3>
+								<p>Используйте наши наработки для ваших собственных проектов! Смотрите код проекта на <a href="https://github.com/OutCast3k/coinbin/">github</a>.</p>
 							</div>
 						</div>
 					</div>
@@ -136,29 +151,33 @@
 					<div class="tab-pane tab-content" id="wallet">
 						<div class="row">
 							<div class="col-md-12">
-								<h2>Open Wallet <small> browser based bitcoin wallet</small></h2>
+								<h2>Открыть Кошелёк <small> браузерный кошелек червонца</small></h2>
 								<div id="openLogin">
 									<form class="form-signin" role="form" action="javascript:;">
 
-										<p>Use the form below to open a wallet and begin using this service.</p>
+										<p>Используйте форму ниже, чтобы открыть кошелек.</p>
 
 										<div class="alert alert-warning">
-											<b>Notice</b>: Different email address and password combination will open different wallets, be careful when entering your details as lost accounts can not be recovered! 
+											<b>Внимание</b>: Разные комбинации почтового ящика и пароля открывают разные кошельки, будьте внимательны при вводе ваших данных! 
+                                                                                        Не рекомендуется использование кошелька на чужих устройствах!
 										</div>
+										<div class="alert alert-warning">
+											<b>Внимание</b>: Утерянные учетные записи не восстанавливаются!
+										</div>                                                                                
 
-										<input id="openEmail" type="email" class="form-control" placeholder="Email address" required autofocus>
-										<input id="openPass" type="password" class="form-control" placeholder="Password" required>
-										<input id="openPassConfirm" type="password" class="form-control" placeholder="Password confirm" required>
+										<input id="openEmail" type="email" class="form-control" placeholder="Email адрес" required autofocus>
+										<input id="openPass" type="password" class="form-control" placeholder="Пароль" required>
+										<input id="openPassConfirm" type="password" class="form-control" placeholder="Подтверждение пароля" required>
 										<br>
 										<div id="openLoginStatus" class="alert alert-danger hidden"></div>
-										<button id="openBtn" class="btn btn-primary" type="submit">Submit</button>
+										<button id="openBtn" class="btn btn-primary" type="submit">Войти</button>
 									</form>
 								</div>
 
 								<div id="openWallet" class="hidden">
 									<div class="row">
 										<div class="col-md-12">
-											<p><span style="float:right;"><a href="javascript:;" id="walletLogout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></span>Welcome to your wallet, enjoy your stay!</p>
+											<p><span style="float:right;"><a href="javascript:;" id="walletLogout"><span class="glyphicon glyphicon-log-out"></span> Выйти</a></span>Добро пожаловать в ваш кошелек!</p>
 										</div>
 										<div class="col-md-12" align="center">
 											<div id="walletQrCode"></div> <br>
@@ -167,29 +186,29 @@
 												<span id="walletAddress"></span>
 											</div>
 											<br>
-											<div style="text-align:center; width:350px;">
+											<div style="text-align:center; width:450px;">
 												<ul class="nav nav-pills" role="tablist">
-													<li role="presentation" class="active"><a href="javascript:;" id="walletBalance">0.00 SIB</a></li>
-													<li role="presentation"><a href="javascript:;" id="walletShowSpend">Spend</a></li>
-													<li role="presentation"><a id="walletHistory" href="javascript:;" target="_blank">History</a></li>
-													<li role="presentation"><a id="walletBuyLink" target="_blank">Buy</a></li>
-													<li role="presentation"><a href="javascript:;" id="walletShowKeys">Keys</a></li>
+													<li role="presentation" class="active"><a href="javascript:;" id="walletBalance">0.00 Ч</a></li>
+													<li role="presentation"><a href="javascript:;" id="walletShowSpend">Потратить</a></li>
+													<li role="presentation"><a id="walletHistory" href="javascript:;" target="_blank">История</a></li>
+													<li role="presentation"><a id="walletBuyLink" target="_blank">Купить</a></li>
+													<li role="presentation"><a href="javascript:;" id="walletShowKeys">Ключи</a></li>
 												</ul>
 
 												<br>
 
 												<div id="walletKeys" class="hidden">
-													<label>Public Key</label>
+													<label>Публичный ключ</label>
 													<input class="form-control pubkey" type="text" readonly>
-													<label>Private key</label>
+													<label>Приватный ключ</label>
 													<div class="input-group">
 														<input class="form-control privkey" type="password" readonly>
 
 														<span class="input-group-btn">
-															<button class="showKey btn btn-default" type="button">Show</button>
+															<button class="showKey btn btn-default" type="button">Показать</button>
 														</span>
 													</div>
-													<label>Private Key (AES256 encrypted key)</label>
+													<label>Приватный ключ (зашифрован AES256)</label>
 													<input class="form-control privkeyaes" type="text" readonly>
 												</div>
 
@@ -197,11 +216,11 @@
 													<div class="row">
 														<div class="form-inline output">
 															<div class="col-xs-8">
-																<label>Address</label>
+																<label>Адрес получателя</label>
 															</div>
 
 															<div class="col-xs-3">
-																<label>Amount</label>
+																<label>Сумма</label>
 															</div>
 														</div>
 													</div>
@@ -222,11 +241,11 @@
 													</div>
 													<div class="row">
 														<div class="col-xs-6">
-															<label><abbr title="the amount to pay in network miner fees - 0.0001 or more recommended">Transaction Fee</abbr></label>
+															<label><abbr title="комиссия сети за транзакцию - рекомендуется 0.0001 или больше">Комиссия сети</abbr></label>
 															<input type="text" class="form-control" value="0.0001" id="txFee">
 														</div>
 														<div class="col-xs-5">
-															<label><abbr title="the amount to donate to coinb.in">Donation</abbr></label>
+															<label><abbr title="the amount to donate to coinb.in">Пожертовование</abbr></label>
 															<input type="text" class="form-control" value="0.001" id="developerDonation">
 														</div>
 													</div>
@@ -234,8 +253,8 @@
 
 													<div id="walletSendStatus" class="alert alert-danger hidden"></div>
 
-													<button class="btn btn-primary" type="button" id="walletSendBtn">Send</button>
-													<button class="btn btn-default" type="button">Reset</button>
+													<button class="btn btn-primary" type="button" id="walletSendBtn">Отправить</button>
+													<button class="btn btn-default" type="button">Сбросить</button>
 												</div>
 											</div>
 										</div>
@@ -246,9 +265,10 @@
 					</div>
 
 					<div class="tab-pane tab-content" id="newAddress">
-						<h2>New Address <small>create a new address</small></h2>
-						<p>Any keys used you will need to manually store safely as they will be needed later to redeem the bitcoins.</p>
-						<label>Address (Share)</label>
+						<h2>Новый адрес <small>создать новый адрес</small></h2>
+						<p>Все созданные в этом разделе ключи(адреса) необходимо сохранить вручную в безопасном месте в случае их использования. </p>
+						<div class="">
+                                                <label>Адрес (Share)</label>
 
 						<div class="input-group">
 							<input id="newBitcoinAddress" type="text" class="form-control address" value="" readonly>
@@ -256,67 +276,68 @@
 								<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
 							</span>
 						</div>
+                                                </div>
 
-						<label>Public key (Share)</label>
+						<label>Публичный ключ (Share)</label>
 						<input id="newPubKey" type="text" class="form-control" readonly>
-						<label>Private key (WIF key)</label>
+						<label>Приватный ключ (WIF формат)</label>
 						<div class="input-group">
 							<input id="newPrivKey" type="password" class="form-control" value="" readonly>
 							<span class="input-group-btn">
-								<button class="showKey btn btn-default" type="button">Show</button>
+								<button class="showKey btn btn-default" type="button">Показать</button>
 							</span>
 						</div>
 
 						<div id="aes256wifkey" class="hidden">
-							<label>AES-256 Encrypted WIF key</label>
+							<label>WIF ключ зашифрованный AES-256</label>
 							<input id="newPrivKeyEnc" type="text" class="form-control" value="" readonly>
 						</div>
 
-						<h3>Address Options</h3>
-						<p>You can use the advanced options below to generate different kind of keys and addresses.</p>
+						<h3>Опции для адреса</h3>
+						<p>Вы можете использовать дополнительные опции для генерации различных типов ключей и адресов.</p>
 						<div class="checkbox">
-							<label><input type="checkbox" id="newCompressed" class="checkbox-inline" checked> Compress <span class="text-muted">(recommended)</span></label>
+							<label><input type="checkbox" id="newCompressed" class="checkbox-inline" checked> Сжатый пуб. ключ <span class="text-muted">(рекомендуется)</span></label>
 						</div>
 						<div class="checkbox">
-							<label><input type="checkbox" id="newBrainwallet" class="checkbox-inline"> Custom Seed or Brain Wallet</label>
+							<label><input type="checkbox" id="newBrainwallet" class="checkbox-inline"> Свой ключ или фраза для создания адреса</label>
 							<input type="text" class="form-control hidden" id="brainwallet">
 						</div>
 
 						<div class="checkbox">
-							<label><input type="checkbox" id="encryptKey" class="checkbox-inline"> Encrypt Private Key with AES-256 Password</label>
+							<label><input type="checkbox" id="encryptKey" class="checkbox-inline"> Зашифровать приватный ключ паролем (AES-256)</label>
 							<div id="aes256passform" class="row hidden">
 								<div class="col-md-6">
-									<input type="password" class="form-control" id="aes256pass" placeholder="Password"></label>
+									<input type="password" class="form-control" id="aes256pass" placeholder="Пароль"></label>
 								</div>
 								<div class="col-md-6">
-									<input type="password" class="form-control" id="aes256pass_confirm" placeholder="Confirm Password">
+									<input type="password" class="form-control" id="aes256pass_confirm" placeholder="Подтвердить пароль">
 								</div>
 							</div>
 
 							<div id="aes256passStatus" class="row hidden">
 								<div class="col-md-12">
 									<br>
-									<div class="alert alert-danger"> <span class="glyphicon glyphicon-exclamation-sign"></span> Your passwords do not match, please try again!</div>
+									<div class="alert alert-danger"> <span class="glyphicon glyphicon-exclamation-sign"></span> Введенные пароли не совпадают, попробуйте еще раз!</div>
 								</div>
 							</div>
 
 						</div>
 
-						<input type="button" class="btn btn-primary" value="Generate" id="newKeysBtn">
+						<input type="button" class="btn btn-primary" value="Генерировать" id="newKeysBtn">
 						<br>
 					</div>
 
 					<div class="tab-pane tab-content" id="newMultiSig">
-						<h2>New Multisig Address <small>Secure multisig address</small></h2>
+						<h2>Новый Мультисиг адрес <small>безопасный адрес с несколькими подписями</small></h2>
 
 						<div class="row">
 
 							<div class="col-md-8">
-								<p>Public keys can be <a href="#newAddress">generated in your browser</a> or from your bitcoin client</a>.</p>
-								<p>Enter the public keys of all the participants, to create a <a href="https://en.bitcoin.it/wiki/Address#Multi-signature_addresses" target="_blank">multi signature address</a>. Maximum of 15 allowed. Compressed and uncompressed public keys are accepted.</p>
+								<p>Публичный ключ можно <a href="#newAddress">сгенерировать в вашем браузере</a> или в вашем кошельке червонца.</p>
+								<p>Введите публичные ключи всех участников, чтобы создать <a href="https://en.bitcoin.it/wiki/Address#Multi-signature_addresses" target="_blank">адрес с несколькими подписями (мультисиг)</a>. Максимум 15 подписей. Можно использовать как сжатые публичные ключи, так и несжатые.</p>
 							</div>
 
-							<div class="col-md-3">
+							<div class="col-md-3 hidden">
 								<p class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span> <a href="javascript:;" data-toggle="modal" data-target="#modalMediator"><abbr>Need a Mediator?</abbr></a></p>
 							</div>
 
@@ -334,7 +355,7 @@
 							</div>
 						</div>
 
-						<p>Enter the amount of signatures required to release the coins</p>
+						<p>Введите количество подписей, необходимых чтобы потратить средства</p>
 						<div class="row">
 							<div class="col-xs-3">
 								<select id="releaseCoins" class="form-control">
@@ -362,8 +383,8 @@
 						<div id="multiSigErrorMsg" class="alert alert-danger" style="display:none;"></div>
 
 						<div class="alert alert-success hidden" id="multiSigData">
-							<label>Address</label>
-							<p>Payment should be made to this address:</p>
+							<label>Адрес</label>
+							<p>Платеж должен быть отправлен на этот адрес:</p>
 							<div class="row">
 								<div class="col-lg-6">
 									<div class="input-group">
@@ -374,26 +395,26 @@
 									</div>
 								</div>
 							</div>
-							<label>Redeem Script</label>
-							<p>This script should be <i>saved and should be shared with all the participants before a payment is made</i>, so they may validate the authenticity of the address, it will also be used later to release the bitcoins.</p>
+							<label>Скрипт погашения (Redeem Script)</label>
+							<p>Этот скрипт должен быть <i>сохранен и передан всем участникам перед отправкой платежа</i>, чтобы они могли проверить правильность адреса. Этот скрипт будет использован в дальнейшем для траты червонцев, которые хранятся на этом адресе.</p>
 							<textarea class="form-control script" style="height:160px" readonly></textarea>
-							<label>Shareable URL</label>
+							<label>Поделиться:</label>
 							<input type="text" class="scriptUrl form-control" readonly>
 						</div>
 
-						<input type="button" class="btn btn-primary" value="Submit" id="newMultiSigAddress">
+						<input type="button" class="btn btn-primary" value="Отправить" id="newMultiSigAddress">
 						<br>
 					</div>
 
                     <div class="tab-pane tab-content" id="newTimeLocked">
-                        <h2>New Time Locked Address <small>Coins can be released only after a certain date</small></h2>
+                        <h2>Новый Time Locked адрес <small>Червонцы смогут быть потрачены только после определенной даты</small></h2>
 
                         <div class="row">
 
                             <div class="col-md-11">
-				<p>Use <i><a href="https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki" target="_blank">OP_CHECKLOCKTIMEVERIFY</a></i> (OP_HODL) to create a time locked address where the funds are unspendable until a set date and time has passed.</p>
-                                <p>Public keys can be <a href="#newAddress">generated in your browser</a> or from your bitcoin client</a>.</p>
-                                <p>Enter the public key that will be able to unlock the funds after the a certain date.
+				<p>Используется специальная команда <i>OP_CHECKLOCKTIMEVERIFY</i> (OP_HODL) для создания адреса со временем блокировки (time locked), червонцы зачисленные на этот адрес не могут быть потрачены до наступления указанной даты и времени.</p>
+                                <p>Публичные ключи можно <a href="#newAddress">сгенерировать в вашем браузере</a> или в вашем кошельке червонца.</p>
+                                <p>Введите публичный ключ, который будет использован для разблокировки средств на адресе по достижению определенного момента в будущем.
                             </div>
 
                             <div class="col-md-1">
@@ -408,7 +429,7 @@
                             </div>
                         </div>
 
-                        <p>Enter the date and time required to release the coins: </p>
+                        <p>Введите дату и время после которых будет возможно потратить средства: </p>
                         <div class="row">
                             <div class='col-md-6'>
                                 <div class="form-group">
@@ -427,8 +448,8 @@
                         <div id="timeLockedErrorMsg" class="alert alert-danger" style="display:none;"></div>
 
                         <div class="alert alert-success hidden" id="timeLockedData">
-                            <label>Address</label>
-                            <p>Payment should be made to this address:</p>
+                            <label>Адрес</label>
+                            <p>Платеж должен быть отправлен на этот адрес:</p>
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="input-group">
@@ -439,22 +460,22 @@
                                     </div>
                                 </div>
                             </div>
-                            <label>Redeem Script</label>
-                            <p>This script should be <i>saved and should be shared with all the participants before a payment is made</i>, so they may validate the authenticity of the address, it will also be used later to release the bitcoins.</p>
+                            <label>Скрипт погашения (Redeem Script)</label>
+                            <p>Этот скрипт должен быть <i>сохранен и передан всем участникам перед отправкой платежа</i>, чтобы они могли проверить правильность адреса. Этот скрипт будет использован в дальнейшем для траты червонцев, которые хранятся на этом адресе.</p>
                             <textarea class="form-control script" style="height:160px" readonly></textarea>
                             <label>Shareable URL</label>
                             <input type="text" class="scriptUrl form-control" readonly>
                         </div>
 
-                        <input type="button" class="btn btn-primary" value="Submit" id="newTimeLockedAddress">
+                        <input type="button" class="btn btn-primary" value="Подтвердить" id="newTimeLockedAddress">
                         <br>
                     </div>
 
 					<div class="tab-pane tab-content" id="newHDaddress">
-						<h2>New HD Address <small>making bip32 even easier</small></h2>
-						<p>Use the form below to generate a <i>master</i> hierarchical deterministic address.</p>
+						<h2>Новый HD адрес <small>making bip32 even easier</small></h2>
+						<p>Используйте форму ниже, чтобы создать <i>мастер-ключ</i> иерархически детермированного адреса (HD адреса).</p>
 
-						<label>xPub Address</label>
+						<label>xPub Адрес</label>
 						<div class="input-group">
 							<input id="newHDxpub" type="text" class="form-control" value="" readonly>
 							<span class="input-group-btn">
@@ -462,7 +483,7 @@
 							</span>
 						</div>
 
-						<label>xPrv Address</label>
+						<label>xPrv Адрес</label>
 						<div class="input-group">
 							<input id="newHDxprv" type="text" class="form-control" value="" readonly>
 							<span class="input-group-btn">
@@ -470,29 +491,29 @@
 							</span>
 						</div>
 
-						<h3>Address Options</h3>
-						<p>You can use the advanced options below to generate different kinds of master addresses.</p>
+						<h3>Настройки для адреса</h3>
+						<p>Вы можете использовать расширенные настройки для создания различных типов мастер адресов.</p>
 						
 						<div class="checkbox">
-							<label><input type="checkbox" id="newHDBrainwallet" class="checkbox-inline"> Custom Seed or Brain Wallet</label>
+							<label><input type="checkbox" id="newHDBrainwallet" class="checkbox-inline"> Свой порождающий ключ или "кошелек в голове"</label>
 							<input type="text" class="form-control hidden" id="HDBrainwallet">
 						</div>
 
-						<input type="button" class="btn btn-primary" value="Generate" id="newHDKeysBtn">
+						<input type="button" class="btn btn-primary" value="Генерировать" id="newHDKeysBtn">
 					</div>
 
 					<div class="tab-pane tab-content" id="newTransaction">
-						<h2>Transaction <small>Create a new transaction</small></h2>
-						<p>Use this page to create a raw transaction</p>
+						<h2>Транзакция <small>Создать новую транзакцию</small></h2>
+						<p>Используйте эту страницу, чтобы создать новую "сырую" транзакцию</p>
 
-						<b>Address, WIF key or Multisig Redeem Script</b>:
+						<b>Адрес, WIF ключ или мультисиг скрипт погашения (Redeem Script)</b>:
 						<div class="input-group">
 							<span class="input-group-btn">
 								<button class="btn btn-info qrcodeScanner" type="button" data-toggle="modal" data-target="#modalQrcodeScanner" forward-result="#redeemFrom"><span class="glyphicon glyphicon-camera"></span></button>
 							</span>
 							<input type="text" id="redeemFrom" class="form-control" value="">
 							<span class="input-group-btn">
-								<button id="redeemFromBtn" class="btn btn-info" type="button">Load</button>
+								<button id="redeemFromBtn" class="btn btn-info" type="button">Загрузить</button>
 							</span>
 						</div>
 
@@ -503,7 +524,7 @@
 						<div class="hidden alert alert-info" id="redeemFromAddress"></div>
 
 						<div>
-							<a href="javascript:;" id="optionsCollapse"><div class="well well-sm"><span class="glyphicon glyphicon-collapse-down" id="glyphcollapse"></span> Advanced Options</div></a>
+							<a href="javascript:;" id="optionsCollapse"><div class="well well-sm"><span class="glyphicon glyphicon-collapse-down" id="glyphcollapse"></span> Дополнительные опции</div></a>
 
 							<div class="hidden" id="optionsAdvanced">
 
@@ -514,21 +535,24 @@
 
 								<hr>
 
-								<label>Null Data</label> <span class="text-muted text-normal">(80 byte limit, <i>40 bytes recommended</i>)</span>
+								<label>Прикрепить дополнительные данные (Null Data)</label> <span class="text-muted text-normal">(Максимум 40 байт)</span>
 								<p class="checkbox">
-									<label><input type="checkbox" id="opReturn" class="checkbox-inline"> Allow data to be sent within the transaction and stored in the blockchain by using <a href="https://bitcoin.org/en/developer-guide#null-data" target="_"blank">OP_RETURN</a>.</label>
-									<div class="text-muted">When using this option you may enter a hex string or address into the address field on the output tab.</div>
+									<label><input type="checkbox" id="opReturn" class="checkbox-inline"> Разрешить добавление пользовательских данных к транзакции и сохранение их в цепи блоков при помощи команды OP_RETURN.</label>
+									<div class="text-muted">
+                                                                            Если эта опция включена, то вы можете добавить произволную строку в шестнадцатиричном формате в поле "адрес" в одном из выходов транзакции.
+                                                                        </div>
 								</p>
 
 								<hr>
 
-								<label>Lock Time</label>
-								<p>The <a href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number">locktime</a> indicates the earliest time a transaction can be added to the block chain.</p>
+								<label>Время блокировки</label>
+								<p>Время блокировки задает самое раннее время, после которого транзакция может быть добавлена в блокчейн. Можно указать либо целочисленное <a href="http://www.unixtime.it/ru/" target="_blank">unix время</a>, либо высоту цепи (номер блока). Нулевое значение означает отсутствие ограничений.
+                                                                </p>
 								<input type="text" class="form-control" value="0" id="nLockTime">
 
 								<hr>
 
-
+                                                                <!--
 								<label>Replace By Fee (RBF)</label>
 								<p class="checkbox">
 									<label><input type="checkbox" id="txRBF" class="checkbox-inline"> Make this a <a href="https://en.bitcoin.it/wiki/Transaction_replacement" target="_blank">RBF transaction</a>.</label>
@@ -536,29 +560,31 @@
 
 								<hr>
 
+                                                                
 								<label>Network</label>
 								<p>The <a href="#settings">settings</a> page can be used to select alternative networks of which you can retrieve your unspent outputs and broadcast a signed transaction into.</p>
-
+                                                                
 								<hr>
+                                                                -->
 							</div>
 						</div>
 
 						<ul class="nav nav-tabs" id="putTabs">
-							<li class="active"><a href="#txoutputs" data-toggle="tab">Outputs <small>(<span id="totalOutput">0.00000000</span>)</small></a></li>
-							<li><a href="#txinputs" data-toggle="tab">Inputs <small>(<span id="totalInput">0.00000000</span>)</small></a></li>
+							<li class="active"><a href="#txoutputs" data-toggle="tab">Выходы <small>(<span id="totalOutput">0.00000000</span>)</small></a></li>
+							<li><a href="#txinputs" data-toggle="tab">Входы <small>(<span id="totalInput">0.00000000</span>)</small></a></li>
 						</ul>
 
 						<br>
 
 						<div class="tab-content">
 							<div class="tab-pane fade in active" id="txoutputs">
-								<p>Enter the address and amount you wish to make a payment to.</p>
+								<p>Введите адрес на который вы хотите совершить платеж.</p>
 								<div class="row">
 									<div class="col-xs-8">
-										<label><abbr title="Address to send to">Address</abbr></label>
+										<label><abbr title="Address to send to">Адрес</abbr></label>
 									</div>
 									<div class="col-xs-3">
-										<label><abbr title="Amount to send">Amount</abbr></label>
+										<label><abbr title="Amount to send">Сумма</abbr></label>
 									</div>
 									<div class="col-xs-1">
 									</div>
@@ -581,19 +607,19 @@
 
 
 							<div class="tab-pane fade" id="txinputs">
-								<p>Enter the details of inputs you wish to spend.</p>
+								<p>Введите детали входов (inputs) которые вы хотите потратить.</p>
 								<div class="row">
 									<div class="col-xs-5">
-										<label><abbr title="Transaction ID">Transaction ID:</abbr></label>
+										<label><abbr title="ID транзакции">ID транзакции:</abbr></label>
 									</div>
 									<div class="col-xs-1">
-										<label><abbr title="Transaction Input Number">N</abbr></label>
+										<label><abbr title="Номер входящего платежа">N</abbr></label>
 									</div>
 									<div class="col-xs-3">
 										<label>Script</label>
 									</div>
 									<div class="col-xs-2">
-										<label><abbr title="This field is for accounting purposes only - the entire input will be spent!">Amount</abbr></label>
+										<label><abbr title="Это поле исключительно для информационных целей - вся входящая сумма будет потрачена!">Сумма</abbr></label>
 									</div>
 									<div class="col-xs-1">
 									</div>
@@ -627,7 +653,7 @@
 
 						<div class="row">
 							<div class="col-xs-3">
-								<label><abbr title="What is not spent will be used as a transaction fee">Transaction Fee</abbr></label>
+								<label><abbr title="Все что не потрачено будет переведено майнерам в качестве комиссии">Комиссия сети</abbr></label>
 								<input type="text" id="transactionFee" class="form-control" value="0.0000" readonly>
 							</div>
 						</div>
@@ -637,37 +663,37 @@
 						<div id="transactionCreateStatus" class="alert alert-danger hidden"></div>
 
 						<div id="transactionCreate" class="alert alert-success hidden">
-							<label>Transaction</label>
+							<label>Транзакция</label>
 							<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode" style="float:right;"><span class="glyphicon glyphicon-qrcode"></span></button>
 
-							<p>The transaction below has been generated and encoded. It can be broadcasted once it has been signed.</p>
+							<p>Транзакция ниже была создана и закодирована. Она может быть отправлена в сеть как только будет подписана.</p>
 							<br>
 			                                <textarea class="form-control" style="height:150px" readonly></textarea>
 
-							<p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
+							<p class="text-muted">Размер: <span class="txSize">0</span> <i>байт</i></p>
 						</div>
 
-						<input type="button" value="Submit" class="btn btn-primary" id="transactionBtn">
+						<input type="button" value="Отправить" class="btn btn-primary" id="transactionBtn">
 
 						<br>
 					</div>
 
 					<div class="tab-pane tab-content" id="verify">
-						<h2>Verify <small>transactions and other scripts</small></h2>
+						<h2>Проверить <small>транзакции и другие скрипты</small></h2>
 						<div class="row">
 							<div class="col-md-12">
-								<p>Enter the raw transaction, redeem script, pubkey, hd address or wif key to convert it into a readable format that can be verified manually.</p>
+								<p>Введите "сырую" транзакцию, скрипт погашения (redeem script), пуб. ключ, hd адрес или wif ключ чтобы привести его к читаемому виду и собственноручно проверить.</p>
 								<textarea type="text" id="verifyScript" class="form-control" style="height:125px"></textarea>
 							</div>
 						</div>
 						<br>
 
 						<div class="hidden verifyData" id="verifyRsData">
-							<h4>Redeem Script</h4>
-							<p><span style="float:right"><a href="javascript:;" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above redeem script has been decoded</p>
+							<h4>Скрипт погашения (Redeem Script)</h4>
+							<p><span style="float:right"><a href="javascript:;" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>Скрипт погашения указанный выше был декодирован</p>
 
 							<div class="hidden" id="verifyRsDataMultisig">
-                                <label>Multi Signature Address</label>
+                                <label>Мультисиг адрес</label>
     							<div class="row">
     								<div class="col-lg-6">
     									<div class="input-group">
@@ -678,9 +704,9 @@
     									</div>
     								</div>
     							</div>
-    							<label>Required Signatures</label>
+    							<label>Количество необходимых подписей</label>
     							<p class="signaturesRequired">?</p>
-    							<label>Signatures Required from</label>
+    							<label>Необходима подпись владельцев следующих адресов</label>
     							<table class="table table-striped table-hover">
     								<tbody>
     								</tbody>
@@ -688,7 +714,7 @@
                             </div>
 
                             <div class="hidden" id="verifyRsDataHodl">
-                                <label>Hodl Address</label>
+                                <label>Hodl Адрес</label>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="input-group">
@@ -700,7 +726,7 @@
                                     </div>
                                 </div>
 
-                                <label>Required Signature</label>
+                                <label>Необходима подпись владельца адреса</label>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="input-group">
@@ -712,7 +738,7 @@
                                     </div>
                                 </div>
 
-                                <label>Unlock Time</label>
+                                <label>Время разблокировки</label>
                                 <div class="row">
                                     <div class='col-md-4'>
                                         <div class="input-group">
@@ -726,31 +752,31 @@
 						</div>
 
 						<div class="hidden verifyData" id="verifyTransactionData">
-							<h4>Transaction Script</h4>
-							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above script has been decoded</p>
-							<div><b>Version</b>: <span class="transactionVersion"></span></div>
-							<div><b>Transaction Size</b>: <span class="transactionSize"></span></div>
-							<div><b>Lock time</b>: <span class="transactionLockTime"></span></div>
-							<div class="transactionRBF"><b>RBF</b>: This is a <a href="https://en.bitcoin.it/wiki/Transaction_replacement">replace by fee</a> transaction!</div>
+							<h4>Скрипт транзакции</h4>
+							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Ссылка на эту страницу"><span class="glyphicon glyphicon-link"></span></a></span>Указанный ваше скрипт был декодирован</p>
+							<div><b>Версия</b>: <span class="transactionVersion"></span></div>
+							<div><b>Размер транзакции</b>: <span class="transactionSize"></span></div>
+							<div><b>Время блокировки</b>: <span class="transactionLockTime"></span></div>
+							<div class="transactionRBF"><b>RBF</b>: Это <a href="https://en.bitcoin.it/wiki/Transaction_replacement">replace by fee</a> транзакция!</div>
 
 							<hr>
 
-							<label>Inputs</label>
+							<label>Входы</label>
 							<table class="table table-striped table-hover ins">
 								<thead>
 									<tr style="font-weight:bold;">
-										<td><abbr title="the transaction id">Txid</abbr></td><td><abbr title="index id of the the transaction">N</abbr></td><td><abbr title="transaction script">Script</abbr></td><td><abbr title="is input signed?">Signed?</abbr></td><td><abbr title="is transaction a multisig transaction?">MultiSig?</abbr></td>
+										<td><abbr title="идентификатор транзакции">Тxid</abbr></td><td><abbr title="индекс предыдущего выхода">N</abbr></td><td><abbr title="скрипт транзакции">Скрипт</abbr></td><td><abbr title="подписан ли вход?">Подписан?</abbr></td><td><abbr title="является ли мультисиг транзакцией?">Мультисиг?</abbr></td>
 									</tr>
 								</thead>
 								<tbody>
 								</tbody>
 							</table>
 
-							<label>Outputs</label>
+							<label>Выходы</label>
 							<table class="table table-striped table-hover outs">
 								<thead>
 									<tr style="font-weight:bold;">
-										<td><abbr title="address the funds are being sent to">Address</abbr></td><td><abbr title="the amount the address is being sent">Amount</abbr></td><td><abbr title="the script of the transaction">Script</abbr></td>
+										<td><abbr title="address the funds are being sent to">Адрес</abbr></td><td><abbr title="the amount the address is being sent">Сумма</abbr></td><td><abbr title="the script of the transaction">Скрипт</abbr></td>
 									</tr>
 								</thead>
 								<tbody>
@@ -759,27 +785,27 @@
 						</div>
 
 						<div class="hidden verifyData" id="verifyPrivKey">
-							<h4>WIF key</h4>
-							<p>The above wif key has been decoded</p>
-							<p><b>Address</b>: <input type="text" class="form-control address" readonly></p>
-							<p><b>Public key</b>: <input type="text" class="form-control pubkey" readonly></p>
-							<p><b>Private key</b>: <input type="text" class="form-control privkey" readonly></p>
-							<p><b>Is compressed</b>: <span class="iscompressed"></span></p>
+							<h4>WIF ключ</h4>
+							<p>Указанный выше wif ключ был декодирован</p>
+							<p><b>Адрес</b>: <input type="text" class="form-control address" readonly></p>
+							<p><b>Публичный ключ</b>: <input type="text" class="form-control pubkey" readonly></p>
+							<p><b>Приватный ключ</b>: <input type="text" class="form-control privkey" readonly></p>
+							<p><b>Сжат</b>: <span class="iscompressed"></span></p>
 
 						</div>
 
 						<div class="hidden verifyData" id="verifyPubKey">
-							<h4>Public key</h4>
-							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above public key has been encoded to its address</p>
-							<p><b>Address</b>: <input type="text" class="form-control address" readonly></p>
+							<h4>Публичный ключ</h4>
+							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>Указанному выше публичному ключу соответствует следующий адрес:</p>
+							<p><b>Адрес</b>: <input type="text" class="form-control address" readonly></p>
 						</div>
 
 						<div class="hidden verifyData" id="verifyHDaddress">
-							<h4>HD Address</h4>
-							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The key <small><span class="hdKey hidden"></span></small> has been decoded</p>
+							<h4>HD адрес</h4>
+							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>Ключ <small><span class="hdKey hidden"></span></small> был декодирован</p>
 							<div class="row">
 								<div class="col-md-2">
-									<b>Type</b><br>
+									<b>Тип</b><br>
 									<span class="key_type"></span>
 								</div>
 
@@ -790,14 +816,14 @@
 
 
 								<div class="col-md-5">
-									<b>Key</b><br>
+									<b>Ключ</b><br>
 									<input type="text" class="form-control hdwifkey" value="" readonly>
 								</div>
 							</div>
 
 							<div class="row">
 								<div class="col-md-3">
-									<b>Version</b><br>
+									<b>Версия</b><br>
 									<input type="text" class="form-control version" value="" readonly>
 								</div>
 
@@ -807,12 +833,12 @@
 								</div>
 
 								<div class="col-md-3">
-									<b>Depth</b><br>
+									<b>Глубина</b><br>
 									<input type="text" class="form-control depth" value="" readonly>
 								</div>
 
 								<div class="col-md-3">
-									<b>Index</b><br>
+									<b>Индекс</b><br>
 									<input type="text" class="form-control child_index" value="" readonly>
 								</div>
 							</div>
@@ -822,38 +848,38 @@
 
 							<hr>
 
-							<h4>Key Derivation</h4>
-							<p>The path of key derivation</p>
+							<h4>Производные ключи</h4>
+							<p>Путь в графе производных ключей</p>
 
 							<div class="row">
 								<div class="col-md-8">
-									<b>Path</b><br>
+									<b>Путь</b><br>
 									<select class="form-control">
-										<option>Simple: m/i</option>
+										<option>Простой: m/i</option>
 									</select>
 								</div>
 
 								<div class="col-md-2">
-									<b>Index (Start)</b><br>
+									<b>Индекс (Начало)</b><br>
 									<input type="text" class="form-control derivation_index_start" value="0">
 								</div>
 
 								<div class="col-md-2">
-									<b>Index (End)</b><br>
+									<b>Индекс (Конец)</b><br>
 									<input type="text" class="form-control derivation_index_end" value="1">
 								</div>
 
 							</div>
 
 							<hr>
-							<h4>Keys</h4>
+							<h4>Ключи</h4>
 
-							<p>Keys derived from the hd address provided</p>
+							<p>Ключи, производные от предоставленного hd мастер ключа</p>
 
 							<div class="derived_data">
 								<table class="table table-striped table-hover">
 									<thead>
-										<tr><td><b>Index</b></td><td><b>Address</b><td><b>Private Key (WIF)</b></td></td><td><b>Extended xPub</b></td><td><b>Extended xPrv</b></td></tr>
+										<tr><td><b>Индекс</b></td><td><b>Адрес</b><td><b>Приватный ключ (WIF)</b></td></td><td><b>Расширенный xPub</b></td><td><b>Расширенный xPrv</b></td></tr>
 									</thead>
 									<tbody>
 									</tbody>
@@ -863,23 +889,23 @@
 							<br>
 						</div>
 
-						<div id="verifyStatus" class="alert alert-danger hidden"><span class="glyphicon glyphicon-exclamation-sign"></span> Unable to decode</div>
+						<div id="verifyStatus" class="alert alert-danger hidden"><span class="glyphicon glyphicon-exclamation-sign"></span> Не удалось декодировать</div>
 
-						<input type="button" value="Submit" class="btn btn-primary" id="verifyBtn">
+						<input type="button" value="Проверить" class="btn btn-primary" id="verifyBtn">
 						<br>
 					</div>
 
 					<div class="tab-pane tab-content" id="sign">
-						<h2>Sign Transaction <small>once a transaction has been verified</small></h2>
-						<p>Once you have <a href="#verify">verified</a> a transaction you can sign and then <a href="#broadcast">broadcast</a> it into the network.</p>
+						<h2>Подписать транзакцию <small>после того как транзакция была проверена</small></h2>
+						<p>После того, как вы <a href="#verify">проверили</a> транзакцию, вы можете подписать её и затем <a href="#broadcast">отправить</a> в сеть червонца.</p>
 						<div class="row">
 							<div class="col-md-12">
-								<label for="signPrivateKey">Private key</label>
+								<label for="signPrivateKey">Приватный ключ</label>
 
 								<div class="input-group">
 									<input id="signPrivateKey" type="password" class="form-control" value="">
 									<span class="input-group-btn">
-										<button class="showKey btn btn-default" type="button">Show</button>
+										<button class="showKey btn btn-default" type="button">Показать</button>
 									</span>
 								</div>
 							</div>
@@ -894,32 +920,32 @@
 						<br>
 
 						<div class="alert alert-danger hidden" id="signedDataError">
-							<span class="glyphicon glyphicon-exclamation-sign"></span> There is a problem with one or more of your inputs, please check and try again
+							<span class="glyphicon glyphicon-exclamation-sign"></span> Обнаружена ошибка с одним или несколькими входами или ключами, пожалуйста проверьте все еще раз и попробуйте снова.
 						</div>
 
 						<div class="alert alert-success hidden" id="signedData">
-							<label>Signed transaction</label>
+							<label>Подписанная транзакция</label>
 							<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode" style="float:right;"><span class="glyphicon glyphicon-qrcode"></span></button>
-							<p>The above transaction has been signed:</p>
+							<p>Указанная выше транзакция подписана:</p>
 
                         				<textarea class="form-control script" style="height:160px" readonly></textarea>
                                     
-							<p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
+							<p class="text-muted">Размер: <span class="txSize">0</span> <i>байт</i></p>
 						</div>
 
-						<input type="button" value="Submit" class="btn btn-primary" id="signBtn">
+						<input type="button" value="Подписать" class="btn btn-primary" id="signBtn">
 						<br>
 					</div>
 
 					<div class="tab-pane tab-content" id="broadcast">
-						<h2>Broadcast Transaction <small>into the bitcoin network</small></h2>
+						<h2>Отправить транзакцию <small>в сеть червонца</small></h2>
 						<a href="#settings" style="float:right;"><span class="glyphicon glyphicon-cog"></span></a>
-						<p>Enter your hex encoded bitcoin transaction</p>
+						<p>Введите вашу транзакцию, закодированную в шестнадцатиричном представлении</p>
 						<textarea class="form-control" style="height:125px" id="rawTransaction"></textarea>
 						<br>
 						<div id="rawTransactionStatus" class="alert hidden">
 						</div>
-						<input type="button" value="Submit" id="rawSubmitBtn" class="btn btn-primary">
+						<input type="button" value="Отправить" id="rawSubmitBtn" class="btn btn-primary">
 						<br>
 					</div>
 
@@ -930,30 +956,30 @@
 					</div>
 
 					<div class="tab-pane tab-content" id="about">
-						<h2>About <small>open source bitcoin wallet</small></h2>
-						<p>Version 1.2</p>
-						<p>Compatible with bitcoin-qt</p>
-						<p>Github <a href="https://github.com/OutCast3k/coinbin/">https://github.com/OutCast3k/coinbin/</a></p>
-						<p>TOR <a href="http://4zpinp6gdkjfplhk.onion">4zpinp6gdkjfplhk.onion</a></p>
-						<h3>What is Bitcoin?</h3>
-						<p>Bitcoin is a type of digital currency in which encryption techniques are used to regulate the generation of units of currency and verify the transfer of funds, operating independently of a central bank. See <a href="http://www.weusecoins.com/" target="_blank">weusecoins.com</a> for more information.</p>
-						<p>If you are looking to buy some Bitcoin try <a href="https://localbitcoins.com/?ch=173j" target="_blank">LocalBitcoins.com</a>.</p>
-						<h3>Information</h3>
-						<p>Coinb.in is a free and open source project released under the MIT license, originally by <a href="https://bitcointalk.org/index.php?action=profile;u=34834" target="_blank">OutCast3k</a> in 2013. Discussion of the project can be found at <a href="https://bitcointalk.org/index.php?topic=390046" target="_blank">bitcointalk.org</a> during its early testing stages when its primary focus was to develop a proof of concept multisig solution in javascript.</p>
-						<p>Coinb.in is run and funded by the generosity of others in terms of <a href="https://github.com/OutCast3k/coinbin/graphs/contributors" target="_blank">development</a> and hosting.</p>
-						<h3>Privacy</h3>
-						<p>Coinb.in beleives strongly in privacy, not only do we support the use of TOR, the site does not collect and store IP or transaction data via our servers nor do we store your bitcoins private key. We do route traffic via cloudflare using an SSL certificate.</p>
-						<h3>Donate</h3>
-						<p>Please donate to <a href="bitcoin:1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg">1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg</a> if you found this project useful or want to see more features!</p>
+						<h2>О нас <small>кошелек червонца с открытым исходным кодом</small></h2>
+						<p>Версия 1.2</p>
+						<p>Совместимо с sibcoin-qt</p>
+						<p>Github <a href="https://github.com/ivansib/sibcoinbin">https://github.com/ivansib/sibcoinbin</a></p>
+                                                <p>TOR (<a href="#">в разработке</a>)</p>
+						<h3>Что такое "сибирский червонец"?</h3>
+						<p>"Сибирский червонец" - это цифровая расчетная единица и использующая её распределенная платежная система, в которой применяются криптографические алгоритмы для подтверждения и защиты прав собственности, а такуже верификации переводов средств, независимо от банков и других сторонних организаций. Для получения более детальной информации посетите 
+                                                     <a href="http://sibcoin.org" target="_blank">sibcoin.org</a> или <a href="http://sibcoin.info" target="_blank">sibcoin.info</a> .</p>
+						<h3>Информация</h3>
+						<p>SibCoinb.in это бесплатный веб-кошелек с открытым исходным кодом, распространяемый под лицензией MIT, разработанный на основе кошелька <a href="https://github.com/OutCast3k/coinbin/" target="_blank">Coinb.In</a> от <a href="https://bitcointalk.org/index.php?action=profile;u=34834" target="_blank">OutCast3k</a>.
+                                                   Кошелек является полностью браузерным решением, мы не имеем доступа к вашим ключам. В связи с этим не рекомендуется использование кошелька на чужих устройствах, т.к. в случае кражи пароля, злоумышленник получит полный доступ к вашим средствам. Также мы не рекомендуем использовать кошелек для хранения крупных сумм, т.к. утраченные/забытые пароли не восстанавливаются.
+                                       
+						<h3>Приватность</h3>
+						<p>Мы верим, что приватность наших пользователей является безусловной ценностью, поэтому мы не только поддерживаем tor-версию сайта, но также не собираем и не храним информацию об IP адресах и транзакциях наших пользователей. Также мы используем защищенное SSL соединение, чтобы обезопасить информацию наших пользователей от третих лиц. Тем не менее, мы рекомендуем использовать VPN сервисы или TOR, на случай если этих мер окажется недостаточно.</p>
+						<h3>Пожертвования</h3>
+						<p>Если вам понравился наш сервис, будем рады получить немного червонцев на адрес <a href="sibcoin:SMSdUsMnMyUt7tR7dR2cnQhS9wDSQ1Bv5d">SMSdUsMnMyUt7tR7dR2cnQhS9wDSQ1Bv5d</a>.</p>
 					</div>
 
 					<div class="tab-pane tab-content" id="settings">
-						<h2>Settings <small> making coinb.in even better!</small></h2>
-						<p>These simple settings below make coinb.in one of the most decentralized wallets in the world.</p>
-
+						<h2>Настройки</h2>
+						<p>Здесь вы можете выбрать какие сервисы использовать для получения информации из сети червонца. 
 						<div class="row">
-							<div class="col-md-12">
-								<b>Network</b>: <br>
+							<div class="col-md-12 hidden">
+								<b>Параметры сети</b>: <br>
 								<p class="text-muted">Select which network you'd like to use for key pair generation.</p>
 								<select class="form-control" id="coinjs_coin">
 									<option value="bitcoin_mainnet" rel="0x00;0x80;0x05;0x488b21e;0x488ade4;coinb.in;coinb.in">Bitcoin (mainnet)</option>
@@ -1005,19 +1031,20 @@
 							<div class="alert alert-info"> <span class="glyphicon glyphicon-info-sign"></span> You will not be able to automatically broadcast or retreive your unspent outputs from coinb.in when using this setting and will need to use your desktop client instead, however everything else such as creating key pairs, addresses, transaction generation and signing will continue to function normally.</div>
 						</div>
 
-						<hr>
+						<!--<hr>-->
 
 						<div class="row">
 							<div class="col-md-12">
-								<b>Broadcast</b>: <br>
-								<p class="text-muted">Select the network you wish to broadcast the transaction via</p>
+								<b>Отправка в сеть</b>: <br>
+								<p class="text-muted">Выберите сервис, который вы хотите использовать для отправки транзакций в сеть червонца
+                                                                    </p>
 								<select class="form-control" id="coinjs_broadcast">
-									<option value="coinb.in">coinb.in (Bitcoin mainnet)</option>
-									<option value="blockr.io_bitcoinmainnet"> Blockr.io (Bitcoin mainnet)</option>
-									<option value="chain.so_bitcoinmainnet"> Chain.so (Bitcoin mainnet)</option>
+									<option value="coinb.in">sibcoinb.in (Основная сеть)</option>
+									<option value="blockr.io_bitcoinmainnet"> chain.sibcoin.net (Основная сеть)</option>
+								<!--	<option value="chain.so_bitcoinmainnet"> Chain.so (Bitcoin mainnet)</option>
 									<option value="blockcypher_bitcoinmainnet"> Blockcypher.com (Bitcoin mainnet)</option>
 									<option value="blockr.io_litecoin"> Blockr.io (Litecoin)</option>
-								<!--	<option value="blockr.io_bitcointestnet"> Blockr.io (Bitcoin testnet)</option> -->
+									<option value="blockr.io_bitcointestnet"> Blockr.io (Bitcoin testnet)</option> -->
 								</select>
 							</div>
 						</div>
@@ -1026,12 +1053,13 @@
 
 						<div class="row">
 							<div class="col-md-12">
-								<b>Unspent outputs</b>: <br>
-								<p class="text-muted">Select the network you wish to retreive your unspent inputs from</p>
+								<b>Непотраченные выходы</b>: <br>
+								<p class="text-muted">Выберите сервис, который вы хотите использовать для получения информации из сети червонца
+                                                                    </p>
 								<select class="form-control" id="coinjs_utxo">
-									<option value="coinb.in">coinb.in (Bitcoin mainnet)</option>
-									<option value="blockr.io_bitcoinmainnet"> Blockr.io (Bitcoin mainnet)</option>
-									<option value="chain.so_litecoin"> Chain.so (Litecoin)</option>
+									<option value="coinb.in">sibcoinb.in (Основная сеть)</option>
+									<option value="blockr.io_bitcoinmainnet"> chain.sibcoin.net (Основная сеть)</option>
+								<!--	<option value="chain.so_litecoin"> Chain.so (Litecoin)</option> -->
 								</select>
 							</div>
 						</div>
@@ -1041,12 +1069,17 @@
 						<div id="statusSettings" class="hidden alert">
 						</div>
 
-						<input type="submit" class="btn btn-primary" id="settingsBtn">
+                                                <input type="submit" class="btn btn-primary" id="settingsBtn" value="Подтвердить">
 
 					</div>
 
 					<br>
-					<p class="text-muted">This page uses javascript to generate your addresses and sign your transactions within your browser, this means we <i>never</i> receive your private keys, this can be independently verified by reviewing the source code on <a href="https://github.com/OutCast3k/coinbin/" target="_blank">github</a>. You can even <a href="https://github.com/OutCast3k/coinbin/archive/master.zip">download</a> this page and host it yourself or run it offline!</p>
+					<p class="text-muted">
+                                            Эта страница использует JavaScript для генерации ваших адресов и подписи ваших транзакций в вашем браузере. 
+                                            Это означает, что мы никогда не получаем ваших приватных ключей и не имеем доступа к вашим средствам. 
+                                            Это может быть проверено при помощи просмотра исходного кода на <a href="https://github.com/OutCast3k/coinbin/" target="_blank">github</a>. 
+                                            Вы даже можете <a href="https://github.com/OutCast3k/coinbin/archive/master.zip">скачать</a> эту страницу целиком и пользоваться ей офлайн!
+                                        </p>
 					<br>
 
 				</div>
@@ -1055,7 +1088,7 @@
 
 		<div id="footer">
 			<div class="container text-right">
-	        		<p class="text-muted">Version 1.2</p>
+	        		<p class="text-muted">Версия 1.2</p>
 			</div>
 		</div>
 
@@ -1066,25 +1099,25 @@
 			<div class="modal-content">
 				<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Please confirm</h4>
+				<h4 class="modal-title">Пожалуйста подтвердите</h4>
 				</div>
 
 				<div class="modal-body">
-					<p>You are about to send a transaction to the value of <span id="spendAmount">0.00</span> BTC</p>
+					<p>Вы собираетесь отправить транзакцию на сумму <span id="spendAmount">0.00</span> Ч</p>
 
 					<br>
 					<div id="walletSendConfirmStatus" class="alert alert-danger hidden"></div>
 
 					<div id="walletSendFailTransaction" class="alert alert-info hidden">
-						<b>Raw Transaction:</b>
-						<p>Below is a copy of the transaction we tried to submit</p>
+						<b>Транзакция:</b>
+						<p>Ниже копия транзакции, которую мы пытались отправить в сеть:</p>
 						<textarea class="form-control" readonly></textarea>
 					</div>
 				</div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" id="walletConfirmSend">Send</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal" id="confirmClose">Close</button>
+					<button type="button" class="btn btn-primary" id="walletConfirmSend">Отправить</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="confirmClose">Закрыть</button>
 				</div>
 			</div>
 		</div>
@@ -1097,7 +1130,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">qrcode</h4>
+				<h4 class="modal-title">QR код</h4>
 				</div>
 
 				<div class="modal-body" align="center">
@@ -1105,7 +1138,7 @@
 				</div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal" id="qrCodeClose">Close</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="qrCodeClose">Закрыть</button>
 				</div>
 			</div>
 		</div>
@@ -1118,18 +1151,18 @@
 			<div class="modal-content">
 				<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">qrcode scanner</h4>
+				<h4 class="modal-title">Сканер QR кодов</h4>
 				</div>
 
 				<div class="modal-body" align="center">
 					<select id="videoSource" class="form-control"></select>
-					<div id="videoReaderError" class="hidden">Your browser does not offer camera support</div>
+					<div id="videoReaderError" class="hidden">Ваш браузер не поддерживает доступа к камере</div>
 					<video id="videoReader" muted autoplay style="width:100%;height:100%"></video>
 					<div id="qrcode-scanner-callback-to" class="hidden"></div>
 				</div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal" id="qrScanClose">Close</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="qrScanClose">Закрыть</button>
 				</div>
 			</div>
 		</div>
@@ -1161,7 +1194,7 @@
 							-->
 
 							<select id="mediatorList" class="form-control">
-								<option value="02b6231cc602740c29436eafbb6448880f4058cc3d2745c709deee313104678277;support@coinb.in;1">Coinb.in</option>
+								<option value="02b6231cc602740c29436eafbb6448880f4058cc3d2745c709deee313104678277;support@coinb.in;1">SibCoinb.in</option>
 							</select>
 						</div>
 
@@ -1199,15 +1232,15 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title"><b>Warning High Fee!</b></h4>
+					<h4 class="modal-title"><b>Внимание! Слишком высокая комиссия!</b></h4>
 				</div>
 
 				<div class="modal-body">
-					Please be aware that you have created a transaction with what seems to be a very high fee of <span id="modalWarningFeeAmount"></span> BTC!
+					Обратите внимание, что вы создали транзакцию с очень большой комиссией <span id="modalWarningFeeAmount"></span> Ч!
 				</div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-dismiss="modal" id="warningFeeClose">OK, I've got it!</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" id="warningFeeClose">OK, я понимаю что я делаю!</button>
 				</div>
 			</div>
 		</div>
