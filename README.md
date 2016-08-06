@@ -1,13 +1,13 @@
 coinbin
 =======
 
-A Open Source Browser Based Bitcoin Wallet. Version 1.2 beta by OutCast3k
+A Open Source Browser Based Sibcoin Wallet. Version 1.2 beta by ivansib
 
 Live version available at http://coinb.in/ or http://4zpinp6gdkjfplhk.onion
 
-Github URL: https://github.com/OutCast3k/coinbin/
+Github URL: https://github.com/ivansib/sibcoinbin/
 
-Coinb.in supports a number of key features such as: 
+SibCoinb.in supports a number of key features such as: 
 
 - Offline Compressed & uncompressed Address creation.
 - Offline Multisignature Address creation.
@@ -28,4 +28,3 @@ Coinb.in supports a number of key features such as:
 - HD (bip32) support
 - Supports altcoins such as litecoin
 
-Donate to 1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg to see more development!
