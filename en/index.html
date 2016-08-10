@@ -57,6 +57,7 @@
 					</div>
 					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav">
+							<li><a href="#wallet" data-toggle="tab"><span class="glyphicon glyphicon-briefcase"></span> Wallet</a></li>
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span> New<b class="caret"></b></a>
 								<ul class="dropdown-menu">
@@ -68,10 +69,14 @@
 									<li><a href="#newTransaction" data-toggle="tab">Transaction</a></li>
 								</ul>
 							</li>
-							<li><a href="#verify" data-toggle="tab"><span class="glyphicon glyphicon-ok"></span> Verify</a></li>
-							<li><a href="#sign" data-toggle="tab"><span class="glyphicon glyphicon-pencil"></span> Sign</a></li>
-							<li><a href="#broadcast" data-toggle="tab"><span class="glyphicon glyphicon-globe"></span> Broadcast</a></li>
-							<li><a href="#wallet" data-toggle="tab"><span class="glyphicon glyphicon-briefcase"></span> Wallet</a></li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span> Tools<b class="caret"></b></a>
+								<ul class="dropdown-menu">                                                        
+                                                                    <li><a href="#verify" data-toggle="tab"><span class="glyphicon glyphicon-ok"></span> Verify</a></li>
+                                                                    <li><a href="#sign" data-toggle="tab"><span class="glyphicon glyphicon-pencil"></span> Sign</a></li>
+                                                                    <li><a href="#broadcast" data-toggle="tab"><span class="glyphicon glyphicon-globe"></span> Broadcast</a></li>
+								</ul>
+							</li>                                                                    
 							<li><a href="#about" data-toggle="tab"><span class="glyphicon glyphicon-info-sign"></span> About</a></li>
 
 							<li class="hidden"><a href="#settings" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
@@ -108,7 +113,7 @@
 						<div class="jumbotron">
 							<h1>Siberian Chervonets (SIB)</h1>
 							<p>People's Money. Be your own bank, start using Sibcoin today!</p>
-							<p><a class="btn btn-primary btn-lg" href="#about" role="button">Learn more &raquo;</a></p>
+							<p><a class="btn btn-primary btn-lg" href="#wallet" role="button">Start now &raquo;</a></p>
 						</div>
 
 						<hr>
@@ -160,13 +165,16 @@
 										<div class="alert alert-warning">
 											<b>Notice</b>: Different email address and password combination will open different wallets, be careful when entering your details as lost accounts can not be recovered! 
 										</div>
-										<div class="alert alert-warning">
-											<b>Notice</b>: Lost/forgotten passwords cannot be restored! 
-										</div>
 
+                                                                                <div class="margintop-10">
 										<input id="openEmail" type="email" class="form-control" placeholder="Email address" required autofocus>
+                                                                                </div>    
+                                                                                <div class="margintop-10">
 										<input id="openPass" type="password" class="form-control" placeholder="Password" required>
+                                                                                </div>    
+                                                                                <div class="margintop-10">
 										<input id="openPassConfirm" type="password" class="form-control" placeholder="Password confirm" required>
+                                                                                </div>    
 										<br>
 										<div id="openLoginStatus" class="alert alert-danger hidden"></div>
 										<button id="openBtn" class="btn btn-primary" type="submit">Submit</button>
@@ -970,8 +978,8 @@
 					</div>
 
 					<div class="tab-pane tab-content" id="settings">
-						<h2>Settings <small> making coinb.in even better!</small></h2>
-						<p>These simple settings below make coinb.in one of the most decentralized wallets in the world.</p>
+						<h2>Settings <small> making sibcoinb.in even better!</small></h2>
+						<p>These simple settings below make sibcoinb.in one of the most decentralized wallets in the world.</p>
 
 						<div class="row">
 							<div class="col-md-12 hidden">

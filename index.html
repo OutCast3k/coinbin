@@ -57,6 +57,7 @@
 					</div>
 					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav">
+							<li><a href="#wallet" data-toggle="tab"><span class="glyphicon glyphicon-briefcase"></span> Кошелек</a></li>
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span> Новый<b class="caret"></b></a>
 								<ul class="dropdown-menu">
@@ -68,10 +69,14 @@
 									<li><a href="#newTransaction" data-toggle="tab">Транзакция</a></li>
 								</ul>
 							</li>
-							<li><a href="#verify" data-toggle="tab"><span class="glyphicon glyphicon-ok"></span> Проверить</a></li>
-							<li><a href="#sign" data-toggle="tab"><span class="glyphicon glyphicon-pencil"></span> Подписать</a></li>
-							<li><a href="#broadcast" data-toggle="tab"><span class="glyphicon glyphicon-globe"></span> Отправить в сеть</a></li>
-							<li><a href="#wallet" data-toggle="tab"><span class="glyphicon glyphicon-briefcase"></span> Кошелек</a></li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span> Инструменты<b class="caret"></b></a>
+								<ul class="dropdown-menu">
+									<li><a href="#verify" data-toggle="tab"><span class="glyphicon glyphicon-ok"></span> Проверить</a></li>
+									<li><a href="#sign" data-toggle="tab"><span class="glyphicon glyphicon-pencil"></span> Подписать</a></li>
+									<li><a href="#broadcast" data-toggle="tab"><span class="glyphicon glyphicon-globe"></span> Отправить в сеть</a></li>
+								</ul>
+							</li>
 							<li><a href="#about" data-toggle="tab"><span class="glyphicon glyphicon-info-sign"></span> О нас</a></li>
 
 							<li class="hidden"><a href="#settings" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span> Настройки</a></li>
@@ -108,7 +113,7 @@
 						<div class="jumbotron">
 							<h1>Сибирский Червонец (SIB)</h1>
 							<p>Народная расчетная единица. Будь сам себе банком, начни использовать червонец сегодня!</p>
-							<p><a class="btn btn-primary btn-lg" href="#about" role="button">Узнать больше &raquo;</a></p>
+							<p><a class="btn btn-primary btn-lg" href="#wallet" role="button">Начать &raquo;</a></p>
 						</div>
 
 						<hr>
@@ -155,21 +160,25 @@
 								<div id="openLogin">
 									<form class="form-signin" role="form" action="javascript:;">
 
-										<p>Используйте форму ниже, чтобы открыть кошелек.</p>
-
 										<div class="alert alert-warning">
-											<b>Внимание</b>: Разные комбинации почтового ящика и пароля открывают разные кошельки, будьте внимательны при вводе ваших данных! 
-                                                                                        Не рекомендуется использование кошелька на чужих устройствах!
-										</div>
-										<div class="alert alert-warning">
-											<b>Внимание</b>: Утерянные учетные записи не восстанавливаются!
+											<b>Внимание</b>: Утерянные учетные записи не восстанавливаются! Не рекомендуется использование кошелька на чужих устройствах!
 										</div>                                                                                
 
-										<input id="openEmail" type="email" class="form-control" placeholder="Email адрес" required autofocus>
+                                                                                <div>
+                                                                                    <input id="openEmail" type="email" class="form-control" placeholder="Email адрес" required autofocus>
+                                                                                </div>    
+                                                                                <div class="margintop-10">
 										<input id="openPass" type="password" class="form-control" placeholder="Пароль" required>
+                                                                                </div>    
+                                                                                <div class="margintop-10">
 										<input id="openPassConfirm" type="password" class="form-control" placeholder="Подтверждение пароля" required>
+                                                                                </div>    
 										<br>
 										<div id="openLoginStatus" class="alert alert-danger hidden"></div>
+										<p>
+                                                                                    Пароль необходимо вводить дважды при каждом входе. При вводе другого пароля или e-mail, открывается новый кошелёк.
+										</p>
+                                                                                
 										<button id="openBtn" class="btn btn-primary" type="submit">Войти</button>
 									</form>
 								</div>
