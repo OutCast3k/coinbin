@@ -911,12 +911,63 @@
 		}
 
 		/* generate the transaction hash to sign from a transaction input */
-		r.transactionHash = function(index) {
+		r.transactionHash = function(index, sigHashType) {
+
 			var clone = coinjs.clone(this);
+			var shType = sigHashType || 1;
+
 			if((clone.ins) && clone.ins[index]){
+
+				/* black out all other ins, except this one */
 				for (var i = 0; i < clone.ins.length; i++) {
 					if(index!=i){
 						clone.ins[i].script = coinjs.script();
+					}
+				}
+
+				/* SIGHASH : For more info on sig hashs see https://en.bitcoin.it/wiki/OP_CHECKSIG	
+				  and https://bitcoin.org/en/developer-guide#signature-hash-type */
+
+				if(shType == 1){
+					//SIGHASH_ALL 0x01 #t
+
+				} else if(shType == 2){
+					//SIGHASH_NONE 0x02 #t
+					clone.outs = [];
+					for (var i = 0; i < clone.ins.length; i++) {
+						if(index!=i){
+							clone.ins[i].sequence = 0;
+						}
+					}
+
+				} else if(shType == 3){
+					//SIGHASH_SINGLE 0x03 #t
+					for (var i = 0; i < clone.outs.length; i++) {
+						if(index!=i){
+							clone.outs[i].value = new BigInteger('' + Math.round((0) * 1e8), 10);
+							clone.outs[i].script = coinjs.script();
+						}
+					}
+
+				} else if(shType >= 128){
+					//SIGHASH_ANYONECANPAY 0x80 #t
+					clone.ins = [this.ins[index]];
+					clone.ins[0].script = this.ins[index].script;
+					if(shType>128){ 
+						if(shType==129){
+							// SIGHASH_ALL + SIGHASH_ANYONECANPAY
+						} else if(shType==130){
+							// SIGHASH_NONE + SIGHASH_ANYONECANPAY #t
+							clone.outs = [];
+						} else if(shType==131){
+							// SIGHASH_SINGLE + SIGHASH_ANYONECANPAY
+							for (var i = 0; i < clone.outs.length; i++) {
+								if(index!=i){
+									clone.outs[i].value = new BigInteger('' + Math.round((0) * 1e8), 10);
+									clone.outs[i].script = coinjs.script();
+								}
+							}	
+						}
 					}
 				}
 
@@ -924,7 +975,7 @@
 				clone.ins[index].script = coinjs.script(extract['script']);
 
 				var buffer = Crypto.util.hexToBytes(clone.serialize());
-				buffer = buffer.concat(coinjs.numToBytes(parseInt(1),4));
+				buffer = buffer.concat(coinjs.numToBytes(parseInt(shType), 4));
 				var hash = Crypto.SHA256(buffer, {asBytes: true});
 				var r = Crypto.util.bytesToHex(Crypto.SHA256(hash, {asBytes: true}));
 				return r;
@@ -967,7 +1018,7 @@
 		}
 
 		/* generate a signature from a transaction hash */
-		r.transactionSig = function(index, wif){
+		r.transactionSig = function(index, wif, sigHashType){
 
 			function serializeSig(r, s) {
 				var rBa = r.toByteArraySigned();
@@ -988,7 +1039,8 @@
 				return sequence;
 			}
 
-			var hash = Crypto.util.hexToBytes(this.transactionHash(index));
+			var shType = sigHashType || 1;
+			var hash = Crypto.util.hexToBytes(this.transactionHash(index, shType));
 
 			if(hash){
 				var curve = EllipticCurve.getSECCurveByName("secp256k1");
@@ -1013,7 +1065,7 @@
 				};
 
 				var sig = serializeSig(r, s);
-				sig.push(parseInt(1, 10));
+				sig.push(parseInt(shType, 10));
 
 				return Crypto.util.bytesToHex(sig);
 			} else {
@@ -1084,9 +1136,10 @@
 		};
 
 		/* sign a "standard" input */
-		r.signinput = function(index, wif){
+		r.signinput = function(index, wif, sigHashType){
 			var key = coinjs.wif2pubkey(wif);
-			var signature = this.transactionSig(index, wif);
+			var shType = sigHashType || 1;
+			var signature = this.transactionSig(index, wif, shType);
 			var s = coinjs.script();
 			s.writeBytes(Crypto.util.hexToBytes(signature));
 			s.writeBytes(Crypto.util.hexToBytes(key['pubkey']));
@@ -1095,8 +1148,9 @@
 		}
 
 		/* signs a time locked / hodl input */
-		r.signhodl = function(index, wif){
-			var signature = this.transactionSig(index, wif);
+		r.signhodl = function(index, wif, sigHashType){
+			var shType = sigHashType || 1;
+			var signature = this.transactionSig(index, wif, shType);
 			var redeemScript = this.ins[index].script.buffer
 			var s = coinjs.script();
 			s.writeBytes(Crypto.util.hexToBytes(signature));
@@ -1106,7 +1160,7 @@
 		}
 		
 		/* sign a multisig input */
-		r.signmultisig = function(index, wif){
+		r.signmultisig = function(index, wif, sigHashType){
 
 			function scriptListPubkey(redeemScript){
 				var r = {};
@@ -1131,8 +1185,9 @@
 			}
 
 			var redeemScript = (this.ins[index].script.chunks[this.ins[index].script.chunks.length-1]==174) ? this.ins[index].script.buffer : this.ins[index].script.chunks[this.ins[index].script.chunks.length-1];
-			var sighash = Crypto.util.hexToBytes(this.transactionHash(index));
-			var signature = Crypto.util.hexToBytes(this.transactionSig(index, wif));
+			var shType = sigHashType || 1;
+			var sighash = Crypto.util.hexToBytes(this.transactionHash(index, shType));
+			var signature = Crypto.util.hexToBytes(this.transactionSig(index, wif, shType));
 			var s = coinjs.script();
 
 			s.writeOp(0);

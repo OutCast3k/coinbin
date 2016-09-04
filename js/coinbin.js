@@ -1125,10 +1125,10 @@ $(document).ready(function() {
 				r += (obj.message) ? ' '+obj.message : '';
 				r = (r!='') ? r : ' Failed to broadcast'; // build response 
 				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-				console.error(JSON.stringify(data, null, 4));
+			//	console.error(JSON.stringify(data, null, 4));
                         },
                         success: function(data) {
-				console.info(JSON.stringify(data, null, 4));
+			//	console.info(JSON.stringify(data, null, 4));
 				if((data.status && data.data) && data.status=='success'){
 					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: ' + data.data.txid);
 				} else {
