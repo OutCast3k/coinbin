@@ -148,7 +148,7 @@
 		}
 
 		var s = coinjs.script();
-		s.writeBytes(coinjs.numToByteArray(checklocktimeverify).reverse());
+		s.writeBytes(coinjs.numToByteArray(checklocktimeverify));
 		s.writeOp(177);//OP_CHECKLOCKTIMEVERIFY
 		s.writeOp(117);//OP_DROP
 		s.writeBytes(Crypto.util.hexToBytes(pubkey));
@@ -687,7 +687,7 @@
 					// ^ <unlocktime> OP_CHECKLOCKTIMEVERIFY OP_DROP <pubkey> OP_CHECKSIG ^
 					r = {}
 					r.pubkey = Crypto.util.bytesToHex(s.chunks[3]);
-					r.checklocktimeverify = coinjs.bytesToNum(s.chunks[0].slice().reverse());
+					r.checklocktimeverify = coinjs.bytesToNum(s.chunks[0].slice());
 					r.address = coinjs.simpleHodlAddress(r.pubkey, r.checklocktimeverify).address;
 					r.type = "hodl__";
 				}
