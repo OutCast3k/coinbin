@@ -679,12 +679,16 @@ $(document).ready(function() {
 		$("#redeemFromBtn").html("Please wait, loading...").attr('disabled',true);
 
 		var host = $(this).attr('rel');
+
+
 		if(host=='blockr.io_bitcoinmainnet'){
 			listUnspentBlockrio_BitcoinMainnet(redeem);
 		} else if(host=='chain.so_litecoin'){
 			listUnspentChainso_Litecoin(redeem);
 		}  else if(host=='chain.so_dogecoin'){
 			listUnspentChainso_Dogecoin(redeem);
+		}  else if(host=='cryptoid.info_carboncoin'){
+			listUnspentCryptoidinfo_Carboncoin(redeem);
 		} else {
 			listUnspentDefault(redeem);
 		}
@@ -872,6 +876,56 @@ $(document).ready(function() {
 	}
 
 
+	/* retrieve unspent data from chain.so for carboncoin */
+	function listUnspentCryptoidinfo_Carboncoin(redeem) {
+		
+		$.ajax ({
+			type: "POST",
+			url: "https://coinb.in/api/",
+			data: 'uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=carboncoin&request=listunspent&address='+redeem.addr,
+			dataType: "xml",
+			error: function() {
+				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+			},
+                        success: function(data) {
+				if($(data).find("result").text()==1){
+					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://btc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+					$.each($(data).find("unspent").children(), function(i,o){
+						var tx = $(o).find("tx_hash").text();
+						var n = $(o).find("tx_output_n").text();
+						var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script_hex;
+						var amount = (($(o).find("value").text()*1)/100000000).toFixed(8);
+						addOutput(tx, n, script, amount);
+					});
+				} else {
+					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+				}
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+			}
+		});
+
+
+	/*	$.ajax ({
+			type: "POST",
+			url: 'https://coinb.in/api/',
+			dataType: 'xml',
+			error: function(data) {
+			},
+			success: function(data) {
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+			}
+		});
+
+	*/
+
+	}
+
 	/* retrieve unspent data from chain.so for dogecoin */
 	function listUnspentChainso_Dogecoin(redeem){
 		$.ajax ({
@@ -969,10 +1023,14 @@ $(document).ready(function() {
 	// broadcast transaction vai coinbin (default)
 	function rawSubmitDefault(btn){ 
 		var thisbtn = btn;		
+	}
+
+	// broadcast transaction via cryptoid
+	function rawSubmitcryptoid_Carboncoin(thisbtn) {
 		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
 		$.ajax ({
 			type: "POST",
-			url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction',
+			url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=carboncoin&request=sendrawtransaction',
 			data: {'rawtx':$("#rawTransaction").val()},
 			dataType: "xml",
 			error: function(data) {
@@ -1611,6 +1669,10 @@ $(document).ready(function() {
 		} else if(host=="blockcypher_bitcoinmainnet"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitblockcypher_BitcoinMainnet(this);
+			});
+		} else if(host=="cryptoid.info_carboncoin"){
+			$("#rawSubmitBtn").click(function(){
+				rawSubmitcryptoid_Carboncoin(this);
 			});
 		} else {
 			$("#rawSubmitBtn").click(function(){
