@@ -26,7 +26,7 @@
 	coinjs.developer = 'SMSdUsMnMyUt7tR7dR2cnQhS9wDSQ1Bv5d'; // sibcoin
 
 	/* bit(coinb.in) api vars */
-	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+'sibcoinbin.in/api/';
+	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+'wallet.sibcoin.net/api/';
 	coinjs.uid = '1';
 	coinjs.key = '12345678901234567890123456789012';
 
@@ -855,8 +855,9 @@
 		}
 
 		/* list unspent transactions */
-		r.listUnspent = function(address, callback) {
-			coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=addresses&request=unspent&address='+address+'&r='+Math.random(), callback, "GET");
+		r.listUnspent = function(address, callback, chost ) {
+                        chost = typeof chost !== 'undefined' ? chost : coinjs.host;
+			coinjs.ajax(chost+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=addresses&request=unspent&address='+address+'&r='+Math.random(), callback, "GET");
 		}
 
 		/* add unspent to transaction */

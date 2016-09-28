@@ -633,10 +633,10 @@ $(document).ready(function() {
 		$("#redeemFromBtn").html("Please wait, loading...").attr('disabled',true);
 
 		var host = $(this).attr('rel');
-		if(host=='blockr.io_bitcoinmainnet'){
-			listUnspentBlockrio_BitcoinMainnet(redeem);
-		} else if(host=='chain.so_litecoin'){
-			listUnspentChainso_Litecoin(redeem);
+		if(host=='chain.sibcoin.net'){
+			listUnspentDefault(redeem,'https://'+host+'/wapi/');
+		} else if(host=='chain.sibcoin.space'){
+			listUnspentDefault(redeem,'https://'+host+'/wapi/');
 		} else {
 			listUnspentDefault(redeem);
 		}
@@ -738,7 +738,7 @@ $(document).ready(function() {
 	}
 
 	/* default function to retreive unspent outputs*/	
-	function listUnspentDefault(redeem){
+	function listUnspentDefault(redeem, chost){
 		var tx = coinjs.transaction();
 		tx.listUnspent(redeem.addr, function(data){
 			if(redeem.addr) {
@@ -758,7 +758,7 @@ $(document).ready(function() {
 			totalInputAmount();
 
 			mediatorPayment(redeem);
-		});
+		},chost);
 	}
 
 	/* retrieve unspent data from blockrio for mainnet */
@@ -884,12 +884,13 @@ $(document).ready(function() {
 	});
 
 	// broadcast transaction vai coinbin (default)
-	function rawSubmitDefault(btn){ 
+	function rawSubmitDefault(btn, chost){ 
+                chost = typeof chost !== 'undefined' ? chost : coinjs.host;
 		var thisbtn = btn;		
 		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
 		$.ajax ({
 			type: "POST",
-			url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction',
+			url: chost+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction',
 			data: {'rawtx':$("#rawTransaction").val()},
 			dataType: "xml",
 			error: function(data) {
@@ -1480,22 +1481,18 @@ $(document).ready(function() {
 	function configureBroadcast(){
 		var host = $("#coinjs_broadcast option:selected").val();
 		$("#rawSubmitBtn").unbind("");
-		if(host=="blockr.io_litecoin"){
+		if(host=="chain.sibcoin.net"){
 			$("#rawSubmitBtn").click(function(){
-				rawSubmitBlockrio_litecoin(this)
+				rawSubmitDefault(this,'https://'+host+'/wapi/');
 			});
-		} else if(host=="blockr.io_bitcoinmainnet"){
+		} else if(host=="chain.sibcoin.space"){
 			$("#rawSubmitBtn").click(function(){
-				rawSubmitBlockrio_BitcoinMainnet(this);
+				rawSubmitDefault(this,'https://'+host+'/wapi/');
 			});
-		} else if(host=="chain.so_bitcoinmainnet"){
-			$("#rawSubmitBtn").click(function(){
-				rawSubmitChainso_BitcoinMainnet(this);
-			});
-		} else if(host=="blockcypher_bitcoinmainnet"){
-			$("#rawSubmitBtn").click(function(){
-				rawSubmitblockcypher_BitcoinMainnet(this);
-			});
+//		} else if(host=="chain.so_bitcoinmainnet"){
+//			$("#rawSubmitBtn").click(function(){
+//				rawSubmitChainso_BitcoinMainnet(this);
+//			});
 		} else {
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitDefault(this); // revert to default
