@@ -1059,13 +1059,13 @@ $(document).ready(function() {
 				}
 			},
 			broadcast: {
-				"blockr.io": function(thisbtn){
+				"blockcypher": function(thisbtn){
 					var orig_html = $(thisbtn).html();
 					$(thisbtn).html('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
 					$.ajax ({
 						type: "POST",
-						url: "https://btc.blockr.io/api/v1/tx/push",
-						data: {"hex":$("#rawTransaction").val()},
+						url: "https://api.blockcypher.com/v1/doge/main/txs/push",
+						data: {"tx":$("#rawTransaction").val()},
 						dataType: "json",
 						error: function(data) {
 							var r = '';
@@ -1075,8 +1075,8 @@ $(document).ready(function() {
 							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 						},
 						success: function(data) {
-							if((data.status && data.data) && data.status=='success'){
-								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data);
+							if((data.status && data.data) && data.status=='1'){
+								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data.tx);
 							} else {
 								$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 							}				
@@ -1113,14 +1113,34 @@ $(document).ready(function() {
 						}
 					});
 				}
+			},
+		getInputAmount: {
+				"blockcypher": function(txid, index, callback) {
+					$.ajax ({
+						type: "GET",
+						url: "https://api.blockcypher.com/v1/doge/main/txs/"+txid,
+						dataType: "json",
+						error: function(data) {
+							callback(false);
+						},
+						sucess: function(data) {
+							if (coinjs.debug) {console.log(data)};
+							if (data.outputs[index]){
+								callback(parseInt(data.outputs[index].value*("1e"+coinjs.decimalPlaces), 10));
+							} else {
+								callback(false);
+							}
+						}
+					});
+				}
 			}
-		},
+			},
 		DASH: {
 			listUnspent: {
 				"insight.dash": function(redeem){
 					$.ajax ({
 						type: "GET",
-						url: "http://insight.dash.siampm.com/api/addr/"+redeem.addr+"/utxo",
+						url: "https://insight.dash.siampm.com/api/addr/"+redeem.addr+"/utxo",
 						dataType: "json",
 						error: function(data) {
 							$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
