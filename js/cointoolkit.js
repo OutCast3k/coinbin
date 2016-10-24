@@ -1065,7 +1065,7 @@ $(document).ready(function() {
 					$.ajax ({
 						type: "POST",
 						url: "https://api.blockcypher.com/v1/doge/main/txs/push",
-						data: {"tx":$("#rawTransaction").val()},
+						data: JSON.stringify({"tx":$("#rawTransaction").val()}),
 						dataType: "json",
 						error: function(data) {
 							var r = '';
@@ -1075,8 +1075,8 @@ $(document).ready(function() {
 							$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 						},
 						success: function(data) {
-							if((data.status && data.data) && data.status=='1'){
-								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data.tx);
+							if(data.tx.hash){
+								$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.tx.hash);
 							} else {
 								$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 							}				
@@ -1120,13 +1120,13 @@ $(document).ready(function() {
 						type: "GET",
 						url: "https://api.blockcypher.com/v1/doge/main/txs/"+txid,
 						dataType: "json",
-						error: function(data) {
+						error: function(data) { 
 							callback(false);
 						},
-						sucess: function(data) {
+						success: function(data) { 
 							if (coinjs.debug) {console.log(data)};
-							if (data.outputs[index]){
-								callback(parseInt(data.outputs[index].value*("1e"+coinjs.decimalPlaces), 10));
+							if (data.outputs[index]){ 
+								callback(data.outputs[index].value); //callback(parseInt(data.outputs[index].value*("1e"+coinjs.decimalPlaces), 10));
 							} else {
 								callback(false);
 							}
