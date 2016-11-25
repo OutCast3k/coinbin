@@ -17,7 +17,7 @@ ad038e1f39646b68ae666324ed4c2882a8c42474  ./js/qrcode.js
 64eb4ea5c882f8bce3e1885bf00728455f1c2f4c  ./js/ripemd160.js
 114089ef2a3feb6d4db4f9cabcb186d7750d5884  ./js/sha512.js
 506c40035e0d22560478629434d0fea27643b77a  ./js/transition.js
-5f570018ed044eafd464f7e0ab1783b966224055  ./LICENCE
+5f570018ed044eafd464f7e0ab1783b966224055  ./LICENSE
 255c58c17e63eb54adb3cd02b5c06224c67fc364  ./css/bootstrap-datetimepicker.min.css
 ed29315e0ffb3f14382431f2724235bf67f44eb3  ./css/bootstrap.min.css
 fc6b4268fbd57ad95d2b41a1d4d6866f222fbdb2  ./css/bootstrap-theme.min.css
