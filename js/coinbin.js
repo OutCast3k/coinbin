@@ -108,8 +108,10 @@ $(document).ready(function() {
 		thisbtn.attr('disabled',true);
 
 		tx.addUnspent($("#walletAddress").html(), function(data){
-			var dvalue = (data.value/100000000).toFixed(8);
-			total = total.toFixed(8);
+
+			var dvalue = (data.value/100000000).toFixed(8) * 1;
+			total = (total*1).toFixed(8) * 1;
+
 			if(dvalue>=total){
 				var change = dvalue-total;
 				if((change*1)>0){
@@ -139,7 +141,7 @@ $(document).ready(function() {
 
 				}, signed);
 			} else {
-				$("#walletSendConfirmStatus").removeClass("hidden").addClass('alert-danger').html("You have a confirmed balance of "+data.value+" BTC unable to send "+total+" BTC").fadeOut().fadeIn();
+				$("#walletSendConfirmStatus").removeClass("hidden").addClass('alert-danger').html("You have a confirmed balance of "+dvalue+" BTC unable to send "+total+" BTC").fadeOut().fadeIn();
 				thisbtn.attr('disabled',false);
 			}
 
