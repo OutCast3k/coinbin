@@ -1417,7 +1417,7 @@ $(document).ready(function() {
 	}
 
 	function decodeHDaddress(){
-		coinjs.compressed = false;
+		coinjs.compressed = true;
 		var s = $("#verifyScript").val();
 		try {
 			var hex = Crypto.util.bytesToHex((coinjs.base58decode(s)).slice(0,4));
