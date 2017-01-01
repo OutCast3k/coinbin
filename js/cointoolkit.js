@@ -1167,13 +1167,13 @@ $(document).ready(function() {
 				}
 			},
 			broadcast: {
-				"blockr.io": function(thisbtn){
+				"insight.dash": function(thisbtn){
 					var orig_html = $(thisbtn).html();
 					$(thisbtn).html('Please wait, loading... <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>').attr('disabled',true);
 					$.ajax ({
 						type: "POST",
-						url: "https://btc.blockr.io/api/v1/tx/push",
-						data: {"hex":$("#rawTransaction").val()},
+						url: "https://insight.dash.siampm.com/api/tx/send",
+						data: {'rawtx':$("#rawTransaction").val()},
 						dataType: "json",
 						error: function(data) {
 							var r = '';
