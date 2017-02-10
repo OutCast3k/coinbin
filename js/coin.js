@@ -1216,7 +1216,8 @@
 		}
 
 		/* sign inputs */
-		r.sign = function(wif){
+		r.sign = function(wif, sigHashType){
+			var shType = sigHashType || 1;
 			for (var i = 0; i < this.ins.length; i++) {
 				var d = this.extractScriptKey(i);
 
@@ -1225,11 +1226,11 @@
 				var pubkeyHash = script.pubkeyHash(w2a['address']);
 
 				if(((d['type'] == 'scriptpubkey' && d['script']==Crypto.util.bytesToHex(pubkeyHash.buffer)) || d['type'] == 'empty') && d['signed'] == "false"){
-					this.signinput(i, wif);
+					this.signinput(i, wif, shType);
 				} else if (d['type'] == 'hodl' && d['signed'] == "false") {
-					this.signhodl(i, wif);
+					this.signhodl(i, wif, shType);
 				} else if (d['type'] == 'multisig') {
-					this.signmultisig(i, wif);
+					this.signmultisig(i, wif, shType);
 				} else {
 					// could not sign
 				}
