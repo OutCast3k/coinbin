@@ -884,6 +884,7 @@
 					<div class="tab-pane tab-content" id="sign">
 						<h2>Sign Transaction <small>once a transaction has been verified</small></h2>
 						<p>Once you have <a href="#verify">verified</a> a transaction you can sign and then <a href="#broadcast">broadcast</a> it into the network.</p>
+
 						<div class="row">
 							<div class="col-md-12">
 								<label for="signPrivateKey">Private key</label>
@@ -904,6 +905,33 @@
 							</div>
 						</div>
 						<br>
+
+						<a href="javascript:;" id="signAdvancedCollapse">
+							<div class="well well-sm"><span class="glyphicon glyphicon-collapse-down"></span> Advanced Options</div>
+						</a>
+
+						<div id="signAdvanced" class="hidden">
+							<div class="row">
+								<div class="col-md-12">
+									<label for="sighashType">Sig Hash Type</label>
+
+									<select id="sighashType" class="form-control">
+										<option value="1" rel="SIGHASH_ALL: Signs all the inputs and outputs, protecting everything against modification.">ALL (default)</option>
+										<option value="2" rel="SIGHASH_NONE: Signs all of the inputs but none of the outputs, allowing anyone to change where the satoshis are going unless other signatures using other signature hash flags protect the outputs.">NONE</option>
+										<option value="3" rel="SIGHASH_SINGLE: The only output signed is the one corresponding to this input, ensuring nobody can change your part of the transaction but allowing other signers to change their part of the transaction.">SINGLE</option>
+										<option value="129" rel="SIGHASH_ALL|SIGHASH_ANYONECANPAY: Signs all of the outputs but only this one input, it allows anyone to add or remove other inputs, so anyone can contribute additional satoshis but they cannot change how many satoshis are sent nor where they go.">ALL|ANYONECANPAY</option>
+										<option value="130" rel="SIGHASH_NONE|SIGHASH_ANYONECANPAY: Signs only this one input and allows anyone to add or remove other inputs or outputs, so anyone who gets a copy of this input can spend it however they'd like.">NONE|ANYONECANPAY</option>
+										<option value="131" rel="SIGHASH_SINGLE|SIGHASH_ANYONECANPAY: Signs this one input and its corresponding output. Allows anyone to add or remove other inputs.">SINGLE|ANYONECANPAY</option>
+									</select>
+								</div>
+							</div>
+
+							<br>
+
+							<div class="alert alert-info" id="sighashTypeInfo">
+								SIGHASH_ALL: The default, signs all the inputs and outputs, protecting everything except the signature scripts against modification.
+							</div>
+						</div>
 
 						<div class="alert alert-danger hidden" id="signedDataError">
 							<span class="glyphicon glyphicon-exclamation-sign"></span> There is a problem with one or more of your inputs, please check and try again

@@ -916,23 +916,26 @@
 			var clone = coinjs.clone(this);
 			var shType = sigHashType || 1;
 
+			/* black out all other ins, except this one */
+			for (var i = 0; i < clone.ins.length; i++) {
+				if(index!=i){
+					clone.ins[i].script = coinjs.script();
+				}
+			}
+
+			var extract = this.extractScriptKey(index);
+			clone.ins[index].script = coinjs.script(extract['script']);
+
 			if((clone.ins) && clone.ins[index]){
 
-				/* black out all other ins, except this one */
-				for (var i = 0; i < clone.ins.length; i++) {
-					if(index!=i){
-						clone.ins[i].script = coinjs.script();
-					}
-				}
-
-				/* SIGHASH : For more info on sig hashs see https://en.bitcoin.it/wiki/OP_CHECKSIG	
-				  and https://bitcoin.org/en/developer-guide#signature-hash-type */
+				/* SIGHASH : For more info on sig hashs see https://en.bitcoin.it/wiki/OP_CHECKSIG
+					and https://bitcoin.org/en/developer-guide#signature-hash-type */
 
 				if(shType == 1){
-					//SIGHASH_ALL 0x01 #t
+					//SIGHASH_ALL 0x01
 
 				} else if(shType == 2){
-					//SIGHASH_NONE 0x02 #t
+					//SIGHASH_NONE 0x02
 					clone.outs = [];
 					for (var i = 0; i < clone.ins.length; i++) {
 						if(index!=i){
@@ -941,38 +944,41 @@
 					}
 
 				} else if(shType == 3){
-					//SIGHASH_SINGLE 0x03 #t
-					for (var i = 0; i < clone.outs.length; i++) {
-						if(index!=i){
-							clone.outs[i].value = new BigInteger('' + Math.round((0) * 1e8), 10);
-							clone.outs[i].script = coinjs.script();
-						}
+
+					//SIGHASH_SINGLE 0x03
+					clone.outs.length = index + 1;
+
+					for(var i = 0; i < index; i++){
+						clone.outs[i].value = -1;
+						clone.outs[i].script.buffer = [];
 					}
 
-				} else if(shType >= 128){
-					//SIGHASH_ANYONECANPAY 0x80 #t
-					clone.ins = [this.ins[index]];
-					clone.ins[0].script = this.ins[index].script;
-					if(shType>128){ 
-						if(shType==129){
-							// SIGHASH_ALL + SIGHASH_ANYONECANPAY
-						} else if(shType==130){
-							// SIGHASH_NONE + SIGHASH_ANYONECANPAY #t
-							clone.outs = [];
-						} else if(shType==131){
-							// SIGHASH_SINGLE + SIGHASH_ANYONECANPAY
-							for (var i = 0; i < clone.outs.length; i++) {
-								if(index!=i){
-									clone.outs[i].value = new BigInteger('' + Math.round((0) * 1e8), 10);
-									clone.outs[i].script = coinjs.script();
-								}
-							}	
+					for (var i = 0; i < clone.ins.length; i++) {
+						if(index!=i){
+								clone.ins[i].sequence = 0;
+							}
+					}
+
+				} else if (shType >= 128){
+					//SIGHASH_ANYONECANPAY 0x80
+					clone.ins = [clone.ins[index]];
+
+					if(shType==129){
+						// SIGHASH_ALL + SIGHASH_ANYONECANPAY
+
+					} else if(shType==130){
+						// SIGHASH_NONE + SIGHASH_ANYONECANPAY
+						clone.outs = [];
+
+					} else if(shType==131){
+                                                // SIGHASH_SINGLE + SIGHASH_ANYONECANPAY
+						clone.outs.length = index + 1;
+						for(var i = 0; i < index; i++){
+							clone.outs[i].value = -1;
+							clone.outs[i].script.buffer = [];
 						}
 					}
 				}
-
-				var extract = this.extractScriptKey(index);
-				clone.ins[index].script = coinjs.script(extract['script']);
 
 				var buffer = Crypto.util.hexToBytes(clone.serialize());
 				buffer = buffer.concat(coinjs.numToBytes(parseInt(shType), 4));
@@ -1185,29 +1191,28 @@
 			}
 
 			var redeemScript = (this.ins[index].script.chunks[this.ins[index].script.chunks.length-1]==174) ? this.ins[index].script.buffer : this.ins[index].script.chunks[this.ins[index].script.chunks.length-1];
+
+			var pubkeyList = scriptListPubkey(coinjs.script(redeemScript));
+			var sigsList = scriptListSigs(this.ins[index].script);
+
 			var shType = sigHashType || 1;
 			var sighash = Crypto.util.hexToBytes(this.transactionHash(index, shType));
 			var signature = Crypto.util.hexToBytes(this.transactionSig(index, wif, shType));
+
+			sigsList[coinjs.countObject(sigsList)+1] = signature;
+
 			var s = coinjs.script();
 
 			s.writeOp(0);
 
-			if(this.ins[index].script.chunks[this.ins[index].script.chunks.length-1]==174){
-				s.writeBytes(signature);
-
-			}  else if (this.ins[index].script.chunks[0]==0 && this.ins[index].script.chunks[this.ins[index].script.chunks.length-1][this.ins[index].script.chunks[this.ins[index].script.chunks.length-1].length-1]==174){
-				var pubkeyList = scriptListPubkey(coinjs.script(redeemScript));
-				var sigsList = scriptListSigs(this.ins[index].script);
-				sigsList[coinjs.countObject(sigsList)+1] = signature;
-
-				for(x in pubkeyList){
-					for(y in sigsList){
-						if(coinjs.verifySignature(sighash, sigsList[y], pubkeyList[x])){
-							s.writeBytes(sigsList[y]);
-						}
+			for(x in pubkeyList){
+				for(y in sigsList){
+					this.ins[index].script.buffer = redeemScript;
+					sighash = Crypto.util.hexToBytes(this.transactionHash(index, sigsList[y].slice(-1)[0]*1));
+					if(coinjs.verifySignature(sighash, sigsList[y], pubkeyList[x])){
+						s.writeBytes(sigsList[y]);
 					}
 				}
-
 			}
 
 			s.writeBytes(redeemScript);
@@ -1505,6 +1510,8 @@
 		if (typeof bytes === "undefined") bytes = 8;
 		if (bytes == 0) { 
 			return [];
+		} else if (num == -1){
+			return Crypto.util.hexToBytes("ffffffffffffffff");
 		} else {
 			return [num % 256].concat(coinjs.numToBytes(Math.floor(num / 256),bytes-1));
 		}

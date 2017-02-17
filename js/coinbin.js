@@ -1488,7 +1488,7 @@ $(document).ready(function() {
 				var tx = coinjs.transaction();
 				var t = tx.deserialize(script.val());
 
-				var signed = t.sign(wifkey.val());
+				var signed = t.sign(wifkey.val(), $("#sighashType option:selected").val());
 				$("#signedData textarea").val(signed);
 				$("#signedData .txSize").html(t.size());
 				$("#signedData").removeClass('hidden').fadeIn();
@@ -1501,6 +1501,19 @@ $(document).ready(function() {
 		}
 	});
 
+	$("#sighashType").change(function(){
+		$("#sighashTypeInfo").html($("option:selected",this).attr('rel')).fadeOut().fadeIn();
+	});
+
+	$("#signAdvancedCollapse").click(function(){
+		if($("#signAdvanced").hasClass('hidden')){
+			$("span",this).removeClass('glyphicon-collapse-down').addClass('glyphicon-collapse-up');
+			$("#signAdvanced").removeClass("hidden");
+		} else {
+			$("span",this).removeClass('glyphicon-collapse-up').addClass('glyphicon-collapse-down');
+			$("#signAdvanced").addClass("hidden");
+		}
+	});
 
 	/* page load code */
 
