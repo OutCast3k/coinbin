@@ -592,6 +592,29 @@ $(document).ready(function() {
 		totalInputAmount();
 	});
 
+	$("#donateTxBtn").click(function(){
+
+		var exists = false;
+
+		$.each($("#recipients .address"), function(i,o){
+			if($(o).val() == coinjs.developer){
+				exists = true;
+				$(o).fadeOut().fadeIn();
+				return true;
+			}
+		});
+
+		if(!exists){
+			if($("#recipients .recipient:last .address:last").val() != ""){
+				$("#recipients .addressAddTo:first").click();
+			};
+
+			$("#recipients .recipient:last .address:last").val(coinjs.developer).fadeOut().fadeIn();
+
+			return true;
+		}
+	});
+
 	/* code for the qr code scanner */
 
 	$(".qrcodeScanner").click(function(){
