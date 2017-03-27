@@ -17,7 +17,6 @@
         coinjs.ticker = 'SIB';
         coinjs.urischeme = 'sibcoin:';
         coinjs.explorer = 'https://chain.sibcoin.net';
-        coinjs.buyLink = 'https://yobit.net/en/trade/SIB/RUR';
         coinjs.opreturnmax = 40;
 
 	coinjs.compressed = false;
@@ -26,9 +25,15 @@
 	coinjs.developer = 'SMSdUsMnMyUt7tR7dR2cnQhS9wDSQ1Bv5d'; // sibcoin
 
 	/* bit(coinb.in) api vars */
-	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+'wallet.sibcoin.net/api/';
+        coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+'wallet.sibcoin.net/';
+        coinjs.apiurl= coinjs.host +'api/';
 	coinjs.uid = '1';
 	coinjs.key = '12345678901234567890123456789012';
+
+        //coinjs.buyLink = 'https://yobit.net/en/trade/SIB/RUR';
+        coinjs.buyLink = 'https://coinex.im/?from=QIWI_RUR_P2P&to=SIB&start=1&account=';
+        coinjs.toCardLink = 'https://coinex.im/?from=SIB&to=QIWI_RUR_2CARD&start=1';
+        coinjs.toPhoneLink = 'https://coinex.im/?from=SIB&to=QIWI_RUR_2PHONE&start=1';
 
 	/* start of address functions */
 
@@ -278,7 +283,7 @@
 
 	/* retreive the balance from a given address */
 	coinjs.addressBalance = function(address, callback){
-		coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=addresses&request=bal&address='+address+'&r='+Math.random(), callback, "GET");
+		coinjs.ajax(coinjs.apiurl+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=addresses&request=bal&address='+address+'&r='+Math.random(), callback, "GET");
 	}
 
 	/* decompress an compressed public key */
@@ -856,7 +861,7 @@
 
 		/* list unspent transactions */
 		r.listUnspent = function(address, callback, chost ) {
-                        chost = typeof chost !== 'undefined' ? chost : coinjs.host;
+                        chost = typeof chost !== 'undefined' ? chost : coinjs.apiurl;
 			coinjs.ajax(chost+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=addresses&request=unspent&address='+address+'&r='+Math.random(), callback, "GET");
 		}
 
@@ -914,7 +919,7 @@
 		/* broadcast a transaction */
 		r.broadcast = function(callback, txhex){
 			var tx = txhex || this.serialize();
-			coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction&rawtx='+tx+'&r='+Math.random(), callback, "GET");
+			coinjs.ajax(coinjs.apiurl+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction&rawtx='+tx+'&r='+Math.random(), callback, "GET");
 		}
 
 		/* generate the transaction hash to sign from a transaction input */

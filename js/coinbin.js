@@ -27,7 +27,9 @@ $(document).ready(function() {
 
 					$("#walletAddress").html(keys.address);
 					$("#walletHistory").attr('href',coinjs.explorer+'/address/'+keys.address);
-                                        $("#walletBuyLink").attr('href',coinjs.buyLink);
+                                        $("#walletBuyLink").attr('href',coinjs.buyLink + keys.address);
+                                        $("#wallet2CardLink").attr('href',coinjs.toCardLink);
+                                        $("#wallet2PhoneLink").attr('href',coinjs.toPhoneLink);
 
 					$("#walletQrCode").html("");
 					var qrcode = new QRCode("walletQrCode");
@@ -885,7 +887,7 @@ $(document).ready(function() {
 
 	// broadcast transaction vai coinbin (default)
 	function rawSubmitDefault(btn, chost){ 
-                chost = typeof chost !== 'undefined' ? chost : coinjs.host;
+                chost = typeof chost !== 'undefined' ? chost : coinjs.apiurl;
 		var thisbtn = btn;		
 		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
 		$.ajax ({
