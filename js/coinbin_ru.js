@@ -126,7 +126,7 @@ $(document).ready(function() {
 				// and finally broadcast!
 				tx2.broadcast(function(data){
 					if($(data).find("result").text()=="1"){
-						$("#walletSendConfirmStatus").removeClass('hidden').addClass('alert-success').html("txid: "+$(data).find("txid").text());
+						$("#walletSendConfirmStatus").removeClass('hidden').addClass('alert-success').html("Отправлено!<br /><br />txid: "+$(data).find("txid").text());
 					} else {
 						$("#walletSendConfirmStatus").removeClass('hidden').addClass('alert-danger').html(unescape($(data).find("response").text()).replace(/\+/g,' '));
 						$("#walletSendFailTransaction").removeClass('hidden');
@@ -902,7 +902,7 @@ $(document).ready(function() {
 				$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
 				if($(data).find("result").text()==1){
 					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger');
-					$("#rawTransactionStatus").html('txid: '+$(data).find("txid").text());
+					$("#rawTransactionStatus").html('Отправлено!<br /><br />txid: '+$(data).find("txid").text());
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
 				}
