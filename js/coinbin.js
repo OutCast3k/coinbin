@@ -714,6 +714,10 @@ $(document).ready(function() {
 			listUnspentChainso_Dogecoin(redeem);
 		}  else if(host=='cryptoid.info_carboncoin'){
 			listUnspentCryptoidinfo_Carboncoin(redeem);
+		}  else if(host=='explorer.globaltoken.org_globaltoken'){
+			listUnspentExplorerGlobaltokenOrg_Globaltoken(redeem);
+		}  else if(host=='blockdozer.com_bitcoincash'){
+			listUnspentBlockdozer_bitcoincash(redeem);
 		} else {
 			listUnspentDefault(redeem);
 		}
@@ -950,6 +954,101 @@ $(document).ready(function() {
 	*/
 
 	}
+	
+	/* retrieve unspent data from chain.so for carboncoin */
+	function listUnspentExplorerGlobaltokenOrg_Globaltoken(redeem) {
+		
+		$.ajax ({
+			type: "GET",
+			cache: false,
+			url: "https://explorer.globaltoken.org/api/addr/"+redeem.addr+"/utxo",
+			dataType: "json",
+			error: function(data) {
+				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+			},
+			success: function(data) {
+				if(data[0] == undefined)
+				{
+					var json = '[{"address":"'+redeem.addr+'","txid":"[]"}]';
+					data = $.parseJSON(json);
+				}
+				if((data[0].address && data[0].txid) && data[0].address==redeem.addr){
+					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://explorer.globaltoken.org/address/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+					for(var i in data){
+						var o = data[i];
+						var tx = ((""+o.txid).match(/.{1,2}/g).reverse()).join("")+'';
+						if(tx.match(/^[a-f0-9]+$/)){
+							var n = o.vout;
+							var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.scriptPubKey;
+							var amount = o.amount;
+							addOutput(tx, n, script, amount);
+						}
+					}
+				} else {
+					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+				}
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+			}
+		});
+	}
+
+	function listUnspentBlockdozer_bitcoincash(redeem) {
+		
+		$.ajax ({
+			type: "GET",
+			cache: false,
+			url: "http://blockdozer.com/insight-api/addr/"+redeem.addr+"/utxo",
+			dataType: "json",
+			error: function(data) {
+				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+			},
+			success: function(data) {
+				if(data[0] == undefined)
+				{
+					var json = '[{"address":"'+redeem.addr+'","txid":"[]"}]';
+					data = $.parseJSON(json);
+				}
+				if((data[0].address && data[0].txid) && data[0].address==redeem.addr){
+					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="http://blockdozer.com/insight/address/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+					for(var i in data){
+						var o = data[i];
+						var tx = ((""+o.txid).match(/.{1,2}/g).reverse()).join("")+'';
+						if(tx.match(/^[a-f0-9]+$/)){
+							var n = o.vout;
+							var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.scriptPubKey;
+							var amount = o.amount;
+							addOutput(tx, n, script, amount);
+						}
+					}
+				} else {
+					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+				}
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+			}
+		});
+	}
+
+	/*	$.ajax ({
+			type: "POST",
+			url: 'https://coinb.in/api/',
+			dataType: 'xml',
+			error: function(data) {
+			},
+			success: function(data) {
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+			}
+		});
+
+	*/
 
 	/* retrieve unspent data from chain.so for dogecoin */
 	function listUnspentChainso_Dogecoin(redeem){
@@ -1092,6 +1191,58 @@ $(document).ready(function() {
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
 				}
+			},
+			complete: function(data, status) {
+				$("#rawTransactionStatus").fadeOut().fadeIn();
+				$(thisbtn).val('Submit').attr('disabled',false);				
+			}
+		});
+	}
+	
+	function rawSubmitExplorerGlobaltokenOrg_Globaltoken(thisbtn) {	
+		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
+		$.ajax ({
+			type: "POST",
+			url: "https://explorer.globaltoken.org/api/tx/send",
+			data: {"rawtx":$("#rawTransaction").val()},
+			dataType: "json",
+			error: function(data) {
+				var r = data.responseText;
+				r = (r!='') ? r : ' Failed to broadcast'; // build response 
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+			},
+            success: function(data) {
+				if(data.txid && data.txid.length > 0){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.txid);
+				} else {
+					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+				}				
+			},
+			complete: function(data, status) {
+				$("#rawTransactionStatus").fadeOut().fadeIn();
+				$(thisbtn).val('Submit').attr('disabled',false);				
+			}
+		});
+	}
+	
+	function rawSubmitBlockDozer_BitcoinCash(thisbtn) {	
+		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
+		$.ajax ({
+			type: "POST",
+			url: "http://blockdozer.com/insight-api/tx/send",
+			data: {"rawtx":$("#rawTransaction").val()},
+			dataType: "json",
+			error: function(data) {
+				var r = data.responseText;
+				r = (r!='') ? r : ' Failed to broadcast'; // build response 
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+			},
+            success: function(data) {
+				if(data.txid && data.txid.length > 0){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.txid);
+				} else {
+					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+				}				
 			},
 			complete: function(data, status) {
 				$("#rawTransactionStatus").fadeOut().fadeIn();
@@ -1735,6 +1886,14 @@ $(document).ready(function() {
 		} else if(host=="cryptoid.info_carboncoin"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitcryptoid_Carboncoin(this);
+			});
+		} else if(host=="explorer.globaltoken.org_globaltoken"){
+			$("#rawSubmitBtn").click(function(){
+				rawSubmitExplorerGlobaltokenOrg_Globaltoken(this);			
+			});
+		} else if(host=="blockdozer.com_bitcoincash"){
+			$("#rawSubmitBtn").click(function(){
+				rawSubmitBlockDozer_BitcoinCash(this);			
 			});
 		} else {
 			$("#rawSubmitBtn").click(function(){
