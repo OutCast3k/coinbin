@@ -951,16 +951,8 @@
 		/* generate the transaction hash to sign from a transaction input */
 		r.transactionHash = function(index, sigHashType) {
 
-			var host = $("#coinjs_broadcast option:selected").val();
-			var isBitcoinCash = (host == 'blockdozer.com_bitcoincash')
-
 			var clone = coinjs.clone(this);
 			var shType = sigHashType || 1;
-
-			if (isBitcoinCash) {
-				/* Add SIGHASH_FORKID by default for Bitcoin Cash */
-				shType = shType | 0x40;
-			}
 
 			/* black out all other ins, except this one */
 			for (var i = 0; i < clone.ins.length; i++) {
@@ -1233,7 +1225,16 @@
 				return sequence;
 			}
 
+			var host = $("#coinjs_broadcast option:selected").val();
+			var isBitcoinCash = (host == 'blockdozer.com_bitcoincash')
+
 			var shType = sigHashType || 1;
+
+			if (isBitcoinCash) {
+				/* Add SIGHASH_FORKID by default for Bitcoin Cash */
+				shType = shType | 0x40;
+			}
+
 			var hash = txhash || Crypto.util.hexToBytes(this.transactionHash(index, shType));
 
 			if(hash){
