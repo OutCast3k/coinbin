@@ -1161,6 +1161,58 @@
 			return buffer;
 		}
 
+		r.extractAddress = function(index) {
+			var utxo_script = this.extractScriptKey(index);
+			var address;
+			if (utxo_script['type'] == 'scriptpubkey') {
+				address = coinjs.scripthash2address(utxo_script['script'].slice(6, 46));
+			} else if (utxo_script['type'] == 'multisig') {
+				address = coinjs.pubkey2address(utxo_script['script']); // hash the redeemscript
+			} else if (utxo_script['type'] == 'hodl') {
+				alert('Bitcoin Cash hodl addresses not supported yet. Sorry.');
+				return false;
+			} else {
+				alert('Can not retreive input values for Bitcoin Cash signatures.');
+				return false;
+			}
+			return address;
+		}
+
+		r.getInputValues = function() {
+			var self = this;
+			for (var i = 0; i < self.ins.length; i++) {
+				var utxo_txid = self.ins[i].outpoint.hash;
+				var utxo_index = self.ins[i].outpoint.index;
+				var utxo_address = self.extractAddress(i);
+				$.ajax ({
+					type: "GET",
+					cache: false,
+					async: false,
+					url: "http://blockdozer.com/insight-api/addr/"+utxo_address+"/utxo",
+					dataType: "json",
+					error: function(data) {
+						alert('Couldn\'t get values for inputs. Bitcoin Cash will not sign correctly.');
+					},
+					success: function(data) {
+						if(data[0] == undefined)
+						{
+							alert('Can not retreive input values for Bitcoin Cash signatures.');
+						}
+						if((data[0].address && data[0].txid) && data[0].address==utxo_address){
+							for(var i in data){
+								if (utxo_txid == data[i].txid
+								&& utxo_index == data[i].vout) {
+									self.ins[i].value = new BigInteger('' + Math.round((data[i].amount*1) * 1e8), 10);
+								}
+							}
+						} else {
+							alert('Can not retreive input values for Bitcoin Cash signatures.');
+						}
+					}
+				});
+			}
+		}
+
 		/* extract the scriptSig, used in the transactionHash() function */
 		r.extractScriptKey = function(index) {
 			if(this.ins[index]){
@@ -1233,6 +1285,11 @@
 			if (isBitcoinCash) {
 				/* Add SIGHASH_FORKID by default for Bitcoin Cash */
 				shType = shType | 0x40;
+				for (var i = 0; i < this.ins.length; i++) {
+					if (this.ins[i].value == undefined) {
+						this.getInputValues()
+					}
+				}
 			}
 
 			var hash = txhash || Crypto.util.hexToBytes(this.transactionHash(index, shType));
