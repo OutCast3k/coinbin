@@ -1175,11 +1175,8 @@
 			var address;
 			if (utxo_script['type'] == 'scriptpubkey') {
 				address = coinjs.scripthash2address(utxo_script['script'].slice(6, 46));
-			} else if (utxo_script['type'] == 'multisig') {
+			} else if (utxo_script['type'] == 'multisig' || utxo_script['type'] == 'hodl') {
 				address = coinjs.redeemscript2address(utxo_script['script']); // hash the redeemscript
-			} else if (utxo_script['type'] == 'hodl') {
-				alert('Bitcoin Cash hodl addresses not supported yet. Sorry.');
-				return false;
 			} else {
 				alert('Can not retreive input values for Bitcoin Cash signatures.');
 				return false;
