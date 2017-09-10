@@ -58,7 +58,8 @@
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span> New<b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									<li><a href="#newAddress" data-toggle="tab">New Address</a></li>
+									<li><a href="#newAddress" data-toggle="tab">Address</a></li>
+									<li><a href="#newSegWit" data-toggle="tab">SegWit Address</a></li>
 									<li><a href="#newMultiSig" data-toggle="tab">MultiSig Address</a></li>
 									<li><a href="#newTimeLocked" data-toggle="tab">Time Locked Address</a></li>
 									<li><a href="#newHDaddress" data-toggle="tab">HD Address</a></li>
@@ -123,7 +124,7 @@
 
 							<div class="col-md-4">
 								<h3><span class="glyphicon glyphicon-globe"></span> Addresses</h3>
-								<p>We support <a href="#newAddress">regular addresses</a> but also <a href="#newMultiSig">multisig</a> and stealth, and access to your own private keys!</p>
+								<p>We support <a href="#newAddress">regular addresses</a>, <a href="#newMultiSig">multisig</a>, <a href="#newSegWit">segwit</a> and stealth all with access to your own private keys!</p>
 							</div>
 
 							<div class="col-md-4">
@@ -303,6 +304,47 @@
 						</div>
 
 						<input type="button" class="btn btn-primary" value="Generate" id="newKeysBtn">
+						<br>
+					</div>
+
+					<div class="tab-pane tab-content" id="newSegWit">
+						<h2>New SegWit Address <small> Smaller &amp; Faster Transactions</small></h2>
+
+						<p>Any keys used you will need to manually store safely as they will be needed later to redeem the bitcoins.</p>
+
+						<label>SegWit Address (Share)</label>
+
+						<div class="input-group">
+							<input id="newSegWitAddress" type="text" class="form-control address" value="" readonly>
+							<span class="input-group-btn">
+								<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+							</span>
+						</div>
+
+						<label>RedeemScript</label>
+						<input id="newSegWitRedeemScript" type="text" class="form-control" readonly>
+
+						<label>Public key</label>
+						<input id="newSegWitPubKey" type="text" class="form-control" readonly>
+
+						<label>Private key (WIF key)</label>
+						<div class="input-group">
+							<input id="newSegWitPrivKey" type="password" class="form-control" value="" readonly>
+							<span class="input-group-btn">
+								<button class="showKey btn btn-default" type="button">Show</button>
+							</span>
+						</div>
+
+
+						<h3>Address Options</h3>
+						<p>You can use the advanced options below to generate different kind of keys and addresses.</p>
+
+						<div class="checkbox">
+							<label><input type="checkbox" id="newSegWitBrainwallet" class="checkbox-inline"> Custom Seed or Brain Wallet</label>
+							<input type="text" class="form-control hidden" id="brainwalletSegWit">
+						</div>
+
+						<input type="button" class="btn btn-primary" value="Generate" id="newSegWitKeysBtn">
 						<br>
 					</div>
 
@@ -497,7 +539,7 @@
 						<h2>Transaction <small>Create a new transaction</small></h2>
 						<p>Use this page to create a raw transaction</p>
 
-						<b>Address, WIF key or Multisig Redeem Script</b>:
+						<b>Address, WIF key or Redeem Script</b>:
 						<div class="input-group">
 							<span class="input-group-btn">
 								<button class="btn btn-info qrcodeScanner" type="button" data-toggle="modal" data-target="#modalQrcodeScanner" forward-result="#redeemFrom"><span class="glyphicon glyphicon-camera"></span></button>
@@ -679,66 +721,82 @@
 						<br>
 
 						<div class="hidden verifyData" id="verifyRsData">
+
 							<h4>Redeem Script</h4>
 							<p><span style="float:right"><a href="javascript:;" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above redeem script has been decoded</p>
 
 							<div class="hidden" id="verifyRsDataMultisig">
-                                <label>Multi Signature Address</label>
-    							<div class="row">
-    								<div class="col-lg-6">
-    									<div class="input-group">
-    										<input type="text" class="form-control address multisigAddress" value="" readonly>
-    										<span class="input-group-btn">
-    											<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
-    										</span>
+								<label>Multi Signature Address</label>
+								<div class="row">
+    									<div class="col-lg-6">
+    										<div class="input-group">
+    											<input type="text" class="form-control address multisigAddress" value="" readonly>
+    											<span class="input-group-btn">
+    												<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+    											</span>
+    										</div>
     									</div>
     								</div>
-    							</div>
-    							<label>Required Signatures</label>
-    							<p class="signaturesRequired">?</p>
-    							<label>Signatures Required from</label>
-    							<table class="table table-striped table-hover">
-    								<tbody>
-    								</tbody>
-    							</table>
-                            </div>
 
-                            <div class="hidden" id="verifyRsDataHodl">
-                                <label>Hodl Address</label>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control address" value="" readonly>
-                                            <span class="input-group-btn">
-                                                <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
+								<label>Required Signatures</label>
+		    						<p class="signaturesRequired">?</p>
+    								<label>Signatures Required from</label>
+    								<table class="table table-striped table-hover">
+    									<tbody>
+    									</tbody>
+    								</table>
+								<br>
+							</div>
+	
+							<div class="hidden verifyData" id="verifyRsDataSegWit">
+				                               	<label>Segwit Address</label>
+   								<div class="row">
+   									<div class="col-lg-6">
+    										<div class="input-group">
+    											<input type="text" class="form-control address segWitAddress" value="" readonly>
+    											<span class="input-group-btn">
+    												<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+    											</span>
+    										</div>
+									</div>
+								</div>
+								<br>
+							</div>
 
-                                <label>Required Signature</label>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control address pubkey" value="" readonly>
-                                            <span class="input-group-btn">
-                                                <button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
+							<div class="hidden verifyData" id="verifyRsDataHodl">
+								<label>Hodl Address</label>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="input-group">
+											<input type="text" class="form-control address" value="" readonly>
+											<span class="input-group-btn">
+												<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+											</span>
+										</div>
+									</div>
+								</div>
 
-                                <label>Unlock Time</label>
-                                <div class="row">
-                                    <div class='col-md-4'>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control date" value="" readonly>
-                                        </div>
-                                    </div>
-                                </div>
+								<label>Required Signature</label>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="input-group">
+											<input type="text" class="form-control address pubkey" value="" readonly>
+											<span class="input-group-btn">
+												<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
+											</span>
+										</div>
+									</div>
+								</div>
 
-                                <br>
-                            </div>
+								<label>Unlock Time</label>
+								<div class="row">
+									<div class='col-md-4'>
+										<div class="input-group">
+											<input type="text" class="form-control date" value="" readonly>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 
 						<div class="hidden verifyData" id="verifyTransactionData">
@@ -747,6 +805,7 @@
 							<div><b>Version</b>: <span class="transactionVersion"></span></div>
 							<div><b>Transaction Size</b>: <span class="transactionSize"></span></div>
 							<div><b>Lock time</b>: <span class="transactionLockTime"></span></div>
+							<div class="transactionSegWit"><b>SegWit</b>: True</div>
 							<div class="transactionRBF"><b>RBF</b>: This is a <a href="https://en.bitcoin.it/wiki/Transaction_replacement">replace by fee</a> transaction!</div>
 
 							<hr>
@@ -773,6 +832,7 @@
 								</tbody>
 							</table>
 						</div>
+
 
 						<div class="hidden verifyData" id="verifyPrivKey">
 							<h4>WIF key</h4>
@@ -883,6 +943,7 @@
 
 						<input type="button" value="Submit" class="btn btn-primary" id="verifyBtn">
 						<br>
+
 					</div>
 
 					<div class="tab-pane tab-content" id="sign">
@@ -975,7 +1036,7 @@
 
 					<div class="tab-pane tab-content" id="about">
 						<h2>About <small>open source bitcoin wallet</small></h2>
-						<p>Version 1.2</p>
+						<p>Version 1.3</p>
 						<p>Compatible with bitcoin-qt</p>
 						<p>Github <a href="https://github.com/OutCast3k/coinbin/">https://github.com/OutCast3k/coinbin/</a></p>
 						<p>TOR <a href="http://4zpinp6gdkjfplhk.onion">4zpinp6gdkjfplhk.onion</a></p>
@@ -987,6 +1048,8 @@
 						<p>Coinb.in is run and funded by the generosity of others in terms of <a href="https://github.com/OutCast3k/coinbin/graphs/contributors" target="_blank">development</a> and hosting.</p>
 						<h3>Privacy</h3>
 						<p>Coinb.in beleives strongly in privacy, not only do we support the use of TOR, the site does not collect and store IP or transaction data via our servers nor do we store your bitcoins private key. We do route traffic via cloudflare using an SSL certificate.</p>
+						<h3>Support</h3>
+						<p>We recommend that you first check our <a href="https://status.coinb.in/" target="_blank">service status</a> page, if the problem persists you can contact us by emailing support{at}coinb.in.</p>
 						<h3>Donate</h3>
 						<p>Please donate to <a href="bitcoin:1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg">1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg</a> if you found this project useful or want to see more features!</p>
 					</div>
@@ -1105,7 +1168,7 @@
 
 		<div id="footer">
 			<div class="container text-right">
-	        		<p class="text-muted">Version 1.2</p>
+	        		<p class="text-muted">Version 1.3</p>
 			</div>
 		</div>
 

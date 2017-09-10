@@ -1,7 +1,7 @@
 coinbin
 =======
 
-A Open Source Browser Based Bitcoin Wallet. Version 1.2 beta by OutCast3k
+A Open Source Browser Based Bitcoin Wallet. Version 1.3 beta by OutCast3k
 
 Live version available at http://coinb.in/ or http://4zpinp6gdkjfplhk.onion
 
@@ -28,5 +28,6 @@ Coinb.in supports a number of key features such as:
 - HD (bip32) support
 - Supports altcoins such as litecoin
 - Replace by fee (RBF) Support
+- Segwit support
 
 Donate to 1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg to see more development!
