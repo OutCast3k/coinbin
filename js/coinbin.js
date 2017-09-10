@@ -731,6 +731,9 @@ $(document).ready(function() {
 
 		if(host=='blockr.io_bitcoinmainnet'){
 			listUnspentBlockrio_BitcoinMainnet(redeem);
+		}
+		else if(host=='blockr.io_bitcointestnet'){
+			listUnspentBlockrio_BitcoinTestnet(redeem);
 		} else if(host=='chain.so_litecoin'){
 			listUnspentChainso_Litecoin(redeem);
 		} else if(host=='chain.so_dogecoin'){
@@ -820,7 +823,7 @@ $(document).ready(function() {
 	}
 
 	/* global function to add outputs to page */
-	function addOutput(tx, n, script, amount) {
+	function addOutput(tx, n, script, amount, testnet) {
 		if(tx){
 			if($("#inputs .txId:last").val()!=""){
 				$("#inputs .txidAdd").click();
@@ -828,8 +831,12 @@ $(document).ready(function() {
 
 			$("#inputs .row:last input").attr('disabled',true);
 
-			var txid = ((tx).match(/.{1,2}/g).reverse()).join("")+'';
-
+			if (testnet != "yes") {
+				var txid = ((tx).match(/.{1,2}/g).reverse()).join("")+'';
+			} else {
+			var txid = tx;
+			}
+			
 			$("#inputs .txId:last").val(txid);
 			$("#inputs .txIdN:last").val(n);
 			$("#inputs .txIdAmount:last").val(amount);
@@ -873,7 +880,7 @@ $(document).ready(function() {
 	/* retrieve unspent data from blockrio for mainnet */
 	function listUnspentBlockrio_BitcoinMainnet(redeem){
 		$.ajax ({
-			type: "POST",
+			type: "GET",
 			url: "https://btc.blockr.io/api/v1/address/unspent/"+redeem.addr+"?unconfirmed=1",
 			dataType: "json",
 			error: function(data) {
@@ -889,6 +896,39 @@ $(document).ready(function() {
 						var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script;
 						var amount = o.amount;
 						addOutput(tx, n, script, amount);
+					}
+				} else {
+					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+				}
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+			}
+		});
+	}
+	
+	/* retrieve unspent data from blockrio for testnet */
+	function listUnspentBlockrio_BitcoinTestnet(redeem){
+		$.ajax ({
+			type: "GET",
+			url: "https://tbtc.blockr.io/api/v1/address/unspent/"+redeem.addr+"?unconfirmed=0",
+			dataType: "json",
+			error: function(data) {
+				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+			},
+			success: function(data) {
+				if((data.status && data.data) && data.status=='success'){
+					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://tbtc.blockr.io/address/info/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+					for(var i in data.data.unspent){
+						var o = data.data.unspent[i];
+						var tx = o.tx;
+						//console.log(tx);
+						var n = o.n;
+						var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script;
+						var amount = o.amount;
+						var testnet = "yes";
+						addOutput(tx, n, script, amount, testnet);
 					}
 				} else {
 					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
@@ -1142,6 +1182,38 @@ $(document).ready(function() {
 			dataType: "json",
 			error: function(data) {
 				var obj = $.parseJSON(data.responseText);
+				console.log(obj);
+				var r = ' ';
+				r += (obj.data) ? obj.data : '';
+				r += (obj.message) ? ' '+obj.message : '';
+				r = (r!='') ? r : ' Failed to broadcast'; // build response 
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+			},
+                        success: function(data) {
+				if((data.status && data.data) && data.status=='success'){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data);
+				} else {
+					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+				}				
+			},
+			complete: function(data, status) {
+				$("#rawTransactionStatus").fadeOut().fadeIn();
+				$(thisbtn).val('Submit').attr('disabled',false);				
+			}
+		});
+	}
+	
+	// broadcast transaction via blockr.io (testnet)
+	function rawSubmitBlockrio_BitcoinTestnet(thisbtn){ 
+		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
+		$.ajax ({
+			type: "POST",
+			url: "https://tbtc.blockr.io/api/v1/tx/push",
+			data: {"hex":$("#rawTransaction").val()},
+			dataType: "json",
+			error: function(data) {
+				var obj = $.parseJSON(data.responseText);
+				//console.log(obj);
 				var r = ' ';
 				r += (obj.data) ? obj.data : '';
 				r += (obj.message) ? ' '+obj.message : '';
@@ -1763,6 +1835,10 @@ $(document).ready(function() {
 		} else if(host=="blockr.io_bitcoinmainnet"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitBlockrio_BitcoinMainnet(this);
+			});
+		} else if(host=="blockr.io_bitcointestnet"){
+			$("#rawSubmitBtn").click(function(){
+				rawSubmitBlockrio_BitcoinTestnet(this);
 			});
 		} else if(host=="chain.so_bitcoinmainnet"){
 			$("#rawSubmitBtn").click(function(){
