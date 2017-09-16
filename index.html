@@ -151,6 +151,15 @@
 										<input id="openPass" type="password" class="form-control" placeholder="Password" required>
 										<input id="openPassConfirm" type="password" class="form-control" placeholder="Password confirm" required>
 										<br>
+										<div>
+											<a href="javascript:;" class="optionsCollapse"><div class="well well-sm"><span class="glyphicon glyphicon-collapse-down" id="glyphcollapse"></span> Advanced Options</div></a>
+											<div class="hidden optionsAdvanced">
+												<label>Segregated Witness Address</label>
+												<p class="checkbox">
+													<label><input type="checkbox" id="walletSegwit" class="checkbox-inline"> Use a segwit address instead of a regular address.</label>
+												</p>
+											</div>
+										</div>
 										<div id="openLoginStatus" class="alert alert-danger hidden"></div>
 										<button id="openBtn" class="btn btn-primary" type="submit">Submit</button>
 									</form>
@@ -557,9 +566,9 @@
 						<div class="hidden alert alert-info" id="redeemFromAddress"></div>
 
 						<div>
-							<a href="javascript:;" id="optionsCollapse"><div class="well well-sm"><span class="glyphicon glyphicon-collapse-down" id="glyphcollapse"></span> Advanced Options</div></a>
+							<a href="javascript:;" class="optionsCollapse"><div class="well well-sm"><span class="glyphicon glyphicon-collapse-down" id="glyphcollapse"></span> Advanced Options</div></a>
 
-							<div class="hidden" id="optionsAdvanced">
+							<div class="hidden optionsAdvanced">
 
 								<label>Clear Inputs</label>
 								<p class="checkbox">

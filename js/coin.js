@@ -876,7 +876,7 @@
 		}
 
 		/* add unspent to transaction */
-		r.addUnspent = function(address, callback){
+		r.addUnspent = function(address, callback, script){
 			var self = this;
 			this.listUnspent(address, function(data){
 				var s = coinjs.script();
@@ -900,9 +900,9 @@
 					var u = xmlDoc.getElementsByTagName("unspent_"+i)[0]
 					var txhash = (u.getElementsByTagName("tx_hash")[0].childNodes[0].nodeValue).match(/.{1,2}/g).reverse().join("")+'';
 					var n = u.getElementsByTagName("tx_output_n")[0].childNodes[0].nodeValue;
-					var script = u.getElementsByTagName("script")[0].childNodes[0].nodeValue;
+					var scr = script || u.getElementsByTagName("script")[0].childNodes[0].nodeValue;
 
-					self.addinput(txhash, n, script);
+					self.addinput(txhash, n, scr);
 
 					value += u.getElementsByTagName("value")[0].childNodes[0].nodeValue*1;
 					total++;

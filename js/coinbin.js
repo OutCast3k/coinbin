@@ -28,17 +28,26 @@ $(document).ready(function() {
 
 					coinjs.compressed = true;
 					var keys = coinjs.newKeys(s);
+					var address = keys.address;
+					var wif = keys.wif;
+					var pubkey = keys.pubkey;
+					var privkeyaes = CryptoJS.AES.encrypt(keys.wif, pass);
 
-					$("#walletAddress").html(keys.address);
-					$("#walletHistory").attr('href',explorer_addr+keys.address);
+					if($("#walletSegwit").is(":checked")){
+						var sw = coinjs.segwitAddress(pubkey);
+						address = sw.address;
+					}
+
+					$("#walletAddress").html(address);
+					$("#walletHistory").attr('href',explorer_addr+address);
 
 					$("#walletQrCode").html("");
 					var qrcode = new QRCode("walletQrCode");
-					qrcode.makeCode("bitcoin:"+keys.address);
+					qrcode.makeCode("bitcoin:"+address);
 
-					$("#walletKeys .privkey").val(keys.wif);
-					$("#walletKeys .pubkey").val(keys.pubkey);
-					$("#walletKeys .privkeyaes").val(CryptoJS.AES.encrypt(keys.wif, pass));
+					$("#walletKeys .privkey").val(wif);
+					$("#walletKeys .pubkey").val(pubkey);
+					$("#walletKeys .privkeyaes").val(privkeyaes);
 
 					$("#openLogin").hide();
 					$("#openWallet").removeClass("hidden").show();
@@ -76,6 +85,7 @@ $(document).ready(function() {
 		$("#walletKeys .privkey").val("");
 		$("#walletKeys .pubkey").val("");
 
+		$("#openLoginStatus").html("").hide();
 	});
 
 	$("#walletShowKeys").click(function(){
@@ -111,6 +121,12 @@ $(document).ready(function() {
 
 		thisbtn.attr('disabled',true);
 
+		var script = false;
+		if($("#walletSegwit").is(":checked")){
+			var sw = coinjs.segwitAddress($("#walletKeys .pubkey").val());
+			scrip = sw.redeemscript;			
+		}
+
 		tx.addUnspent($("#walletAddress").html(), function(data){
 
 			var dvalue = (data.value/100000000).toFixed(8) * 1;
@@ -124,7 +140,7 @@ $(document).ready(function() {
 
 				// clone the transaction with out using coinjs.clone() function as it gives us trouble
 				var tx2 = coinjs.transaction(); 
-				var txunspent = tx2.deserialize(tx.serialize()); 
+				var txunspent = tx2.deserialize(tx.serialize());
 
 				// then sign
 				var signed = txunspent.sign($("#walletKeys .privkey").val());
@@ -150,7 +166,8 @@ $(document).ready(function() {
 			}
 
 			$("#walletLoader").addClass("hidden");
-		});
+
+		}, script);
 	});
 
 	$("#walletSendBtn").click(function(){
@@ -246,7 +263,9 @@ $(document).ready(function() {
 
 	function checkBalanceLoop(){
 		setTimeout(function(){
-			walletBalance();
+			if($("#walletLoader").hasClass("hidden")){
+				walletBalance();
+			}
 			checkBalanceLoop();
 		},45000);
 	}
@@ -1015,13 +1034,13 @@ $(document).ready(function() {
 		$("#transactionFee").val((fee>0)?fee:'0.00');
 	}
 
-	$("#optionsCollapse").click(function(){
-		if($("#optionsAdvanced").hasClass('hidden')){
-			$("#glyphcollapse").removeClass('glyphicon-collapse-down').addClass('glyphicon-collapse-up');
-			$("#optionsAdvanced").removeClass("hidden");
+	$(".optionsCollapse").click(function(){
+		if($(".optionsAdvanced",$(this).parent()).hasClass('hidden')){
+			$(".glyphcollapse",$(this).parent()).removeClass('glyphicon-collapse-down').addClass('glyphicon-collapse-up');
+			$(".optionsAdvanced",$(this).parent()).removeClass("hidden");
 		} else {
-			$("#glyphcollapse").removeClass('glyphicon-collapse-up').addClass('glyphicon-collapse-down');
-			$("#optionsAdvanced").addClass("hidden");
+			$(".glyphcollapse",$(this).parent()).removeClass('glyphicon-collapse-up').addClass('glyphicon-collapse-down');
+			$(".optionsAdvanced",$(this).parent()).addClass("hidden");
 		}
 	});
 
