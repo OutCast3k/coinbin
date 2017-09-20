@@ -124,7 +124,7 @@ $(document).ready(function() {
 		var script = false;
 		if($("#walletSegwit").is(":checked")){
 			var sw = coinjs.segwitAddress($("#walletKeys .pubkey").val());
-			scrip = sw.redeemscript;			
+			script = sw.redeemscript;
 		}
 
 		tx.addUnspent($("#walletAddress").html(), function(data){
@@ -148,7 +148,7 @@ $(document).ready(function() {
 				// and finally broadcast!
 				tx2.broadcast(function(data){
 					if($(data).find("result").text()=="1"){
-						$("#walletSendConfirmStatus").removeClass('hidden').addClass('alert-success').html("txid: "+$(data).find("txid").text());
+						$("#walletSendConfirmStatus").removeClass('hidden').addClass('alert-success').html('txid: <a href="https://coinb.in/tx/'+$(data).find("txid").text()+'" target="_blank">'+$(data).find("txid").text()+'</a>');
 					} else {
 						$("#walletSendConfirmStatus").removeClass('hidden').addClass('alert-danger').html(unescape($(data).find("response").text()).replace(/\+/g,' '));
 						$("#walletSendFailTransaction").removeClass('hidden');
@@ -167,7 +167,7 @@ $(document).ready(function() {
 
 			$("#walletLoader").addClass("hidden");
 
-		}, script);
+		}, script, script);
 	});
 
 	$("#walletSendBtn").click(function(){
@@ -1262,7 +1262,6 @@ $(document).ready(function() {
 		var tx = coinjs.transaction();
 		try {
 			var decode = tx.deserialize($("#verifyScript").val());
-		//	console.log(decode);
 			$("#verifyTransactionData .transactionVersion").html(decode['version']);
 			$("#verifyTransactionData .transactionSize").html(decode.size()+' <i>bytes</i>');
 			$("#verifyTransactionData .transactionLockTime").html(decode['lock_time']);

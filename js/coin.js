@@ -876,7 +876,7 @@
 		}
 
 		/* add unspent to transaction */
-		r.addUnspent = function(address, callback, script){
+		r.addUnspent = function(address, callback, script, segwit){
 			var self = this;
 			this.listUnspent(address, function(data){
 				var s = coinjs.script();
@@ -902,8 +902,18 @@
 					var n = u.getElementsByTagName("tx_output_n")[0].childNodes[0].nodeValue;
 					var scr = script || u.getElementsByTagName("script")[0].childNodes[0].nodeValue;
 
-					self.addinput(txhash, n, scr);
+					if(segwit){
+						/* this is a small hack to include the value with the redeemscript to make the signing procedure smoother. 
+						It is not standard and removed during the signing procedure. */
 
+						s = coinjs.script();
+						s.writeBytes(Crypto.util.hexToBytes(script));
+						s.writeOp(0);
+						s.writeBytes(coinjs.numToBytes(u.getElementsByTagName("value")[0].childNodes[0].nodeValue*1, 8));
+						scr = Crypto.util.bytesToHex(s.buffer);
+					}
+
+					self.addinput(txhash, n, scr);
 					value += u.getElementsByTagName("value")[0].childNodes[0].nodeValue*1;
 					total++;
 				}
