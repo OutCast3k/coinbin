@@ -792,7 +792,7 @@
 		r.lock_time = 0;
 		r.ins = [];
 		r.outs = [];
-		r.witness = [];
+		r.witness = false;
 		r.timestamp = null;
 		r.block = null;
 
@@ -1372,15 +1372,28 @@
 					script.writeBytes(this.ins[index].script.chunks[0]);	
 					this.ins[index].script = script;
 
+					if(!coinjs.isArray(this.witness)){
+						this.witness = [];
+					}
+
 					this.witness.push([signature, wif2['pubkey']]);
 
-					/* reorder witness data */
+					/* attempt to reorder witness data as best as we can. 
+					   data can't be easily validated at this stage as 
+					   we dont have access to the inputs value and 
+					   making a web call will be too slow. */
+
 					var witness_order = [];
+					var witness_used = [];
 					for(var i = 0; i < this.ins.length; i++){
 						for(var y = 0; y < this.witness.length; y++){
-							var sw = coinjs.segwitAddress(this.witness[y][1]);
-							if(sw['redeemscript'] == Crypto.util.bytesToHex(this.ins[i].script.chunks[0])){
-								witness_order.push(this.witness[y]);
+							if(!witness_used.includes(y)){
+								var sw = coinjs.segwitAddress(this.witness[y][1]);
+								if(sw['redeemscript'] == Crypto.util.bytesToHex(this.ins[i].script.chunks[0])){
+									witness_order.push(this.witness[y]);
+									witness_used.push(y);
+									break;
+								}
 							}
 						}
 					}
@@ -1424,7 +1437,7 @@
 			var buffer = [];
 			buffer = buffer.concat(coinjs.numToBytes(parseInt(this.version),4));
 
-			if(this.witness.length>=1){
+			if(coinjs.isArray(this.witness)){
 				buffer = buffer.concat([0x00, 0x01]);
 			}
 
@@ -1448,7 +1461,7 @@
 				buffer = buffer.concat(scriptBytes);
 			}
 
-			if(this.witness.length>=1){
+			if((coinjs.isArray(this.witness)) && this.witness.length>=1){
 				for(var i = 0; i < this.witness.length; i++){
 	 				buffer = buffer.concat(coinjs.numToVarInt(this.witness[i].length));
 					for(var x = 0; x < this.witness[i].length; x++){
