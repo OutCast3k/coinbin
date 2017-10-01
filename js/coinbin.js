@@ -6,6 +6,8 @@ $(document).ready(function() {
 	var explorer_addr = "https://coinb.in/addr/"
 	var explorer_block = "https://coinb.in/block/"
 
+	var wallet_timer = false;
+
 	$("#openBtn").click(function(){
 		var email = $("#openEmail").val().toLowerCase();
 		if(email.match(/[\s\w\d]+@[\s\w\d]+/g)){
@@ -87,6 +89,19 @@ $(document).ready(function() {
 
 		$("#openLoginStatus").html("").hide();
 	});
+
+	$("#walletToSegWit").click(function(){
+		$("#walletToBtn").html('SegWit <span class="caret"></span>');
+		$("#walletSegwit")[0].checked = true;
+		$("#openBtn").click();
+	});
+
+	$("#walletToLegacy").click(function(){
+		$("#walletToBtn").html('Legacy <span class="caret"></span>');
+		$("#walletSegwit")[0].checked = false;
+		$("#openBtn").click();
+	});
+
 
 	$("#walletShowKeys").click(function(){
 		$("#walletKeys").removeClass("hidden");
@@ -262,7 +277,8 @@ $(document).ready(function() {
 	}
 
 	function checkBalanceLoop(){
-		setTimeout(function(){
+		clearTimeout(wallet_timer);
+		wallet_timer = setTimeout(function(){
 			if($("#walletLoader").hasClass("hidden")){
 				walletBalance();
 			}

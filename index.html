@@ -156,7 +156,7 @@
 											<div class="hidden optionsAdvanced">
 												<label>Segregated Witness Address</label>
 												<p class="checkbox">
-													<label><input type="checkbox" id="walletSegwit" class="checkbox-inline"> Use a segwit address instead of a regular address.</label>
+													<label><input type="checkbox" id="walletSegwit" class="checkbox-inline" checked> Use a segwit address instead of a regular address. <span class="text-muted"><i>(recommended)</i></span></label></label>
 												</p>
 											</div>
 										</div>
@@ -174,7 +174,15 @@
 											<div id="walletQrCode"></div> <br>
 											<div>
 												<span id="walletLoader" class="hidden"><img src="images/loader.gif"></span>
-												<span id="walletAddress"></span>
+												<span id="walletAddress"></span> 
+
+												<div class="btn-group">
+													<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" id="walletToBtn">SegWit <span class="caret"></span></button>
+													<ul class="dropdown-menu">
+														<li><a href="javascript:;" id="walletToSegWit">SegWit</a></li>
+														<li><a href="javascript:;" id="walletToLegacy">Legacy</a></li>
+													</ul>
+												</div>
 											</div>
 											<br>
 											<div style="text-align:center; width:350px;">
