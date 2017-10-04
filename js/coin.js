@@ -132,7 +132,13 @@
 		var checksum = r.slice(0,4);
 		var redeemScript = Crypto.util.bytesToHex(s.buffer);
 		var address = coinjs.base58encode(x.concat(checksum));
-		return {'address':address, 'redeemScript':redeemScript};
+
+		if(s.buffer.length > 520){ // too large
+			address = 'invalid';
+			redeemScript = 'invalid';
+		}
+
+		return {'address':address, 'redeemScript':redeemScript, 'size': s.buffer.length};
 	}
 
 	/* new time locked address, provide the pubkey and time necessary to unlock the funds.

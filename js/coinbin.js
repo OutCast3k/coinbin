@@ -379,11 +379,15 @@ $(document).ready(function() {
 		if(($("#multisigPubKeys .pubkey").parent().hasClass('has-error')==false) && $("#releaseCoins").parent().hasClass('has-error')==false){
 			var sigsNeeded = $("#releaseCoins option:selected").html();
 			var multisig =  coinjs.pubkeys2MultisigAddress(keys, sigsNeeded);
-			$("#multiSigData .address").val(multisig['address']);
-			$("#multiSigData .script").val(multisig['redeemScript']);
-			$("#multiSigData .scriptUrl").val(document.location.origin+''+document.location.pathname+'?verify='+multisig['redeemScript']+'#verify');
-			$("#multiSigData").removeClass('hidden').addClass('show').fadeIn();
-			$("#releaseCoins").removeClass('has-error');
+			if(multisig.size <= 520){
+				$("#multiSigData .address").val(multisig['address']);
+				$("#multiSigData .script").val(multisig['redeemScript']);
+				$("#multiSigData .scriptUrl").val(document.location.origin+''+document.location.pathname+'?verify='+multisig['redeemScript']+'#verify');
+				$("#multiSigData").removeClass('hidden').addClass('show').fadeIn();
+				$("#releaseCoins").removeClass('has-error');
+			} else {
+				$("#multiSigErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> Your generated redeemscript is too large (>520 bytes) it can not be used safely').fadeIn();
+			}
 		} else {
 			$("#multiSigErrorMsg").html('<span class="glyphicon glyphicon-exclamation-sign"></span> One or more public key is invalid!').fadeIn();
 		}
