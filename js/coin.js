@@ -10,15 +10,15 @@
 	var coinjs = window.coinjs = function () { };
 
 	/* public vars */
-	coinjs.pub = 0x6f;
-	coinjs.priv = 0xef;
-	coinjs.multisig = 0xc4;
-	coinjs.hdkey = {'prv':0x04358394, 'pub':0x043587cf};
+	coinjs.pub = 0x26;
+	coinjs.priv = 0x80;
+	coinjs.multisig = 0x17;
+	coinjs.hdkey = {'prv':0x0488ade4, 'pub':0x0488b21e};
 
 	coinjs.compressed = false;
 
 	/* other vars */
-	coinjs.developer = '1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg'; // bitcoin
+	coinjs.developer = 'GHri78iH9CfBbm79rfdXtCqjsiFhbKMwZd'; // bitcoin gold
 
 	/* bit(coinb.in) api vars */
 	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+'coinb.in/api/';
