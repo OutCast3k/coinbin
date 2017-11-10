@@ -1,11 +1,23 @@
 coinbin
 =======
 
+##Tasks:
+
+- [x] Change wallet symbols for making it compatible to BTG
+
+- [x] Rebrand the UX
+
+- [ ] Add transaction signing with replay protection
+
+- [ ] Add beaming raw transaction to node
+
+- [ ] Uncomment and improve existion features
+
 A Open Source Browser Based Bitcoin Wallet. Version 1.3 beta by OutCast3k
 
-Live version available at http://coinb.in/ or http://4zpinp6gdkjfplhk.onion
+Live version available at http://btgwallet.online
 
-Github URL: https://github.com/OutCast3k/coinbin/
+Github URL: https://github.com/poolgold/coinbin
 
 Coinb.in supports a number of key features such as: 
 
