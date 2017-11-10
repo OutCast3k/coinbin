@@ -1,7 +1,7 @@
 coinbin
 =======
 
-##Tasks:
+## Tasks:
 
 - [x] Change wallet symbols for making it compatible to BTG
 
