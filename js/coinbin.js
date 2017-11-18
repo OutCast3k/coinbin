@@ -635,7 +635,24 @@ $(document).ready(function() {
 
 
 		if(!$("#recipients .row, #inputs .row").hasClass('has-error')){
-			$("#transactionCreate textarea").val(tx.serialize());
+			var valuesBuffer = [];
+			if (coinjs.isBitcoinCash()) {
+				$.each($("#inputs .txIdAmount"), function(i,o){
+					if(isNaN($(o).val())){
+						$(o).parent().addClass('has-error');
+					} else {
+						$(o).parent().removeClass('has-error');
+						var f = 0;
+						if(!isNaN($(o).val())){
+							f += $(o).val()*1;
+						}
+						var valueBI = new BigInteger('' + Math.floor(f * 1e8), 10)
+						valuesBuffer = valuesBuffer.concat(coinjs.numToBytes(valueBI,8));
+					}
+				});
+			}
+			var addedValue = coinjs.isBitcoinCash() ? "|" + Crypto.util.bytesToHex(valuesBuffer) : "";
+			$("#transactionCreate textarea").val(tx.serialize() + addedValue);
 			$("#transactionCreate .txSize").html(tx.size());
 
 			$("#transactionCreate").removeClass("hidden");
@@ -1284,6 +1301,36 @@ $(document).ready(function() {
 		});
 	}
 
+	// broadcast transaction via blockr.io for litecoin
+	function rawSubmitBlockrio_litecoin(thisbtn){
+		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
+		$.ajax ({
+			type: "POST",
+			url: "https://ltc.blockr.io/api/v1/tx/push",
+			data: {"hex":$("#rawTransaction").val()},
+			dataType: "json",
+			error: function(data) {
+				var obj = $.parseJSON(data.responseText);
+				var r = ' ';
+				r += (obj.data) ? obj.data : '';
+				r += (obj.message) ? ' '+obj.message : '';
+				r = (r!='') ? r : ' Failed to broadcast'; // build response
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+			},
+                        success: function(data) {
+				if((data.status && data.data) && data.status=='success'){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data);
+				} else {
+					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+				}
+			},
+			complete: function(data, status) {
+				$("#rawTransactionStatus").fadeOut().fadeIn();
+				$(thisbtn).val('Submit').attr('disabled',false);
+			}
+		});
+	}
+
 
 	// broadcast transaction via chain.so for dogecoin
 	function rawSubmitchainso_dogecoin(thisbtn){
@@ -1577,6 +1624,12 @@ $(document).ready(function() {
 			$(wifkey).parent().addClass('has-error');
 		}
 
+		if(script.indexOf("|") >= 0){
+			var splitScript = script.split("|");
+			var valuesBufferHex = splitScript[1];
+			script = splitScript[0];
+		}
+
 		if((script.val()).match(/^[a-f0-9]+$/ig)){
 			$(script).parent().removeClass('has-error');
 		} else {
@@ -1588,6 +1641,14 @@ $(document).ready(function() {
 			try {
 				var tx = coinjs.transaction();
 				var t = tx.deserialize(script.val());
+
+				if (valuesBufferHex) {
+					for (var i = 0; i < t.ins.length; i++) {
+						var thisValueBuffer = Crypto.util.hexToBytes(valuesBufferHex.slice(0,16));
+						valuesBufferHex = valuesBufferHex.slice(16)
+						t.ins[i].value = coinjs.bytesToNum(thisValueBuffer)
+					}
+				}
 
 				var signed = t.sign(wifkey.val(), $("#sighashType option:selected").val());
 				$("#signedData textarea").val(signed);

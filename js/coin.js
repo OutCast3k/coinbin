@@ -1288,11 +1288,9 @@
 				return sequence;
 			}
 
-			var isBitcoinCash = coinjs.isBitcoinCash();
-
 			var shType = sigHashType || 1;
 
-			if (isBitcoinCash) {
+			if (coinjs.isBitcoinCash()) {
 				/* Add SIGHASH_FORKID by default for Bitcoin Cash */
 				shType = shType | 0x40;
 				for (var i = 0; i < this.ins.length; i++) {
