@@ -1617,6 +1617,7 @@ $(document).ready(function() {
 	$("#signBtn").click(function(){
 		var wifkey = $("#signPrivateKey");
 		var script = $("#signTransaction");
+		var scriptVal = script.val();
 
 		if(coinjs.addressDecode(wifkey.val())){
 			$(wifkey).parent().removeClass('has-error');
@@ -1624,13 +1625,13 @@ $(document).ready(function() {
 			$(wifkey).parent().addClass('has-error');
 		}
 
-		if(script.indexOf("|") >= 0){
-			var splitScript = script.split("|");
+		if(scriptVal.indexOf("|") >= 0){
+			var splitScript = scriptVal.split("|");
 			var valuesBufferHex = splitScript[1];
-			script = splitScript[0];
+			scriptVal = splitScript[0];
 		}
 
-		if((script.val()).match(/^[a-f0-9]+$/ig)){
+		if(scriptVal.match(/^[a-f0-9]+$/ig)){
 			$(script).parent().removeClass('has-error');
 		} else {
 			$(script).parent().addClass('has-error');
@@ -1640,7 +1641,7 @@ $(document).ready(function() {
 			$("#signedDataError").addClass('hidden');
 			try {
 				var tx = coinjs.transaction();
-				var t = tx.deserialize(script.val());
+				var t = tx.deserialize(scriptVal);
 
 				if (valuesBufferHex) {
 					var valuesHex = valuesBufferHex;
