@@ -1643,15 +1643,16 @@ $(document).ready(function() {
 				var t = tx.deserialize(script.val());
 
 				if (valuesBufferHex) {
+					var valuesHex = valuesBufferHex;
 					for (var i = 0; i < t.ins.length; i++) {
-						var thisValueBuffer = Crypto.util.hexToBytes(valuesBufferHex.slice(0,16));
-						valuesBufferHex = valuesBufferHex.slice(16)
+						var thisValueBuffer = Crypto.util.hexToBytes(valuesHex.slice(0,16));
+						valuesHex = valuesHex.slice(16)
 						t.ins[i].value = coinjs.bytesToNum(thisValueBuffer)
 					}
 				}
 
 				var signed = t.sign(wifkey.val(), $("#sighashType option:selected").val());
-				$("#signedData textarea").val(signed);
+				$("#signedData textarea").val(signed + (valuesBufferHex ? "|" + valuesBufferHex : ""));
 				$("#signedData .txSize").html(t.size());
 				$("#signedData").removeClass('hidden').fadeIn();
 			} catch(e) {
