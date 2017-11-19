@@ -1191,10 +1191,10 @@
 
 		r.getInputValues = function() {
 			var self = this;
-			for (var i = 0; i < self.ins.length; i++) {
-				var utxo_txid = self.ins[i].outpoint.hash;
-				var utxo_index = self.ins[i].outpoint.index;
-				var utxo_address = self.extractAddress(i);
+			for (var k = 0; k < self.ins.length; k++) {
+				var utxo_txid = self.ins[k].outpoint.hash;
+				var utxo_index = self.ins[k].outpoint.index;
+				var utxo_address = self.extractAddress(k);
 				$.ajax ({
 					type: "GET",
 					cache: false,
@@ -1213,7 +1213,7 @@
 							for(var i in data){
 								if (utxo_txid == data[i].txid
 								&& utxo_index == data[i].vout) {
-									self.ins[i].value = new BigInteger('' + Math.round((data[i].amount*1) * 1e8), 10);
+									self.ins[k].value = new BigInteger('' + Math.round((data[i].amount*1) * 1e8), 10);
 								}
 							}
 						} else {
