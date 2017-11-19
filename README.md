@@ -1,6 +1,8 @@
 coinbin
 =======
 
+### None of the developers bare responsibility if a user got scammed. By using this software you are agreeing to bare all the responsibility if you lose funds. The code is open source and can be checked each time when you open a site using this code. We do suggest you to do so!
+
 ## Tasks:
 
 - [x] Change wallet symbols for making it compatible to BTG
