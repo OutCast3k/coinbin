@@ -35,9 +35,13 @@ $(document).ready(function() {
 					var pubkey = keys.pubkey;
 					var privkeyaes = CryptoJS.AES.encrypt(keys.wif, pass);
 
+					$("#walletKeys .walletSegWitRS").addClass("hidden");
 					if($("#walletSegwit").is(":checked")){
 						var sw = coinjs.segwitAddress(pubkey);
 						address = sw.address;
+
+						$("#walletKeys .walletSegWitRS").removeClass("hidden");
+						$("#walletKeys .walletSegWitRS input:text").val(sw.redeemscript);						
 					}
 
 					$("#walletAddress").html(address);
