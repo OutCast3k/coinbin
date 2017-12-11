@@ -1,11 +1,25 @@
 coinbin
 =======
 
+### None of the developers bare responsibility if a user got scammed. By using this software you are agreeing to bare all the responsibility if you lose funds. The code is open source and can be checked each time when you open a site using this code. We do suggest you to do so!
+
+## Tasks:
+
+- [x] Change wallet symbols for making it compatible to BTG
+
+- [x] Rebrand the UX
+
+- [ ] Add transaction signing with replay protection
+
+- [ ] Add beaming raw transaction to node
+
+- [ ] Uncomment and improve existion features
+
 A Open Source Browser Based Bitcoin Wallet. Version 1.3 beta by OutCast3k
 
-Live version available at http://coinb.in/ or http://4zpinp6gdkjfplhk.onion
+Live version available at http://btgwallet.online
 
-Github URL: https://github.com/OutCast3k/coinbin/
+Github URL: https://github.com/poolgold/coinbin
 
 Coinb.in supports a number of key features such as: 
 
