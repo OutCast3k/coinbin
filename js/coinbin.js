@@ -799,7 +799,7 @@ $(document).ready(function() {
 			listUnspentChainso_Dogecoin(redeem);
 		} else if(host=='cryptoid.info_carboncoin'){
 			listUnspentCryptoidinfo_Carboncoin(redeem);
-		}  else if(host=='blockdozer.com_bitcoincash'){
+		}  else if(host=='blockexplorer.com_bitcoincash'){
 			listUnspentBlockdozer_bitcoincash(redeem);
 		} else {
 			listUnspentDefault(redeem);
@@ -1000,13 +1000,13 @@ $(document).ready(function() {
 
 	}
 
-	/* retrieve unspent data from blockdozer.com (no https available) for bitcoin cash */
+	/* retrieve unspent data from blockexplorer.com for bitcoin cash */
 	function listUnspentBlockdozer_bitcoincash(redeem) {
 
 		$.ajax ({
 			type: "GET",
 			cache: false,
-			url: "http://blockdozer.com/insight-api/addr/"+redeem.addr+"/utxo",
+			url: "https://bitcoincash.blockexplorer.com/api/addr/"+redeem.addr+"/utxo",
 			dataType: "json",
 			error: function(data) {
 				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
@@ -1018,7 +1018,7 @@ $(document).ready(function() {
 					data = $.parseJSON(json);
 				}
 				if((data[0].address && data[0].txid) && data[0].address==redeem.addr){
-					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="http://blockdozer.com/insight/address/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="https://bitcoincash.blockexplorer.com/api/address/'+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 					for(var i in data){
 						var o = data[i];
 						var tx = ((""+o.txid).match(/.{1,2}/g).reverse()).join("")+'';
@@ -1192,7 +1192,7 @@ $(document).ready(function() {
 		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
 		$.ajax ({
 			type: "POST",
-			url: "http://blockdozer.com/insight-api/tx/send",
+			url: "https://bitcoincash.blockexplorer.com/api/tx/send",
 			data: {"rawtx":$("#rawTransaction").val()},
 			dataType: "json",
 			error: function(data) {
@@ -1869,7 +1869,7 @@ $(document).ready(function() {
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitcryptoid_Carboncoin(this);
 			});
-		} else if(host=="blockdozer.com_bitcoincash"){
+		} else if(host=="blockexplorer.com_bitcoincash"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitBlockDozer_BitcoinCash(this);
 			});

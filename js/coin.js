@@ -441,7 +441,7 @@
 
 	coinjs.isBitcoinCash = function() {
 		var host = $("#coinjs_broadcast option:selected").val();
-		return (host == 'blockdozer.com_bitcoincash')
+		return (host == 'blockexplorer.com_bitcoincash')
 	}
 
 	/* start of hd functions, thanks bip32.org */
@@ -1199,7 +1199,7 @@
 					type: "GET",
 					cache: false,
 					async: false,
-					url: "http://blockdozer.com/insight-api/addr/"+utxo_address+"/utxo",
+					url: "https://bitcoincash.blockexplorer.com/api/addr/"+utxo_address+"/utxo",
 					dataType: "json",
 					error: function(data) {
 						alert('Couldn\'t get values for inputs. Bitcoin Cash will not sign correctly.');
