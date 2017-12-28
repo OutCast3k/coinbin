@@ -636,7 +636,7 @@
 								<p>Enter the address and amount you wish to make a payment to.</p>
 								<div class="row">
 									<div class="col-xs-8">
-										<label><abbr title="Address to send to">Address</abbr></label>
+										<label><abbr title="Address to send to">Send addresses</abbr></label>
 									</div>
 									<div class="col-xs-3">
 										<label><abbr title="Amount to send">Amount</abbr></label>
@@ -644,8 +644,21 @@
 									<div class="col-xs-1">
 									</div>
 								</div>
-
 								<div id="recipients">
+								<p>Address of sender for returning unspent amount: </p>
+									<div class="row recipient">
+										<div class="col-xs-8">
+											<input type="text" id="returnoutputaddress" class="form-control address" placeholder="" data-original-title="" title="" readonly>
+										</div>
+										<div class="col-xs-3">
+											<input type="text" id="returnoutputamount" class="form-control amount" placeholder="0.00" data-original-title="" title="">
+										</div>
+										<div class="col-xs-1">
+											<a href="javascript:;" class="addressAddTo" hidden><span class="glyphicon glyphicon-plus"></span></a>
+										</div>
+										<br><br><br>
+									</div>
+								<p>Address(es) to send payments: </p>
 									<div class="row recipient">
 										<div class="col-xs-8">
 											<input type="text" class="form-control address" placeholder="1">
@@ -1090,7 +1103,7 @@
 									<option value="dogecoin_mainnet" rel="0x1e;0x9e;0x16;0x0827421e;0x089944e4;chain.so_dogecoin;chain.so_dogecoin">Dogecoin (mainnet)</option>
 									<option value="carboncoin_mainnet" rel="0x2f;0xaf;0x05;0x488b21e;0x488ade4;cryptoid.info_carboncoin;cryptoid.info_carboncoin">Carboncoin (mainnet)</option>
 									<option value="shadowcash_mainnet" rel="0x3f;0xbf;0x7d;0xee80286a;0xee8031e8;false;false">ShadowCash (mainnet)</option>
-									<option value="bitcoin_testnet" rel="0x6f;0xef;0xc4;0x043587cf;0x04358394;false;false">Bitcoin (testnet)</option>
+									<option value="bitcoin_testnet" rel="0x6f;0xef;0xc4;0x043587cf;0x04358394;bexp_bitcointestnet;bexp_bitcointestnet">Bitcoin (testnet)</option>
 
 									<option value="custom" rel="0x00;0x80;0x05;0x488b21e;0x488ade4;false;false">Custom</option>
 								</select>
@@ -1146,6 +1159,7 @@
 									<option value="coinb.in">coinb.in (Bitcoin mainnet)</option>
 									<option value="chain.so_bitcoinmainnet"> Chain.so (Bitcoin mainnet)</option>
 									<option value="blockcypher_bitcoinmainnet"> Blockcypher.com (Bitcoin mainnet)</option>
+									<option value="bexp_bitcointestnet"> blockexplorer (Bitcoin testnet)</option>
 									<option value="chain.so_dogecoin"> Chain.so (Dogecoin)</option>
 									<option value="cryptoid.info_carboncoin"> Cryptoid.info (Carboncoin)</option>
 								</select>
@@ -1160,6 +1174,7 @@
 								<p class="text-muted">Select the network you wish to retreive your unspent inputs from</p>
 								<select class="form-control" id="coinjs_utxo">
 									<option value="coinb.in">coinb.in (Bitcoin mainnet)</option>
+									<option value="bexp_bitcointestnet"> blockexplorer (Bitcoin testnet)</option>
 									<option value="chain.so_litecoin"> Chain.so (Litecoin)</option>
 									<option value="chain.so_dogecoin"> Chain.so (Dogecoin)</option>
 									<option value="cryptoid.info_carboncoin"> Cryptoid.info (Carboncoin)</option>

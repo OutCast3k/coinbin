@@ -754,7 +754,7 @@ $(document).ready(function() {
 
 	$("#redeemFromBtn").click(function(){
 		var redeem = redeemingFrom($("#redeemFrom").val());
-
+		document.getElementById("returnoutputaddress").value = redeem.addr;
 		$("#redeemFromStatus, #redeemFromAddress").addClass('hidden');
 
 		if(redeem.from=='multisigAddress'){
@@ -782,6 +782,8 @@ $(document).ready(function() {
 			listUnspentChainso_Dogecoin(redeem);
 		} else if(host=='cryptoid.info_carboncoin'){
 			listUnspentCryptoidinfo_Carboncoin(redeem);
+		} else if(host=='bexp_bitcointestnet'){
+			listUnspentbexp_bitcointestnet(redeem);
 		} else {
 			listUnspentDefault(redeem);
 		}
@@ -1014,7 +1016,40 @@ $(document).ready(function() {
 			}
 		});
 	}
-
+	/* retrieve unspent data from blockexplorer.com for bitcoin (testnet) */
+	function listUnspentbexp_bitcointestnet(redeem){
+	    var bp = "https://testnet.blockexplorer.com/api/addr/"+redeem.addr+"/utxo";
+		$.ajax ({
+			type: "GET",
+			url: "https://testnet.blockexplorer.com/api/addr/"+redeem.addr+"/utxo",
+			error: function(data) {
+				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+			},
+			success: function(data) {
+				if((data[0].address)){
+					$("#redeemFromAddress").removeClass('hidden').html(
+						'<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+					for (var i = 0; i < data.length; i++) {
+                        var o = data[i];
+						var tx = ((""+o.txid).match(/.{1,2}/g).reverse()).join("")+'';
+						if(tx.match(/^[a-f0-9]+$/)){
+							var n = o.vout;
+							var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.scriptPubKey;
+							var amount = o.amount;
+							addOutput(tx, n, script, amount);
+						}
+					}
+				} else {
+					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+				}
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+			}
+		});
+	}
+	
 	/* math to calculate the inputs and outputs */
 
 	function totalInputAmount(){
@@ -1186,6 +1221,33 @@ $(document).ready(function() {
 		});
 	}
 
+	// broadcast transaction via blockexplorer.com (testnet)
+	function rawSubmitbexp_bitcointestnet(thisbtn){ 
+		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
+		var sendtr = {'tx':$("#rawTransaction").val()};
+		$.ajax ({
+			type: "POST",
+			url: "https://testnet.blockexplorer.com/api/tx/send",
+			data: {'rawtx':$("#rawTransaction").val()},
+			error: function(res) {
+				var r = ' ';
+				r += (res.responseText) ? res.responseText : '';
+				r = (r!='') ? r : ' Failed to broadcast'; // build response 
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+			},
+            success: function(res) {
+				if(res.txid){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+res.txid+'<br> Check this transaction by searching Txid on <a href="https://testnet.blockexplorer.com/">testnet.blockexplorer.com</a>');
+				} else {
+					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again. Response error text: ').res.responseText.prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+				}
+			},
+			complete: function(data, status) {
+				$("#rawTransactionStatus").fadeOut().fadeIn();
+				$(thisbtn).val('Submit').attr('disabled',false);				
+			}
+		});
+	}
 
 	// broadcast transaction via chain.so for dogecoin
 	function rawSubmitchainso_dogecoin(thisbtn){ 
@@ -1707,6 +1769,10 @@ $(document).ready(function() {
 		} else if(host=="cryptoid.info_carboncoin"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitcryptoid_Carboncoin(this);
+			});
+		} else if(host=="bexp_bitcointestnet"){
+			$("#rawSubmitBtn").click(function(){
+				rawSubmitbexp_bitcointestnet(this);
 			});
 		} else {
 			$("#rawSubmitBtn").click(function(){
