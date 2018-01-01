@@ -635,19 +635,82 @@ $(document).ready(function() {
 
 
 		if(!$("#recipients .row, #inputs .row").hasClass('has-error')){
+			
 			$("#transactionCreate textarea").val(tx.serialize());
 			$("#transactionCreate .txSize").html(tx.size());
 
-			$("#transactionCreate").removeClass("hidden");
+			if($("#feesestnewtx").attr('est')=='y'){
+				$("#fees .txhex").val($("#transactionCreate textarea").val());
+				$("#analyseBtn").click();
+				$("#fees .txhex").val("");
+				window.location = "#fees";
+			} else {
 
-			// Check fee against hard 0.01 as well as fluid 200 satoshis per byte calculation.
-			if($("#transactionFee").val()>=0.01 || $("#transactionFee").val()>= estimatedTxSize * 200 * 1e-8){
-				$("#modalWarningFeeAmount").html($("#transactionFee").val());
-				$("#modalWarningFee").modal("show");
+				$("#transactionCreate").removeClass("hidden");
+
+				// Check fee against hard 0.01 as well as fluid 200 satoshis per byte calculation.
+				if($("#transactionFee").val()>=0.01 || $("#transactionFee").val()>= estimatedTxSize * 200 * 1e-8){
+					$("#modalWarningFeeAmount").html($("#transactionFee").val());
+					$("#modalWarningFee").modal("show");
+				}
 			}
+			$("#feesestnewtx").attr('est','');
 		} else {
 			$("#transactionCreateStatus").removeClass("hidden").html("One or more input or output is invalid").fadeOut().fadeIn();
 		}
+	});
+
+	$("#feesestnewtx").click(function(){
+		$(this).attr('est','y');
+		$("#transactionBtn").click();
+	});
+
+	$("#feesestwallet").click(function(){
+		$(this).attr('est','y');
+		var outputs = $("#walletSpendTo .output").length;
+
+		$("#fees .inputno, #fees .outputno, #fees .bytes").html(0);
+		$("#fees .slider").val(0);
+
+		var tx = coinjs.transaction();
+		tx.listUnspent($("#walletAddress").html(), function(data){
+			var inputs = $(data).find("unspent").children().length;
+			if($("#walletSegwit").is(":checked")){	
+				$("#fees .txi_segwit").val(inputs);
+				$("#fees .txi_segwit").change();
+			} else {
+				$("#fees .txi_regular").val(inputs);
+				$("#fees .txi_regular").change();
+			}
+
+			$.each($("#walletSpendTo .output"), function(i,o){
+				var addr = $('.addressTo',o);
+				var ad = coinjs.addressDecode(addr.val());
+				if (ad.version == coinjs.multisig){ // p2sh
+					$("#fees .txo_p2sh").val(($("#fees .txo_p2sh").val()*1)+1);
+					$("#fees .txo_p2sh").change();
+				} else { // p2pkh
+					$("#fees .txo_p2pkh").val(($("#fees .txo_p2pkh").val()*1)+1);
+					$("#fees .txo_p2pkh").change();					
+				}
+			});
+
+			if(($("#developerDonation").val()*1)>0){
+				var addr = coinjs.developer;
+				var ad = coinjs.addressDecode(addr);
+				if (ad.version == coinjs.multisig){ // p2sh
+					$("#fees .txo_p2sh").val(($("#fees .txo_p2sh").val()*1)+1);
+					$("#fees .txo_p2sh").change();
+				} else { // p2pkh
+					$("#fees .txo_p2pkh").val(($("#fees .txo_p2pkh").val()*1)+1);
+					$("#fees .txo_p2pkh").change();					
+				}
+			}
+
+		});
+
+		//feeStats();
+		window.location = "#fees";
 	});
 
 	$(".txidClear").click(function(){
@@ -1549,6 +1612,12 @@ $(document).ready(function() {
 		window.location.hash = "#verify";
 	}
 
+	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+		if(e.target.hash == "#fees"){
+			feeStats();
+		}
+	})
+
 	$(".qrcodeBtn").click(function(){
 		$("#qrcode").html("");
 		var thisbtn = $(this).parent().parent();
@@ -1719,6 +1788,216 @@ $(document).ready(function() {
 		$("#redeemFromBtn").attr('rel',$("#coinjs_utxo option:selected").val());
 	}
 
+
+	/* fees page code */
+
+	$("#fees .slider").change(function(){
+		$('.'+$(this).attr('rel')+' .inputno, .'+$(this).attr('rel')+' .outputno',$(this).parent()).html($(this).val());
+		$('.'+$(this).attr('rel')+' .estimate',$(this).parent()).removeClass('hidden');
+	});
+
+	$("#fees .txo_p2pkh").change(function(){
+		var outputno = $('.'+$(this).attr('rel')+' .outputno',$(this).parent()).html();
+		$('.'+$(this).attr('rel')+' .bytes',$(this).parent()).html((outputno*$("#est_txo_p2pkh").val())+(outputno*9));
+		mathFees();
+	});
+
+	$("#fees .txo_p2sh").change(function(){
+		var outputno = $('.'+$(this).attr('rel')+' .outputno',$(this).parent()).html();
+		$('.'+$(this).attr('rel')+' .bytes',$(this).parent()).html((outputno*$("#est_txo_p2sh").val())+(outputno*9));
+		mathFees();
+	});
+
+	$("#fees .txi_regular").change(function(){
+		var inputno = $('.'+$(this).attr('rel')+' .inputno',$(this).parent()).html();
+		$('.'+$(this).attr('rel')+' .bytes',$(this).parent()).html((inputno*$("#est_txi_regular").val())+(inputno*41));
+		mathFees();
+	});
+
+	$("#fees .txi_segwit").change(function(){
+		var inputno = $('.'+$(this).attr('rel')+' .inputno',$(this).parent()).html();
+		var bytes = 0;
+		if(inputno >= 1){
+			bytes = 2;
+			bytes += (inputno*32);
+			bytes += (inputno*$("#est_txi_segwit").val());
+			bytes += (inputno*(41))
+		}
+
+		bytes = bytes.toFixed(0);
+		$('.'+$(this).attr('rel')+' .bytes',$(this).parent()).html(bytes);
+		mathFees();
+	});
+
+	$("#fees .txi_multisig").change(function(){
+		var inputno = $('.'+$(this).attr('rel')+' .inputno',$(this).parent()).html();
+		$('.'+$(this).attr('rel')+' .bytes',$(this).parent()).html((inputno*$("#est_txi_multisig").val())+(inputno*41));
+		mathFees();
+	});
+
+	$("#fees .txi_hodl").change(function(){
+		var inputno = $('.'+$(this).attr('rel')+' .inputno',$(this).parent()).html();
+		$('.'+$(this).attr('rel')+' .bytes',$(this).parent()).html((inputno*$("#est_txi_hodl").val())+(inputno*41));
+		mathFees();
+	});
+
+	$("#fees .txi_unknown").change(function(){
+		var inputno = $('.'+$(this).attr('rel')+' .inputno',$(this).parent()).html();
+		$('.'+$(this).attr('rel')+' .bytes',$(this).parent()).html((inputno*$("#est_txi_unknown").val())+(inputno*41));
+		mathFees();
+	});
+
+	$("#advancedFeesCollapse").click(function(){
+		if($("#advancedFees").hasClass('hidden')){
+			$("span",this).removeClass('glyphicon-collapse-down').addClass('glyphicon-collapse-up');
+			$("#advancedFees").removeClass("hidden");
+		} else {
+			$("span",this).removeClass('glyphicon-collapse-up').addClass('glyphicon-collapse-down');
+			$("#advancedFees").addClass("hidden");
+		}
+	});
+
+	$("#analyseBtn").click(function(){
+		if(!$("#fees .txhex").val().match(/^[a-f0-9]+$/ig)){
+			alert('You must provide a hex encoded transaction');
+			return;
+		}
+
+		var tx = coinjs.transaction();
+		var deserialized = tx.deserialize($("#fees .txhex").val());
+
+		$("#fees .txoutputs .outputno, #fees .txinputs .inputno").html("0");
+		$("#fees .txoutputs .bytes, #fees .txinputs .bytes").html("0");
+		$("#fees .slider").val(0);
+
+		for(var i = 0; i < deserialized.ins.length; i++){
+			var script = deserialized.extractScriptKey(i);
+			var size = 41;
+			if(script.type == 'segwit'){
+				if(deserialized.witness[i]){
+					size += deserialized.ins[i].script.buffer.length / 2;
+					for(w in deserialized.witness[i]){
+						size += (deserialized.witness[i][w].length / 2) /4;
+					}
+				} else {
+					size += $("#est_txi_segwit").val()*1;
+				}
+				size = size.toFixed(0);
+				$("#fees .segwit .inputno").html(($("#fees .segwit .inputno").html()*1)+1);
+				$("#fees .txi_segwit").val(($("#fees .txi_segwit").val()*1)+1);
+				$("#fees .segwit .bytes").html(size);
+							
+			} else if(script.type == 'multisig'){
+				var s = coinjs.script();
+				var rs = s.decodeRedeemScript(script.script);
+				size += 4 + ((script.script.length / 2) + (73 * rs.signaturesRequired));
+				$("#fees .multisig .inputno").html(($("#fees .multisig .inputno").html()*1)+1);
+				$("#fees .txi_multisig").val(($("#fees .txi_multisig").val()*1)+1);
+				$("#fees .multisig .bytes").html(size);
+
+			} else if(script.type == 'hodl'){
+				size += 78;
+				$("#fees .hodl .inputno").html(($("#fees .hodl .inputno").html()*1)+1);
+				$("#fees .hodl .bytes").html(size);
+				$("#fees .txi_hodl").val(($("#fees .txi_hodl").val()*1)+1);
+
+			} else if(script.type == 'empty' || script.type == 'scriptpubkey'){
+				if(script.signatures == 1){
+					size += script.script.length / 2;
+				} else {
+					size += $("#est_txi_regular").val()*1;
+				}
+
+				$("#fees .regular .inputno").html(($("#fees .regular .inputno").html()*1)+1);
+				$("#fees .txi_regular").val(($("#fees .txi_regular").val()*1)+1);
+				$("#fees .regular .bytes").html(($("#fees .regular .bytes").html()*1)+size);
+
+			} else if(script.type == 'unknown'){
+				size += script.script.length / 2;
+				$("#fees .unknown .inputno").html(($("#fees .unknown .inputno").html()*1)+1);
+				$("#fees .txi_unknown").val(($("#fees .txi_unknown").val()*1)+1);
+				$("#fees .unknown .bytes").html(($("#fees .unknown .bytes").html()*1)+size);
+			}
+		}
+
+		for(var i = 0; i < deserialized.outs.length; i++){
+			if(deserialized.outs[i].script.buffer[0]==118){
+				$("#fees .txoutputs .p2pkh .outputno").html(($("#fees .txoutputs .p2pkh .outputno").html()*1)+1);
+				$("#fees .txoutputs .p2pkh .bytes").html(($("#fees .txoutputs .p2pkh .bytes").html()*1)+34);
+				$("#fees .txo_p2pkh").val(($("#fees .txo_p2pkh").val()*1)+1);
+			} else if (deserialized.outs[i].script.buffer[0]==169){
+				$("#fees .txoutputs .p2sh .outputno").html(($("#fees .txoutputs .p2sh .outputno").html()*1)+1);
+				$("#fees .txoutputs .p2sh .bytes").html(($("#fees .txoutputs .p2sh .bytes").html()*1)+32);
+				$("#fees .txo_p2sh").val(($("#fees .txo_p2sh").val()*1)+1);
+			} 
+		}
+
+		//feeStats();
+	});
+
+	$("#feeStatsReload").click(function(){
+		feeStats();
+	});
+
+	function mathFees(){
+
+		var inputsTotal = 0;
+		var inputsBytes = 0;
+		$.each($(".inputno"), function(i,o){
+			inputsTotal += ($(o).html()*1);
+			inputsBytes += ($(".bytes",$(o).parent()).html()*1);
+		});
+		
+		$("#fees .txinputs .txsize").html(inputsBytes.toFixed(0));
+		$("#fees .txinputs .txtotal").html(inputsTotal.toFixed(0));
+
+		var outputsTotal = 0;
+		var outputsBytes = 0;
+		$.each($(".outputno"), function(i,o){
+			outputsTotal += ($(o).html()*1);
+			outputsBytes += ($(".bytes",$(o).parent()).html()*1);
+		});
+		
+		$("#fees .txoutputs .txsize").html(outputsBytes.toFixed(0));
+		$("#fees .txoutputs .txtotal").html(outputsTotal.toFixed(0));
+
+		var totalBytes = 10 + outputsBytes + inputsBytes;
+		if((!isNaN($("#fees .feeSatByte:first").html())) && totalBytes > 10){
+			var recommendedFee = ((totalBytes * $(".feeSatByte").html())/100000000).toFixed(8);
+			$(".recommendedFee").html(recommendedFee);
+			$(".feeTxSize").html(totalBytes);
+		} else {
+			$(".recommendedFee").html((0).toFixed(8));
+			$(".feeTxSize").html(0);
+		}
+	};
+
+	function feeStats(){
+		$("#feeStatsReload").attr('disabled',true);
+		$.ajax ({
+			type: "GET",
+			url: "https://coinb.in/api/?uid=1&key=12345678901234567890123456789012&setmodule=fees&request=stats",
+			dataType: "xml",
+			error: function(data) {
+			},
+			success: function(data) {
+				$("#fees .recommended .blockHeight").html('<a href="https://coinb.in/height/'+$(data).find("height").text()+'" target="_blank">'+$(data).find("height").text()+'</a>');
+				$("#fees .recommended .blockHash").html($(data).find("block").text());
+				$("#fees .recommended .blockTime").html($(data).find("timestamp").text());
+				$("#fees .recommended .blockDateTime").html(unescape($(data).find("datetime").text()).replace(/\+/g,' '));
+				$("#fees .recommended .txId").html('<a href="https://coinb.in/tx/'+$(data).find("txid").text()+'" target="_blank">'+$(data).find("txid").text()+'</a>');
+				$("#fees .recommended .txSize").html($(data).find("txsize").text());
+				$("#fees .recommended .txFee").html($(data).find("txfee").text());
+				$("#fees .feeSatByte").html($(data).find("satbyte").text());
+
+				mathFees();
+			},
+			complete: function(data, status){
+				$("#feeStatsReload").attr('disabled', false);
+			}
+		});
+	}
+
 	/* capture mouse movement to add entropy */
 	var IE = document.all?true:false // Boolean, is browser IE?
 	if (!IE) document.captureEvents(Event.MOUSEMOVE)
@@ -1750,4 +2029,5 @@ $(document).ready(function() {
 
 		return true;
 	};
+
 });
