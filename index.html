@@ -4,7 +4,7 @@
 
 		<title>Bitcoin Gold Wallet by BTGwallet.online</title>
 
-        	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 		<meta name="keywords" content="bitcoin, wallet, multisig, multisignature, address, browser, segwit, javascript, js, broadcast, transaction, verify, decode" />
 		<meta name="description" content="A Bitcoin Wallet written in Javascript. Supports Multisig, SegWit, Custom Transactions, nLockTime and more! By using this software you agree that you are taking all the responsibility if you get scammed/tricked. The code is open source and you are suggested it to check it before use." />
 
@@ -74,6 +74,7 @@
 <!--                            <li><a href="#about" data-toggle="tab"><span class="glyphicon glyphicon-info-sign"></span> About</a></li>-->
 
 							<li class="hidden"><a href="#settings" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+							<li class="hidden"><a href="#fees" data-toggle="tab"><span class="glyphicon glyphicon-tag"></span> Fees</a></li>
 						</ul>
 					</div>
 				</div>
@@ -117,10 +118,10 @@
 						</div>
 
 						<div class="row">
-<!--                            <div class="col-md-4">-->
-<!--                                <h3><span class="glyphicon glyphicon-piggy-bank"></span> Wallet</h3>-->
-<!--                                <p>Quick access to an <a href="#wallet">online wallet</a> where only you have access to your own private keys!</p>-->
-<!--                            </div>-->
+							<div class="col-md-4">
+								<h3><span class="glyphicon glyphicon-piggy-bank"></span> Wallet</h3>
+								<p>Quick access to an <a href="#wallet">online wallet</a> where only you have access to your own private keys &amp; can <a href="#fees">calculate your own fee</a>!</p>
+							</div>
 
 							<div class="col-md-4">
 								<h3><span class="glyphicon glyphicon-globe"></span> Addresses</h3>
@@ -199,6 +200,12 @@
 												<div id="walletKeys" class="hidden">
 													<label>Public Key</label>
 													<input class="form-control pubkey" type="text" readonly>
+
+													<div class="walletSegWitRS hidden">
+														<label>Redeem Script <i>(SegWit)</i></label>
+														<input class="form-control" type="text" readonly>
+													</div>
+
 													<label>Private key</label>
 													<div class="input-group">
 														<input class="form-control privkey" type="password" readonly>
@@ -206,11 +213,6 @@
 														<span class="input-group-btn">
 															<button class="showKey btn btn-default" type="button">Show</button>
 														</span>
-													</div>
-
-													<div class="walletSegWitRS hidden">
-														<label>Redeem Script <i>(SegWit)</i></label>
-														<input class="form-control" type="text" readonly>
 													</div>
 
 													<label>Private Key (AES256 encrypted key)</label>
@@ -246,7 +248,7 @@
 													</div>
 													<div class="row">
 														<div class="col-xs-6">
-															<label><abbr title="the amount to pay in network miner fees - 0.0004 or more recommended for a faster processing time">Transaction Fee</abbr>&nbsp;&nbsp;<a href="https://bitcoinfees.21.co/" target="_blank"><span class="glyphicon glyphicon-question-sign"></span></a></label>
+															<label><abbr title="the amount to pay in network miner fee">Transaction Fee</abbr>&nbsp;&nbsp;<a href="javascript:;" id="feesestwallet"><span class="glyphicon glyphicon-question-sign"></span></a></label>
 															<input type="text" class="form-control" value="0.0004" id="txFee">
 														</div>
 														<div class="col-xs-5">
@@ -708,7 +710,7 @@
 
 						<div class="row">
 							<div class="col-xs-3">
-								<label><abbr title="What is not spent will be used as a transaction fee">Transaction Fee</abbr>&nbsp;&nbsp;<a href="https://bitcoinfees.21.co/" target="_blank"><span class="glyphicon glyphicon-question-sign"></span></a></label>
+								<label><abbr title="What is not spent will be used as a transaction fee, so remember to add a &quot;change address&quot;">Transaction Fee</abbr>&nbsp;&nbsp;<a href="javascript:;" id="feesestnewtx"><span class="glyphicon glyphicon-question-sign"></span></a></label>
 								<input type="text" id="transactionFee" class="form-control" value="0.0000" readonly>
 							</div>
 						</div>
@@ -731,6 +733,176 @@
 						<input type="button" value="Submit" class="btn btn-primary" id="transactionBtn">
 
 						<br>
+					</div>
+
+
+					<div class="tab-pane tab-content" id="fees">
+						<h2>Bitcoin Fee Calculator</h2>
+						<p>This page will give you a guide on the lowest fee to use to get your transaction included within the next few blocks. It works by predicting the size of a transaction and comparing it to another transaction in a recent block to determine an appropriate fee.</p>	
+
+						<div align="center" class="alert alert-info">
+							<h2><span class="glyphicon glyphicon-question-sign"></span> Recommended Fee: <span class="recommendedFee">0.00000000</span> BTC <small> <br> for a transaction of <span class="feeTxSize">0</span> bytes</small></h2>
+							<span class="text-muted"><i><span class="feeSatByte">?</span> Sat/Byte</i></span>
+						</div>
+
+						<div id="txsliders" class="row">
+							<div class="col-md-6 txinputs">
+
+								<div align="center"><b><span class="txtotal total">0</span><br>Inputs</b></div>
+								<div id="txinputstype" align="center" class="small text-muted">
+									<br>
+									<span><span class="txsize">0</span> Bytes</span>
+								</div>
+
+								<h4 class="regular"><abbr title="Spending from a compressed legacy address. p2pkh">Regular</abbr> <small>Compressed</small> 
+									<span class="badge inputno" title="Number of Regular Inputs">1</span> 
+									<small><span class="bytes">148</span> bytes</small>
+									<small class="estimate hidden"><em> *estimate</em></small>
+								</h4> 
+								<input type="range" min="0" max="100" value="1" class="slider txinput txi_regular" rel="regular">
+
+								<h4 class="segwit"><abbr title="Spending from a segwit address. p2sh">SegWit</abbr> 
+									<span class="badge inputno" title="Number of SegWit Inputs">0</span>
+									<small><span class="bytes">0</span> bytes</small>
+									<small class="estimate hidden"><em> *estimate</em></small>
+								</h4> 
+								<input type="range" min="0" max="100" value="0" class="slider txinput txi_segwit" rel="segwit">
+
+								<h4 class="multisig"><abbr title="Spending from a multisig address. p2sh">MultiSig</abbr>  
+									<span class="badge inputno" title="Number of MultiSig Inputs">0</span>
+									<small><span class="bytes">0</span> bytes</small>
+									<small class="estimate hidden"><em> *estimate</em></small>
+								</h4> 
+								<input type="range" min="0" max="100" value="0" class="slider txinput txi_multisig" rel="multisig">
+
+								<h4 class="hodl"><abbr title="Spending from a time locked address. p2sh">Hodl</abbr> <small>Time Locked</small> 
+									<span class="badge inputno" title="Number of Hodl Inputs">0</span>
+									<small><span class="bytes">0</span> bytes</small>
+									<small class="estimate hidden"><em> *estimate</em></small>
+								</h4>
+								<input type="range" min="0" max="100" value="0" class="slider txinput txi_hodl" rel="hodl">
+
+								<h4 class="unknown"><abbr title="Spending from an unrecognized input. p2sh">Unknown</abbr> 
+									<span class="badge inputno" title="Number of Unknown Inputs">0</span>
+									<small><span class="bytes">0</span> bytes</small>
+									<small class="estimate hidden"><em> *estimate</em></small>
+								</h4>
+								<input type="range" min="0" max="100" value="0" class="slider txinput txi_unknown" rel="unknown">
+
+								<br>
+							</div>
+
+							<div class="col-md-6 txoutputs">
+
+								<div align="center"><b><span class="txtotal total">0</span><br>Outputs</b></div>
+								<div id="txoutputtype" align="center" class="small text-muted">
+									<br>
+									<span><span class="txsize">0</span> Bytes</span>
+								</div>
+
+								<h4 class="p2pkh"><abbr title="A pay 2 public key hash. Starts with 1. Used with legacy addresses">Regular</abbr> <small>p2pkh (1...)</small> 
+									<span class="badge outputno" title="Number of p2pkh Outputs">2</span> 
+									<small><span class="bytes">68</span> bytes</small>
+									<small class="estimate hidden"><em> *estimate</em></small>
+								</h4>	 
+								<input type="range" min="0" max="100" value="2" class="slider txoutput txo_p2pkh" rel="p2pkh">
+
+								<h4 class="p2sh"><abbr title="A pay 2 script hash address. Starts with a 3. For example a segwit or multisig address">Regular</abbr> <small>p2sh (3...)</small> 
+									<span class="badge outputno" title="Number of p2sh Outputs">0</span> 
+									<small><span class="bytes">0</span> bytes</small>
+									<small class="estimate hidden"><em> *estimate</em></small>
+								</h4> 
+								<input type="range" min="0" max="100" value="0" class="slider txoutput txo_p2sh" rel="p2sh">
+	
+								<br>
+							</div>
+						</div>
+
+						<br>
+
+						<div class="row">
+							<div class="col-md-12">
+								<div class="text-muted">Chargable Transaction Size: <span class="feeTxSize">0</span> bytes</div>
+							</div>
+						</div>
+
+						<hr>
+
+						<div class="row">
+							<div class="col-md-12 recommended">
+
+								<h3>Blockchain Data <span class="pull-right"><button type="button" id="feeStatsReload" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-refresh"></span></button></span></h3>
+
+								<p>This is based on us comparing your transaction agianst the last transaction found in the last block</p>
+								<p><b>Block Height</b>: <span class="blockHeight">?</span></p>
+								<p class="hideOverflow"><b>Block #</b>: <span class="blockHash">?</span></p>
+								<p><b>Block Time</b>: <span class="blockTime">?</span> <span class="blockDateTime text-muted"></span></p>
+								<p class="hideOverflow"><b>Transaction ID</b>: <span class="txId">?</span></p>
+								<p><b>Transaction Size</b>: <span class="txSize">0</span> bytes</p>
+								<p><b>Transaction Fee</b>: <span class="txFee">0.00000000</span></p>
+								<p><b>Satoshi per Byte</b>: <span class="feeSatByte">0</span></p>
+
+								<p>Based on your data and this recently mined transaction we recommend a fee of <b><span class="recommendedFee">0.00000000</span> BTC</b> to get it into the next few blocks</p>
+							</div>
+						</div>
+
+						<br>
+
+						<div class="row">
+
+							<div class="col-md-12">
+								<a href="javascript:;" id="advancedFeesCollapse">
+									<div class="well well-sm"><span class="glyphicon glyphicon-collapse-down"></span> Advanced Options &amp; Raw Transaction</div>
+								</a>
+							</div>
+						</div>
+
+						<div class="row hidden" id="advancedFees">
+							<div class="col-md-12">
+								<p>Enter your unsigned or signed hex encoded transaction below:</p>
+								<textarea class="form-control txhex" style="height:160px"></textarea><br>
+								<button type="button" class="btn btn-primary" id="analyseBtn">Analyse Transaction</button>
+
+								<hr>
+
+								<h4>Estimate Input Size <small>in bytes</small></h4>
+
+								<div class="form-inline">
+									<div class="form-group">
+										<label for="est_txi_regular">Regular</label>
+										<input type="number" class="form-control" id="est_txi_regular" value="107">
+									</div>
+									<div class="form-group">
+										<label for="est_txi_segwit">SegWit</label>
+										<input type="number" class="form-control" id="est_txi_segwit" value="27">
+									</div>
+									<div class="form-group">
+										<label for="est_txi_multisig">MultiSig</label>
+										<input type="number" class="form-control" id="est_txi_multisig" value="351">
+									</div>
+									<div class="form-group">
+										<label for="est_txi_hodl">Hodl</label>
+										<input type="number" class="form-control" id="est_txi_hodl" value="78">
+									</div>
+									<div class="form-group">
+										<label for="est_txi_unknown">Unknown</label>
+										<input type="number" class="form-control" id="est_txi_unknown" value="512">
+									</div>
+								</div>
+
+								<h4>Estimate Output Size <small> in bytes</small></h4>
+								<div class="form-inline">
+									<div class="form-group">
+										<label for="est_txo_p2pkh">Regular P2PKH</label>
+										<input type="number" class="form-control" id="est_txo_p2pkh" value="25">
+									</div>
+										<div class="form-group">
+										<label for="est_txo_p2sh">Regular P2SH</label>
+										<input type="number" class="form-control" id="est_txo_p2sh" value="23">
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 
 					<div class="tab-pane tab-content" id="verify">
