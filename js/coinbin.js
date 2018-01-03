@@ -1791,31 +1791,31 @@ $(document).ready(function() {
 
 	/* fees page code */
 
-	$("#fees .slider").change(function(){
-		$('.'+$(this).attr('rel')+' .inputno, .'+$(this).attr('rel')+' .outputno',$(this).parent()).html($(this).val());
-		$('.'+$(this).attr('rel')+' .estimate',$(this).parent()).removeClass('hidden');
+	$("#fees .slider").on('input', function(){
+		$('.'+$(this).attr('rel')+' .inputno, .'+$(this).attr('rel')+' .outputno',$("#fees")).html($(this).val());
+		$('.'+$(this).attr('rel')+' .estimate',$("#fees")).removeClass('hidden');
 	});
 
-	$("#fees .txo_p2pkh").change(function(){
-		var outputno = $('.'+$(this).attr('rel')+' .outputno',$(this).parent()).html();
-		$('.'+$(this).attr('rel')+' .bytes',$(this).parent()).html((outputno*$("#est_txo_p2pkh").val())+(outputno*9));
+	$("#fees .txo_p2pkh").on('input', function(){
+		var outputno = $('.'+$(this).attr('rel')+' .outputno',$("#fees .txoutputs")).html();
+		$('.'+$(this).attr('rel')+' .bytes',$("#fees .txoutputs")).html((outputno*$("#est_txo_p2pkh").val())+(outputno*9));
 		mathFees();
 	});
 
-	$("#fees .txo_p2sh").change(function(){
-		var outputno = $('.'+$(this).attr('rel')+' .outputno',$(this).parent()).html();
-		$('.'+$(this).attr('rel')+' .bytes',$(this).parent()).html((outputno*$("#est_txo_p2sh").val())+(outputno*9));
+	$("#fees .txo_p2sh").on('input', function(){
+		var outputno = $('.'+$(this).attr('rel')+' .outputno',$("#fees .txoutputs")).html();
+		$('.'+$(this).attr('rel')+' .bytes',$("#fees .txoutputs")).html((outputno*$("#est_txo_p2sh").val())+(outputno*9));
 		mathFees();
 	});
 
-	$("#fees .txi_regular").change(function(){
-		var inputno = $('.'+$(this).attr('rel')+' .inputno',$(this).parent()).html();
-		$('.'+$(this).attr('rel')+' .bytes',$(this).parent()).html((inputno*$("#est_txi_regular").val())+(inputno*41));
+	$("#fees .txi_regular").on('input', function(){
+		var inputno = $('.'+$(this).attr('rel')+' .inputno',$("#fees .txinputs")).html();
+		$('.'+$(this).attr('rel')+' .bytes',$("#fees .txinputs")).html((inputno*$("#est_txi_regular").val())+(inputno*41));
 		mathFees();
 	});
 
-	$("#fees .txi_segwit").change(function(){
-		var inputno = $('.'+$(this).attr('rel')+' .inputno',$(this).parent()).html();
+	$("#fees .txi_segwit").on('input', function(){
+		var inputno = $('.'+$(this).attr('rel')+' .inputno',$("#fees .txinputs")).html();
 		var bytes = 0;
 		if(inputno >= 1){
 			bytes = 2;
@@ -1825,26 +1825,42 @@ $(document).ready(function() {
 		}
 
 		bytes = bytes.toFixed(0);
-		$('.'+$(this).attr('rel')+' .bytes',$(this).parent()).html(bytes);
+		$('.'+$(this).attr('rel')+' .bytes',$("#fees .txinputs")).html(bytes);
 		mathFees();
 	});
 
-	$("#fees .txi_multisig").change(function(){
-		var inputno = $('.'+$(this).attr('rel')+' .inputno',$(this).parent()).html();
-		$('.'+$(this).attr('rel')+' .bytes',$(this).parent()).html((inputno*$("#est_txi_multisig").val())+(inputno*41));
+	$("#fees .txi_multisig").on('input', function(){
+		var inputno = $('.'+$(this).attr('rel')+' .inputno',$("#fees .txinputs")).html();
+		$('.'+$(this).attr('rel')+' .bytes',$("#fees .txinputs")).html((inputno*$("#est_txi_multisig").val())+(inputno*41));
 		mathFees();
 	});
 
-	$("#fees .txi_hodl").change(function(){
-		var inputno = $('.'+$(this).attr('rel')+' .inputno',$(this).parent()).html();
-		$('.'+$(this).attr('rel')+' .bytes',$(this).parent()).html((inputno*$("#est_txi_hodl").val())+(inputno*41));
+	$("#fees .txi_hodl").on('input', function(){
+		var inputno = $('.'+$(this).attr('rel')+' .inputno',$("#fees .txinputs")).html();
+		$('.'+$(this).attr('rel')+' .bytes',$("#fees .txinputs")).html((inputno*$("#est_txi_hodl").val())+(inputno*41));
 		mathFees();
 	});
 
-	$("#fees .txi_unknown").change(function(){
-		var inputno = $('.'+$(this).attr('rel')+' .inputno',$(this).parent()).html();
-		$('.'+$(this).attr('rel')+' .bytes',$(this).parent()).html((inputno*$("#est_txi_unknown").val())+(inputno*41));
+	$("#fees .txi_unknown").on('input', function(){
+		var inputno = $('.'+$(this).attr('rel')+' .inputno',$("#fees .txinputs")).html();
+		$('.'+$(this).attr('rel')+' .bytes',$("#fees .txinputs")).html((inputno*$("#est_txi_unknown").val())+(inputno*41));
 		mathFees();
+	});
+
+	$("#fees .sliderbtn.down").click(function(){
+		var val = $(".slider",$(this).parent().parent()).val()*1;
+		if(val>($(".slider",$(this).parent().parent()).attr('min')*1)){
+			$(".slider",$(this).parent().parent()).val(val-1);
+			$(".slider",$(this).parent().parent()).trigger('input');
+		}
+	});
+
+	$("#fees .sliderbtn.up").click(function(){
+		var val = $(".slider",$(this).parent().parent()).val()*1;
+		if(val<($(".slider",$(this).parent().parent()).attr('max')*1)){
+			$(".slider",$(this).parent().parent()).val(val+1);
+			$(".slider",$(this).parent().parent()).trigger('input');
+		}
 	});
 
 	$("#advancedFeesCollapse").click(function(){
