@@ -677,10 +677,10 @@ $(document).ready(function() {
 			var inputs = $(data).find("unspent").children().length;
 			if($("#walletSegwit").is(":checked")){	
 				$("#fees .txi_segwit").val(inputs);
-				$("#fees .txi_segwit").change();
+				$("#fees .txi_segwit").trigger('input');
 			} else {
 				$("#fees .txi_regular").val(inputs);
-				$("#fees .txi_regular").change();
+				$("#fees .txi_regular").trigger('input');
 			}
 
 			$.each($("#walletSpendTo .output"), function(i,o){
@@ -688,10 +688,10 @@ $(document).ready(function() {
 				var ad = coinjs.addressDecode(addr.val());
 				if (ad.version == coinjs.multisig){ // p2sh
 					$("#fees .txo_p2sh").val(($("#fees .txo_p2sh").val()*1)+1);
-					$("#fees .txo_p2sh").change();
+					$("#fees .txo_p2sh").trigger('input');
 				} else { // p2pkh
 					$("#fees .txo_p2pkh").val(($("#fees .txo_p2pkh").val()*1)+1);
-					$("#fees .txo_p2pkh").change();					
+					$("#fees .txo_p2pkh").trigger('input');					
 				}
 			});
 
@@ -700,10 +700,10 @@ $(document).ready(function() {
 				var ad = coinjs.addressDecode(addr);
 				if (ad.version == coinjs.multisig){ // p2sh
 					$("#fees .txo_p2sh").val(($("#fees .txo_p2sh").val()*1)+1);
-					$("#fees .txo_p2sh").change();
+					$("#fees .txo_p2sh").trigger('input');
 				} else { // p2pkh
 					$("#fees .txo_p2pkh").val(($("#fees .txo_p2pkh").val()*1)+1);
-					$("#fees .txo_p2pkh").change();					
+					$("#fees .txo_p2pkh").trigger('input');					
 				}
 			}
 
