@@ -1,8 +1,8 @@
----- Version 1.3 2018.01.03 ---
+---- Version 1.3 2018.01.04 ---
 77e4519962e2f6a9fc93342137dbb31c33b76b04  ./js/aes.js
 3a09a8fc0cfe828b57fc798d668234d0490ee1a6  ./js/bootstrap-datetimepicker.min.js
 253711c6d825de55a8360552573be950da180614  ./js/bootstrap.min.js
-f43691b7db457598283d3b146f8b8545b2aa21a1  ./js/coinbin.js
+c23f25f218ed8a05376c2f7d98d7056ee9738c74  ./js/coinbin.js
 31fbebf65d9cae8f26761cb057c4fb1b97339d08  ./js/coin.js
 988565bc2cb402d63ed5c5fd7ff47c4278efc2c5  ./js/collapse.js
 9ba5ede3d7f9d4c8fd623395f196adfdcf7e970f  ./js/crypto-min.js
