@@ -882,7 +882,7 @@
 		}
 
 		/* add unspent to transaction */
-		r.addUnspent = function(address, callback, script, segwit){
+		r.addUnspent = function(address, callback, script, segwit, sequence){
 			var self = this;
 			this.listUnspent(address, function(data){
 				var s = coinjs.script();
@@ -919,7 +919,8 @@
 						scr = Crypto.util.bytesToHex(s.buffer);
 					}
 
-					self.addinput(txhash, n, scr);
+					var seq = sequence || false;
+					self.addinput(txhash, n, scr, seq);
 					value += u.getElementsByTagName("value")[0].childNodes[0].nodeValue*1;
 					total++;
 				}

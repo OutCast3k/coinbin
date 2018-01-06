@@ -146,6 +146,11 @@ $(document).ready(function() {
 			script = sw.redeemscript;
 		}
 
+		var sequence = false;
+		if($("#walletRBF").is(":checked")){
+			sequence = 0xffffffff-2;
+		}
+
 		tx.addUnspent($("#walletAddress").html(), function(data){
 
 			var dvalue = (data.value/100000000).toFixed(8) * 1;
@@ -186,7 +191,7 @@ $(document).ready(function() {
 
 			$("#walletLoader").addClass("hidden");
 
-		}, script, script);
+		}, script, script, sequence);
 	});
 
 	$("#walletSendBtn").click(function(){
@@ -1471,6 +1476,9 @@ $(document).ready(function() {
 		if(pubkey.length==66 || pubkey.length==130){
 			try {
 				$("#verifyPubKey .address").val(coinjs.pubkey2address(pubkey));
+				var sw = coinjs.segwitAddress(pubkey);
+				$("#verifyPubKey .addressSegWit").val(sw.address);
+				$("#verifyPubKey .addressSegWitRedeemScript").val(sw.redeemscript);
 				$("#verifyPubKey").removeClass("hidden");
 				$(".verifyLink").attr('href','?verify='+$("#verifyScript").val());
 				return true;

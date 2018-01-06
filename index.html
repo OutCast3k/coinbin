@@ -159,6 +159,11 @@
 												<p class="checkbox">
 													<label><input type="checkbox" id="walletSegwit" class="checkbox-inline" checked> Use a segwit address instead of a regular address. <span class="text-muted"><i>(recommended)</i></span></label></label>
 												</p>
+
+												<label>Enable Replace by Fee (RBF)</label>
+												<p class="checkbox">
+													<label><input type="checkbox" id="walletRBF" class="checkbox-inline" checked> Enable RBF on all transactions, allowing the user to manually bump the transaction later if required. <span class="text-muted"><i>(recommended)</i></span></label></label>
+												</p>
 											</div>
 										</div>
 										<div id="openLoginStatus" class="alert alert-danger hidden"></div>
@@ -1077,7 +1082,10 @@
 						<div class="hidden verifyData" id="verifyPubKey">
 							<h4>Public key</h4>
 							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above public key has been encoded to its address</p>
-							<p><b>Address</b>: <input type="text" class="form-control address" readonly></p>
+							<p><b>Address</b>:<span class="text-muted">(Legacy)</span>: <input type="text" class="form-control address" readonly></p>
+							<br>
+							<p><b>Segwit Address</b>: <input type="text" class="form-control addressSegWit" readonly></p>
+							<p><b>Segwit Redeem Script</b>: <input type="text" class="form-control addressSegWitRedeemScript" readonly></p>
 						</div>
 
 						<div class="hidden verifyData" id="verifyHDaddress">
