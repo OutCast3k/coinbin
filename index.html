@@ -152,6 +152,7 @@
 										<input id="openPass" type="password" class="form-control" placeholder="Password" required>
 										<input id="openPassConfirm" type="password" class="form-control" placeholder="Password confirm" required>
 										<br>
+
 										<div>
 											<a href="javascript:;" class="optionsCollapse"><div class="well well-sm"><span class="glyphicon glyphicon-collapse-down" id="glyphcollapse"></span> Advanced Options</div></a>
 											<div class="hidden optionsAdvanced">
@@ -162,10 +163,11 @@
 
 												<label>Enable Replace by Fee (RBF)</label>
 												<p class="checkbox">
-													<label><input type="checkbox" id="walletRBF" class="checkbox-inline" checked> Enable RBF on all transactions, allowing the user to manually bump the transaction later if required. <span class="text-muted"><i>(recommended)</i></span></label></label>
+													<label><input type="checkbox" id="walletRBF" class="checkbox-inline" checked> Enable RBF on all transactions, allowing you to manually raise the transaction fee later if required. <span class="text-muted"><i>(recommended)</i></span></label></label>
 												</p>
 											</div>
 										</div>
+
 										<div id="openLoginStatus" class="alert alert-danger hidden"></div>
 										<button id="openBtn" class="btn btn-primary" type="submit">Submit</button>
 									</form>
@@ -1082,10 +1084,20 @@
 						<div class="hidden verifyData" id="verifyPubKey">
 							<h4>Public key</h4>
 							<p><span style="float:right"><a href="" target="_blank" class="verifyLink" title="Link to this page"><span class="glyphicon glyphicon-link"></span></a></span>The above public key has been encoded to its address</p>
-							<p><b>Address</b>:<span class="text-muted">(Legacy)</span>: <input type="text" class="form-control address" readonly></p>
-							<br>
-							<p><b>Segwit Address</b>: <input type="text" class="form-control addressSegWit" readonly></p>
-							<p><b>Segwit Redeem Script</b>: <input type="text" class="form-control addressSegWitRedeemScript" readonly></p>
+							<p><b>Legacy Address</b>: <input type="text" class="form-control address" readonly></p>
+
+							<div class="hidden verifyDataSw">
+								<hr>
+								<div class="row">
+									<div class="col-md-6">
+										<p><b>Segwit Address</b>: <input type="text" class="form-control addressSegWit" readonly></p>
+									</div>
+
+									<div class="col-md-6">
+										<p><b>Segwit Redeem Script</b>: <input type="text" class="form-control addressSegWitRedeemScript" readonly></p>
+									</div>
+								</div>
+							</div>
 						</div>
 
 						<div class="hidden verifyData" id="verifyHDaddress">
@@ -1289,7 +1301,7 @@
 						<h3>Support</h3>
 						<p>We recommend that you first check our <a href="https://status.coinb.in/" target="_blank">service status</a> page and then <a href="https://blog.coinb.in/" target="_blank">blog</a> page which has multiple <a href="https://blog.coinb.in/guides" target="_blank">guides</a>. However if the problem persists you can contact us by emailing support{at}coinb.in.</p>
 						<h3>Donate</h3>
-						<p>Please donate to <a href="bitcoin:1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg">1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg</a> if you found this project useful or want to see more features!</p>
+						<p>Please donate to <a href="bitcoin:3K1oFZMks41C7qDYBsr72SYjapLqDuSYuN">3K1oFZMks41C7qDYBsr72SYjapLqDuSYuN</a> if you found this project useful or want to see more features!</p>
 					</div>
 
 					<div class="tab-pane tab-content" id="settings">
