@@ -646,7 +646,7 @@ $(document).ready(function() {
 
 			if($("#feesestnewtx").attr('est')=='y'){
 				$("#fees .txhex").val($("#transactionCreate textarea").val());
-				$("#analyseBtn").click();
+				$("#feesAnalyseBtn").click();
 				$("#fees .txhex").val("");
 				window.location = "#fees";
 			} else {
@@ -1886,7 +1886,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$("#analyseBtn").click(function(){
+	$("#feesAnalyseBtn").click(function(){
 		if(!$("#fees .txhex").val().match(/^[a-f0-9]+$/ig)){
 			alert('You must provide a hex encoded transaction');
 			return;
@@ -1911,10 +1911,9 @@ $(document).ready(function() {
 				} else {
 					size += $("#est_txi_segwit").val()*1;
 				}
-				size = size.toFixed(0);
 				$("#fees .segwit .inputno").html(($("#fees .segwit .inputno").html()*1)+1);
 				$("#fees .txi_segwit").val(($("#fees .txi_segwit").val()*1)+1);
-				$("#fees .segwit .bytes").html(size);
+				$("#fees .segwit .bytes").html(($("#fees .segwit .bytes").html()*1)+size);
 							
 			} else if(script.type == 'multisig'){
 				var s = coinjs.script();
@@ -1922,13 +1921,13 @@ $(document).ready(function() {
 				size += 4 + ((script.script.length / 2) + (73 * rs.signaturesRequired));
 				$("#fees .multisig .inputno").html(($("#fees .multisig .inputno").html()*1)+1);
 				$("#fees .txi_multisig").val(($("#fees .txi_multisig").val()*1)+1);
-				$("#fees .multisig .bytes").html(size);
+				$("#fees .multisig .bytes").html(($("#fees .multisig .bytes").html()*1)+size);
 
 			} else if(script.type == 'hodl'){
 				size += 78;
 				$("#fees .hodl .inputno").html(($("#fees .hodl .inputno").html()*1)+1);
-				$("#fees .hodl .bytes").html(size);
 				$("#fees .txi_hodl").val(($("#fees .txi_hodl").val()*1)+1);
+				$("#fees .hodl .bytes").html(($("#fees .hodl .bytes").html()*1)+size);
 
 			} else if(script.type == 'empty' || script.type == 'scriptpubkey'){
 				if(script.signatures == 1){
@@ -1961,7 +1960,7 @@ $(document).ready(function() {
 			} 
 		}
 
-		//feeStats();
+		 feeStats();
 	});
 
 	$("#feeStatsReload").click(function(){
