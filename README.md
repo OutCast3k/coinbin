@@ -42,6 +42,7 @@ Coinb.in supports a number of key features such as:
 - HD (bip32) support
 - Supports altcoins such as litecoin
 - Replace by fee (RBF) Support
-- Segwit support
+- Segwit Support
+- Fee calculator - https://coinb.in/#fees
 
-Donate to 1CWHWkTWaq1K5hevimJia3cyinQsrgXUvg to see more development!
+Donate to 3K1oFZMks41C7qDYBsr72SYjapLqDuSYuN to see more development!
