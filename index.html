@@ -1270,7 +1270,12 @@
 						<h2>Broadcast Transaction <small>into the bitcoin network</small></h2>
 						<a href="#settings" style="float:right;"><span class="glyphicon glyphicon-cog"></span></a>
 						<p>Enter your hex encoded bitcoin transaction</p>
-						<textarea class="form-control" style="height:125px" id="rawTransaction"></textarea>
+						<div class="input-group">
+							<span class="input-group-text">
+								<button class="btn btn-info qrcodeScanner" type="button" data-toggle="modal" data-target="#modalQrcodeScanner" forward-result="#rawTransaction"><span class="glyphicon glyphicon-camera"></span></button>
+							</span>
+							<textarea class="form-control" style="height:125px" id="rawTransaction"></textarea>
+						</div>
 						<br>
 						<div id="rawTransactionStatus" class="alert hidden">
 						</div>
