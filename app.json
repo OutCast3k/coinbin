@@ -1,0 +1,7 @@
+{
+  "name": "Bitcoin wallet by Coinb.in",
+  "description": "A Open Source Browser Based Bitcoin Wallet.",
+  "repository": "https://github.com/OutCast3k/coinbin",
+  "logo": "https://coinb.in/images/coinbin.gif",
+  "keywords": ["bitcoin", "wallet", "javascript"]
+}
