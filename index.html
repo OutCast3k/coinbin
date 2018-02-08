@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 
@@ -14,7 +14,7 @@
 		<link rel="stylesheet" href="css/bootstrap.min.css" media="screen">
 		<link rel="stylesheet" href="css/bootstrap-datetimepicker.min.css">
 		<link rel="stylesheet" href="css/style.css" media="screen">
-		
+
 		<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 		<script type="text/javascript" src="js/moment.min.js"></script>
 		<script type="text/javascript" src="js/transition.js"></script>
@@ -145,7 +145,7 @@
 										<p>Use the form below to open a wallet and begin using this service.</p>
 
 										<div class="alert alert-warning">
-											<b>Notice</b>: Different email address and password combination will open different wallets, be careful when entering your details as lost accounts can not be recovered! 
+											<b>Notice</b>: Different email address and password combination will open different wallets, be careful when entering your details as lost accounts can not be recovered!
 										</div>
 
 										<input id="openEmail" type="email" class="form-control" placeholder="Email address" required autofocus>
@@ -182,7 +182,7 @@
 											<div id="walletQrCode"></div> <br>
 											<div>
 												<span id="walletLoader" class="hidden"><img src="images/loader.gif"></span>
-												<span id="walletAddress"></span> 
+												<span id="walletAddress"></span>
 
 												<div class="btn-group">
 													<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" id="walletToBtn">SegWit <span class="caret"></span></button>
@@ -483,14 +483,14 @@
                         </div>
 
                         <p id="timeLockedRbTypeBox">
-                        	Enter the 
-                        		<input type="radio" id="timeLockedRbTypeDate" name="timeLockedRbType" value="date" checked="checked"> 
-                        		<label for="timeLockedRbTypeDate">date and time</label> 
-                        		or                         		
+                        	Enter the
+                        		<input type="radio" id="timeLockedRbTypeDate" name="timeLockedRbType" value="date" checked="checked">
+                        		<label for="timeLockedRbTypeDate">date and time</label>
+                        		or
                         		<input type="radio" id="timeLockedRbTypeBlockHeight" name="timeLockedRbType" value="blockheight">
                         		<label for="timeLockedRbTypeBlockHeight">blockheight</label>
 
-                        		required to release the coins: 
+                        		required to release the coins:
                         </p>
                         <div class="row">
                             <div class='col-md-6'>
@@ -558,7 +558,7 @@
 
 						<h3>Address Options</h3>
 						<p>You can use the advanced options below to generate different kinds of master addresses.</p>
-						
+
 						<div class="checkbox">
 							<label><input type="checkbox" id="newHDBrainwallet" class="checkbox-inline"> Custom Seed or Brain Wallet</label>
 							<input type="text" class="form-control hidden" id="HDBrainwallet">
@@ -745,7 +745,7 @@
 
 					<div class="tab-pane tab-content" id="fees">
 						<h2>Bitcoin Fee Calculator</h2>
-						<p>This page will give you a guide on the lowest fee to use to get your transaction included within the next few blocks. It works by predicting the size of a transaction and comparing it to another transaction in a recent block to determine an appropriate fee.</p>	
+						<p>This page will give you a guide on the lowest fee to use to get your transaction included within the next few blocks. It works by predicting the size of a transaction and comparing it to another transaction in a recent block to determine an appropriate fee.</p>
 
 						<div align="center" class="alert alert-info">
 							<h2><span class="glyphicon glyphicon-question-sign"></span> Recommended Fee: <span class="recommendedFee">0.00000000</span> BTC <small> <br> for a transaction of <span class="feeTxSize">0</span> bytes</small></h2>
@@ -761,11 +761,11 @@
 									<span><span class="txsize">0</span> Bytes</span>
 								</div>
 
-								<h4 class="regular"><abbr title="Spending from a compressed legacy address. p2pkh">Regular</abbr> <small>Compressed</small> 
-									<span class="badge inputno" title="Number of Regular Inputs">1</span> 
+								<h4 class="regular"><abbr title="Spending from a compressed legacy address. p2pkh">Regular</abbr> <small>Compressed</small>
+									<span class="badge inputno" title="Number of Regular Inputs">1</span>
 									<small><span class="bytes">148</span> bytes</small>
 									<small class="estimate hidden"><em> *estimate</em></small>
-								</h4> 
+								</h4>
 
 								<div class="input-group">
 									<span class="input-group-btn"><button class="btn sliderbtn down" type="button"><span class="glyphicon glyphicon-chevron-left"></span></button></span>
@@ -773,11 +773,11 @@
 									<span class="input-group-btn"><button class="btn sliderbtn up" type="button"><span class="glyphicon glyphicon-chevron-right"></span></button></span>
 								</div>
 
-								<h4 class="segwit"><abbr title="Spending from a segwit address. p2sh">SegWit</abbr> 
+								<h4 class="segwit"><abbr title="Spending from a segwit address. p2sh">SegWit</abbr>
 									<span class="badge inputno" title="Number of SegWit Inputs">0</span>
 									<small><span class="bytes">0</span> bytes</small>
 									<small class="estimate hidden"><em> *estimate</em></small>
-								</h4> 
+								</h4>
 
 								<div class="input-group">
 									<span class="input-group-btn"><button class="btn sliderbtn down" type="button"><span class="glyphicon glyphicon-chevron-left"></span></button></span>
@@ -785,11 +785,11 @@
 									<span class="input-group-btn"><button class="btn sliderbtn up" type="button"><span class="glyphicon glyphicon-chevron-right"></span></button></span>
 								</div>
 
-								<h4 class="multisig"><abbr title="Spending from a multisig address. p2sh">MultiSig</abbr>  
+								<h4 class="multisig"><abbr title="Spending from a multisig address. p2sh">MultiSig</abbr>
 									<span class="badge inputno" title="Number of MultiSig Inputs">0</span>
 									<small><span class="bytes">0</span> bytes</small>
 									<small class="estimate hidden"><em> *estimate</em></small>
-								</h4> 
+								</h4>
 
 								<div class="input-group">
 									<span class="input-group-btn"><button class="btn sliderbtn down" type="button"><span class="glyphicon glyphicon-chevron-left"></span></button></span>
@@ -797,7 +797,7 @@
 									<span class="input-group-btn"><button class="btn sliderbtn up" type="button"><span class="glyphicon glyphicon-chevron-right"></span></button></span>
 								</div>
 
-								<h4 class="hodl"><abbr title="Spending from a time locked address. p2sh">Hodl</abbr> <small>Time Locked</small> 
+								<h4 class="hodl"><abbr title="Spending from a time locked address. p2sh">Hodl</abbr> <small>Time Locked</small>
 									<span class="badge inputno" title="Number of Hodl Inputs">0</span>
 									<small><span class="bytes">0</span> bytes</small>
 									<small class="estimate hidden"><em> *estimate</em></small>
@@ -809,7 +809,7 @@
 									<span class="input-group-btn"><button class="btn sliderbtn up" type="button"><span class="glyphicon glyphicon-chevron-right"></span></button></span>
 								</div>
 
-								<h4 class="unknown"><abbr title="Spending from an unrecognized input. p2sh">Unknown</abbr> 
+								<h4 class="unknown"><abbr title="Spending from an unrecognized input. p2sh">Unknown</abbr>
 									<span class="badge inputno" title="Number of Unknown Inputs">0</span>
 									<small><span class="bytes">0</span> bytes</small>
 									<small class="estimate hidden"><em> *estimate</em></small>
@@ -832,11 +832,11 @@
 									<span><span class="txsize">0</span> Bytes</span>
 								</div>
 
-								<h4 class="p2pkh"><abbr title="A pay 2 public key hash. Starts with 1. Used with legacy addresses">Regular</abbr> <small>p2pkh (1...)</small> 
-									<span class="badge outputno" title="Number of p2pkh Outputs">2</span> 
+								<h4 class="p2pkh"><abbr title="A pay 2 public key hash. Starts with 1. Used with legacy addresses">Regular</abbr> <small>p2pkh (1...)</small>
+									<span class="badge outputno" title="Number of p2pkh Outputs">2</span>
 									<small><span class="bytes">68</span> bytes</small>
 									<small class="estimate hidden"><em> *estimate</em></small>
-								</h4>	 
+								</h4>
 
 								<div class="input-group">
 									<span class="input-group-btn"><button class="btn sliderbtn down" type="button"><span class="glyphicon glyphicon-chevron-left"></span></button></span>
@@ -844,15 +844,15 @@
 									<span class="input-group-btn"><button class="btn sliderbtn up" type="button"><span class="glyphicon glyphicon-chevron-right"></span></button></span>
 								</div>
 
-								<h4 class="p2sh"><abbr title="A pay 2 script hash address. Starts with a 3. For example a segwit or multisig address">Regular</abbr> <small>p2sh (3...)</small> 
-									<span class="badge outputno" title="Number of p2sh Outputs">0</span> 
+								<h4 class="p2sh"><abbr title="A pay 2 script hash address. Starts with a 3. For example a segwit or multisig address">Regular</abbr> <small>p2sh (3...)</small>
+									<span class="badge outputno" title="Number of p2sh Outputs">0</span>
 									<small><span class="bytes">0</span> bytes</small>
 									<small class="estimate hidden"><em> *estimate</em></small>
-								</h4> 
+								</h4>
 
 								<div class="input-group">
 									<span class="input-group-btn"><button class="btn sliderbtn down" type="button"><span class="glyphicon glyphicon-chevron-left"></span></button></span>
-									<input type="range" min="0" max="100" value="0" class="slider txoutput txo_p2sh" rel="p2sh">	
+									<input type="range" min="0" max="100" value="0" class="slider txoutput txo_p2sh" rel="p2sh">
 									<span class="input-group-btn"><button class="btn sliderbtn up" type="button"><span class="glyphicon glyphicon-chevron-right"></span></button></span>
 								</div>
 
@@ -984,7 +984,7 @@
     								</table>
 								<br>
 							</div>
-	
+
 							<div class="hidden verifyData" id="verifyRsDataSegWit">
 				                               	<label>Segwit Address</label>
    								<div class="row">
@@ -1258,7 +1258,7 @@
 							<p>The above transaction has been signed:</p>
 
                         				<textarea class="form-control script" style="height:160px" readonly></textarea>
-                                    
+
 							<p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
 						</div>
 
@@ -1281,7 +1281,7 @@
 					<div class="tab-pane tab-content" id="dev">
 						<h2>Development <small>Javascript framework, API and more</small></h2>
 						<div class="alert alert-info">This section is currently under development and is subject to change.</div>
-						
+
 					</div>
 
 					<div class="tab-pane tab-content" id="about">
@@ -1378,7 +1378,7 @@
 								</select>
 							</div>
 						</div>
-							
+
 						<hr>
 
 						<div class="row">
@@ -1511,9 +1511,9 @@
 						<div class="col-md-5">
 							<label>Mediator:</label>
 
-							<!-- 
-								You need to contact us before adding your pubkey 
-								and submitting a pull request on github. 
+							<!--
+								You need to contact us before adding your pubkey
+								and submitting a pull request on github.
 
 								format is: pubkey;email;fee
 							-->
@@ -1525,12 +1525,12 @@
 
 						<div class="col-md-5">
 							<label>Address:</label> <span class="text-muted">(for disputes)</span>
-							<input id="mediatorEmail" type="text" class="form-control address" value="" readonly>	
+							<input id="mediatorEmail" type="text" class="form-control address" value="" readonly>
 						</div>
 
 						<div class="col-md-2">
-							<label>Fee (%):</label> 
-							<input id="mediatorFee" type="text" class="form-control address" value="" readonly>	
+							<label>Fee (%):</label>
+							<input id="mediatorFee" type="text" class="form-control address" value="" readonly>
 						</div>
 
 					</div>
