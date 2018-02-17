@@ -1,4 +1,4 @@
----- Version 1.2 2018.01.28 ----
+---- Version 1.2 2018.02.17 ----
 77e4519962e2f6a9fc93342137dbb31c33b76b04  ./js/aes.js
 3a09a8fc0cfe828b57fc798d668234d0490ee1a6  ./js/bootstrap-datetimepicker.min.js
 253711c6d825de55a8360552573be950da180614  ./js/bootstrap.min.js
@@ -33,6 +33,6 @@ ca35b697d99cae4d1b60f2d60fcd37771987eb07  ./fonts/glyphicons-halflings-regular.w
 de51a8494180a6db074af2dee2383f0a363c5b08  ./fonts/glyphicons-halflings-regular.svg
 278e49a86e634da6f2a02f3b47dd9d2a8f26210f  ./fonts/glyphicons-halflings-regular.woff
 44bc1850f570972267b169ae18f1cb06b611ffa2  ./fonts/glyphicons-halflings-regular.ttf
-248d9ddceb6bfdcfb0725b16a4da7c522edb54de  ./README.md
-1112df6feba58861c391a442dcd9e04bf7eade91  ./index.html
-550a0ca5c866a224ecfe148fce522812e7dbfadb  ./en/index.html
+8d7f2e3f1071b70fadb303db4f2689e0fe3b5999  ./README.md
+583ff81d199ba54a1e538d9e148888617b5af9f3  ./index.html
+5d8adebbac8925737c935b7e6c9f70ee63f94c6d  ./en/index.html

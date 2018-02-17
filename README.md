@@ -1,9 +1,9 @@
-coinbin
+Sibcoinbin
 =======
 
 A Open Source Browser Based Sibcoin Wallet. Version 1.2 beta by ivansib
 
-Live version available at http://coinb.in/ or http://4zpinp6gdkjfplhk.onion
+Live version available at https://wallet.sibcoin.net/ 
 
 Github URL: https://github.com/ivansib/sibcoinbin/
 
