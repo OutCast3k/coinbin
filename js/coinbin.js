@@ -846,6 +846,8 @@ $(document).ready(function() {
 
 		if(host=='chain.so_litecoin'){
 			listUnspentChainso_Litecoin(redeem);
+		} else if(host=='digiexplorer.info'){
+			listUnspentDigiExplorer(redeem);
 		} else if(host=='chain.so_dogecoin'){
 			listUnspentChainso_Dogecoin(redeem);
 		} else if(host=='cryptoid.info_carboncoin'){
@@ -1047,6 +1049,38 @@ $(document).ready(function() {
 			}
 		});
 
+	}
+
+	/* retrieve unspent data from digiexplorer.info for digibyte */
+	function listUnspentDigiExplorer(redeem){
+		$.ajax ({
+			type: "GET",
+			url: "https://digiexplorer.info/api/addr/"+redeem.addr+"/utxo",
+			dataType: "json",
+			error: function(data) {
+				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+			},
+			success: function(data) {
+				if(data && data.length){
+					$("#redeemFromAddress").removeClass('hidden').html(
+						'<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+						for(var i in data){
+							var o = data[i];
+							var tx = o.txid;
+							var n = o.vout;
+							var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.scriptPubKey;
+							var amount = o.amount;
+							addOutput(tx, n, script, amount);
+						}
+				} else {
+					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+				}
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+			}
+		});
 	}
 
 	/* retrieve unspent data from chain.so for dogecoin */
@@ -1284,6 +1318,35 @@ $(document).ready(function() {
 				$(thisbtn).val('Submit').attr('disabled',false);				
                         }
                 });
+	}
+
+	function rawSubmitDigiExplorer(thisbtn){ 
+		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
+		$.ajax ({
+			type: "POST",
+			url: "https://digiexplorer.info/api/tx/send",
+			data: JSON.stringify({ "rawtx": $("#rawTransaction").val() }),
+			dataType : "json",
+			contentType: "application/json",
+      error: function(data) {
+				var obj = data.responseText;
+				var r = ' ';
+				r += (obj) ? ' '+obj : '';
+				r = (r!='') ? r : ' Failed to broadcast'; // build response 
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+			},
+			success: function(data) {
+				if(data){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: ' + data.txid);
+				} else {
+					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+				}
+			},
+			complete: function(data, status) {
+				$("#rawTransactionStatus").fadeOut().fadeIn();
+				$(thisbtn).val('Submit').attr('disabled',false);				
+			}
+		});
 	}
 
 
@@ -1777,6 +1840,10 @@ $(document).ready(function() {
 		if(host=="chain.so_bitcoinmainnet"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitChainso_BitcoinMainnet(this);
+			});
+		} else if(host=="digiexplorer.info"){
+			$("#rawSubmitBtn").click(function(){
+				rawSubmitDigiExplorer(this);
 			});
 		} else if(host=="chain.so_dogecoin"){
 			$("#rawSubmitBtn").click(function(){
