@@ -610,7 +610,8 @@ $(document).ready(function() {
 					estimatedTxSize += 147
 				}
 
-				tx.addinput($(".txId",o).val(), $(".txIdN",o).val(), $(".txIdScript",o).val(), seq);
+				var value = parseInt($(".txIdAmount", o).val() * 1e8);
+				tx.addinput($(".txId",o).val(), $(".txIdN",o).val(), $(".txIdScript",o).val(), seq, value);
 			} else {
 				$('#putTabs a[href="#txinputs"]').attr('style','color:#a94442;');
 			}
@@ -640,12 +641,14 @@ $(document).ready(function() {
 
 
 		if(!$("#recipients .row, #inputs .row").hasClass('has-error')){
-			
-			$("#transactionCreate textarea").val(tx.serialize());
+			var txhex = tx.serialize();
+			var txinputs = JSON.stringify(tx.coreInputObject());
+			$("#transactionCreate textarea.transactionHex").val(txhex);
+			$("#transactionCreate textarea.transactionInputs").val(txinputs);
 			$("#transactionCreate .txSize").html(tx.size());
 
 			if($("#feesestnewtx").attr('est')=='y'){
-				$("#fees .txhex").val($("#transactionCreate textarea").val());
+				$("#fees .txhex").val(txhex);
 				$("#feesAnalyseBtn").click();
 				$("#fees .txhex").val("");
 				window.location = "#fees";
@@ -663,6 +666,14 @@ $(document).ready(function() {
 		} else {
 			$("#transactionCreateStatus").removeClass("hidden").html("One or more input or output is invalid").fadeOut().fadeIn();
 		}
+	});
+
+	$("#transactionToSignBtn").click(function(){
+		var txhex = $("#transactionCreate textarea.transactionHex").val();
+		var txinputs = $("#transactionCreate textarea.transactionInputs").val();
+		$("#signTransaction").val(txhex);
+		$("#signTransactionInputs").val(txinputs);
+		window.location.hash = "#sign";
 	});
 
 	$("#feesestnewtx").click(function(){
@@ -850,6 +861,10 @@ $(document).ready(function() {
 			listUnspentChainso_Dogecoin(redeem);
 		} else if(host=='cryptoid.info_carboncoin'){
 			listUnspentCryptoidinfo_Carboncoin(redeem);
+		} else if(host=='bitcoingold.org_bgoldmainnet'){
+			listUnspentBitcoingoldorg_BitcoinGold(redeem, true);
+		} else if(host=='bitcoingold.org_bgoldtestnet'){
+			listUnspentBitcoingoldorg_BitcoinGold(redeem, false);
 		} else {
 			listUnspentDefault(redeem);
 		}
@@ -1083,6 +1098,45 @@ $(document).ready(function() {
 		});
 	}
 
+	function listUnspentBitcoingoldorg_BitcoinGold(redeem, mainnet) {
+		$.ajax ({
+			type: "GET",
+			url: "https://explorer.bitcoingold.org/insight-api/addr/"+redeem.addr+"/utxo",
+			dataType: "json",
+            crossDomain: true,
+			contentType: 'text/plain',
+			xhrFields: {
+				withCredentials: false
+			},
+			error: function(data) {
+				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+			},
+			success: function(data) {
+				if(data instanceof Array){
+					$("#redeemFromAddress").removeClass('hidden').html(
+						'<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+					for(var i=0; i<data.length; i++) {
+						// for(var i in data.data.txs){
+						var o = data[i];
+						var tx = o.txid;
+						if(tx.match(/^[a-f0-9]+$/)){
+							var n = o.vout;
+							var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.scriptPubKey;
+							var amount = o.amount;
+							addOutput(tx, n, script, amount);
+						}
+					}
+				} else {
+					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+				}
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+			}
+		});
+	}
+
 	/* math to calculate the inputs and outputs */
 
 	function totalInputAmount(){
@@ -1186,6 +1240,33 @@ $(document).ready(function() {
 				if($(data).find("result").text()==1){
 					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger');
 					$("#rawTransactionStatus").html('txid: '+$(data).find("txid").text());
+				} else {
+					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
+				}
+			},
+			complete: function(data, status) {
+				$("#rawTransactionStatus").fadeOut().fadeIn();
+				$(thisbtn).val('Submit').attr('disabled',false);				
+			}
+		});
+	}
+
+	// broadcast transaction via bitcoingold.org
+	function rawSubmitBitcoingoldorg_BitcoinGold(thisbtn, mainnet) {
+		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
+		$.ajax ({
+			type: "POST",
+			url: "https://explorer.bitcoingold.org/insight-api/tx/send",
+			data: "rawtx: " + $("#rawTransaction").val(),
+			dataType: "json",
+			error: function(data) {
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(" There was an error submitting your request, please try again").prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+			},
+            success: function(data) {
+				$("#rawTransactionStatus").html("Successful").removeClass('hidden');
+				if(data.txid) {
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger');
+					$("#rawTransactionStatus").html('txid: '+data.txid);
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
 				}
@@ -1548,6 +1629,7 @@ $(document).ready(function() {
 	$("#signBtn").click(function(){
 		var wifkey = $("#signPrivateKey");
 		var script = $("#signTransaction");
+		var txinputs = $("#signTransactionInputs");
 
 		if(coinjs.addressDecode(wifkey.val())){
 			$(wifkey).parent().removeClass('has-error');
@@ -1561,11 +1643,26 @@ $(document).ready(function() {
 			$(script).parent().addClass('has-error');
 		}
 
+		var txinputsObj = null;
+		if (txinputs.val().trim()) {
+			try {
+				txinputsObj = JSON.parse(txinputs.val());
+				$(txinputs).parent().removeClass('has-error');
+			} catch(e) {
+				$(txinputs).parent().addClass('has-error');
+			}
+		} else {
+			$(script).parent().removeClass('has-error');
+		}
+
 		if($("#sign .has-error").length==0){
 			$("#signedDataError").addClass('hidden');
 			try {
 				var tx = coinjs.transaction();
 				var t = tx.deserialize(script.val());
+				if (txinputsObj) {
+					t.completeInputValues(txinputsObj);
+				}
 
 				var signed = t.sign(wifkey.val(), $("#sighashType option:selected").val());
 				$("#signedData textarea").val(signed);
@@ -1711,7 +1808,8 @@ $(document).ready(function() {
 		$("#settings .has-error").removeClass("has-error");
 
 		$.each($(".coinjssetting"),function(i, o){
-			if(!$(o).val().match(/^0x[0-9a-f]+$/)){
+			// allow hex, dec, or empty.
+			if(!$(o).val().match(/^0x[0-9a-f]+|[0-9]+|$/)){
 				$(o).parent().addClass("has-error");
 			}
 		});
@@ -1721,6 +1819,14 @@ $(document).ready(function() {
 			coinjs.pub =  $("#coinjs_pub").val()*1;
 			coinjs.priv =  $("#coinjs_priv").val()*1;
 			coinjs.multisig =  $("#coinjs_multisig").val()*1;
+			var forkIdVal = $("#coinjs_forkid").val();
+			if (!isNaN(forkIdVal) && forkIdVal*1 >= 0) {
+				coinjs.useForkId = true;
+				coinjs.forkId = forkIdVal*1;
+			} else {
+				coinjs.useForkId = false;
+				coinjs.forkId = 0;
+			}
 
 			coinjs.hdkey.pub =  $("#coinjs_hdpub").val()*1;
 			coinjs.hdkey.prv =  $("#coinjs_hdprv").val()*1;
@@ -1763,6 +1869,12 @@ $(document).ready(function() {
 		$("#coinjs_hdpub").val(o[3]);
 		$("#coinjs_hdprv").val(o[4]);
 
+		if(o.length >= 8) {
+			$("#coinjs_forkid").val(o[7]);
+		} else {
+			$("#coinjs_forkid").val("");
+		}
+
 		// hide/show custom screen
 		if($("option:selected",this).val()=="custom"){
 			$("#settingsCustom").removeClass("hidden");
@@ -1789,6 +1901,14 @@ $(document).ready(function() {
 		} else if(host=="cryptoid.info_carboncoin"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitcryptoid_Carboncoin(this);
+			});
+		} else if(host=="bitcoingold.org_bgoldmainnet"){
+			$("#rawSubmitBtn").click(function(){
+				rawSubmitBitcoingoldorg_BitcoinGold(this, true);
+			});
+		} else if(host=="bitcoingold.org_bgoldtestnet"){
+			$("#rawSubmitBtn").click(function(){
+				rawSubmitBitcoingoldorg_BitcoinGold(this, false);
 			});
 		} else {
 			$("#rawSubmitBtn").click(function(){
