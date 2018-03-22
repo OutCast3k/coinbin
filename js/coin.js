@@ -15,7 +15,7 @@
 	coinjs.multisig = 0x17;
 	coinjs.hdkey = {'prv':0x0488ade4, 'pub':0x0488b21e};
     coinjs.useForkId = true;
-    coinjs.forkId = 0x79;
+    coinjs.forkId = 79;
 	coinjs.compressed = false;
 
 	/* other vars */
