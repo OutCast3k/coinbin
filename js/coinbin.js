@@ -170,6 +170,7 @@ $(document).ready(function() {
 				var signed = txunspent.sign($("#walletKeys .privkey").val());
 
 				// and finally broadcast!
+
 				tx2.broadcast(function(data){
 					if($(data).find("result").text()=="1"){
 						$("#walletSendConfirmStatus").removeClass('hidden').addClass('alert-success').html('txid: <a href="https://coinb.in/tx/'+$(data).find("txid").text()+'" target="_blank">'+$(data).find("txid").text()+'</a>');
@@ -349,9 +350,16 @@ $(document).ready(function() {
 	$("#newSegWitKeysBtn").click(function(){
 		var compressed = coinjs.compressed;
 		coinjs.compressed = true;
+
 		var s = ($("#newSegWitBrainwallet").is(":checked")) ? $("#brainwalletSegWit").val() : null;
 		var coin = coinjs.newKeys(s);
-		var sw = coinjs.segwitAddress(coin.pubkey);
+
+		if($("#newSegWitBech32addr").is(":checked")){
+			var sw = coinjs.bech32Address(coin.pubkey);
+		} else {
+			var sw = coinjs.segwitAddress(coin.pubkey);
+		}
+
 		$("#newSegWitAddress").val(sw.address);
 		$("#newSegWitRedeemScript").val(sw.redeemscript);
 		$("#newSegWitPubKey").val(coin.pubkey);
@@ -621,7 +629,7 @@ $(document).ready(function() {
 		$.each($("#recipients .row"), function(i,o){
 			var a = ($(".address",o).val());
 			var ad = coinjs.addressDecode(a);
-			if(((a!="") && (ad.version == coinjs.pub || ad.version == coinjs.multisig)) && $(".amount",o).val()!=""){ // address
+			if(((a!="") && (ad.version == coinjs.pub || ad.version == coinjs.multisig || ad.type=="bech32")) && $(".amount",o).val()!=""){ // address
 				// P2SH output is 32, P2PKH is 34
 				estimatedTxSize += (ad.version == coinjs.pub ? 34 : 32)
 				tx.addoutput(a, $(".amount",o).val());
@@ -831,7 +839,7 @@ $(document).ready(function() {
 		}
 
 		if(redeem.from=='other'){
-			$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> The address or multisig redeem script you have entered is invalid');
+			$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> The address or redeem script you have entered is invalid');
 			return false;
 		}
 
@@ -871,28 +879,33 @@ $(document).ready(function() {
 		if(decode.version == coinjs.pub){ // regular address
 			r.addr = string;
 			r.from = 'address';
-			r.isMultisig = false;
+			r.redeemscript = false;
 		} else if (decode.version == coinjs.priv){ // wif key
 			var a = coinjs.wif2address(string);
 			r.addr = a['address'];
 			r.from = 'wif';
-			r.isMultisig = false;
+			r.redeemscript = false;
 		} else if (decode.version == coinjs.multisig){ // mulisig address
 			r.addr = '';
 			r.from = 'multisigAddress';
-			r.isMultisig = false;
+			r.redeemscript = false;
+		} else if(decode.type == 'bech32'){
+			r.addr = string;
+			r.from = 'bech32';
+			r.decodedRs = decode.redeemscript;
+			r.redeemscript = true;
 		} else {
 			var script = coinjs.script();
 			var decodeRs = script.decodeRedeemScript(string);
 			if(decodeRs){ // redeem script
 				r.addr = decodeRs['address'];
 				r.from = 'redeemScript';
-				r.decodedRs = decodeRs;
-				r.isMultisig = true; // not quite, may be hodl
+				r.decodedRs = decodeRs.redeemscript;
+				r.redeemscript = true;
 			} else { // something else
 				r.addr = '';
 				r.from = 'other';
-				r.isMultisig = false;
+				r.redeemscript = false;
 			}
 		}
 		return r;
@@ -947,7 +960,7 @@ $(document).ready(function() {
 			$("#inputs .txIdN:last").val(n);
 			$("#inputs .txIdAmount:last").val(amount);
 
-			if(script.match(/^00/) && script.length==44){
+			if(((script.match(/^00/) && script.length==44)) || (script.length==40 && script.match(/^[a-f0-9]+$/gi))){
 				s = coinjs.script();
 				s.writeBytes(Crypto.util.hexToBytes(script));
 				s.writeOp(0);
@@ -969,7 +982,7 @@ $(document).ready(function() {
 				$.each($(data).find("unspent").children(), function(i,o){
 					var tx = $(o).find("tx_hash").text();
 					var n = $(o).find("tx_output_n").text();
-					var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : $(o).find("script").text();
+					var script = (redeem.redeemscript==true) ? redeem.decodedRs : $(o).find("script").text();
 					var amount = (($(o).find("value").text()*1)/100000000).toFixed(8);
 
 					addOutput(tx, n, script, amount);
@@ -1000,7 +1013,7 @@ $(document).ready(function() {
 						var o = data.data.txs[i];
 						var tx = ((o.txid).match(/.{1,2}/g).reverse()).join("")+'';
 						var n = o.output_no;
-						var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script_hex;
+						var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script_hex;
 						var amount = o.value;
 						addOutput(tx, n, script, amount);
 					}
@@ -1033,7 +1046,7 @@ $(document).ready(function() {
 					$.each($(data).find("unspent").children(), function(i,o){
 						var tx = $(o).find("tx_hash").text();
 						var n = $(o).find("tx_output_n").text();
-						var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script_hex;
+						var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script_hex;
 						var amount = (($(o).find("value").text()*1)/100000000).toFixed(8);
 						addOutput(tx, n, script, amount);
 					});
@@ -1067,7 +1080,7 @@ $(document).ready(function() {
 						var tx = ((""+o.txid).match(/.{1,2}/g).reverse()).join("")+'';
 						if(tx.match(/^[a-f0-9]+$/)){
 							var n = o.output_no;
-							var script = (redeem.isMultisig==true) ? $("#redeemFrom").val() : o.script_hex;
+							var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script_hex;
 							var amount = o.value;
 							addOutput(tx, n, script, amount);
 						}
@@ -1418,6 +1431,8 @@ $(document).ready(function() {
 					var addr = '';
 					if(o.script.chunks.length==5){
 						addr = coinjs.scripthash2address(Crypto.util.bytesToHex(o.script.chunks[2]));
+					} else if((o.script.chunks.length==2) && o.script.chunks[0]==0){
+						addr = coinjs.bech32_encode(coinjs.bech32.hrp, [coinjs.bech32.version].concat(coinjs.bech32_convert(o.script.chunks[1], 8, 5, true)));
 					} else {
 						var pub = coinjs.pub;
 						coinjs.pub = coinjs.multisig;
@@ -1481,6 +1496,10 @@ $(document).ready(function() {
 					var sw = coinjs.segwitAddress(pubkey);
 					$("#verifyPubKey .addressSegWit").val(sw.address);
 					$("#verifyPubKey .addressSegWitRedeemScript").val(sw.redeemscript);
+
+					var b32 = coinjs.bech32Address(pubkey);
+					$("#verifyPubKey .addressBech32").val(b32.address);
+					$("#verifyPubKey .addressBech32RedeemScript").val(b32.redeemscript);
 
 					$("#verifyPubKey .verifyDataSw").removeClass('hidden');
 				}

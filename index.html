@@ -125,7 +125,7 @@
 
 							<div class="col-md-4">
 								<h3><span class="glyphicon glyphicon-globe"></span> Addresses</h3>
-								<p>We support <a href="#newAddress">regular addresses</a>, <a href="#newMultiSig">multisig</a>, <a href="#newSegWit">segwit</a> and stealth all with access to your own private keys!</p>
+								<p>We support <a href="#newAddress">regular addresses</a>, <a href="#newMultiSig">multisig</a>, <a href="#newSegWit">segwit / bech32</a> and stealth all with access to your own private keys!</p>
 							</div>
 
 							<div class="col-md-4">
@@ -370,6 +370,10 @@
 
 						<h3>Address Options</h3>
 						<p>You can use the advanced options below to generate different kind of keys and addresses.</p>
+
+						<div class="checkbox">
+							<label><input type="checkbox" id="newSegWitBech32addr" class="checkbox-inline" checked> Enable <a href="https://en.bitcoin.it/wiki/Bech32" target="_blank">Bech32</a>?</label>
+						</div>
 
 						<div class="checkbox">
 							<label><input type="checkbox" id="newSegWitBrainwallet" class="checkbox-inline"> Custom Seed or Brain Wallet</label>
@@ -1090,13 +1094,26 @@
 								<hr>
 								<div class="row">
 									<div class="col-md-6">
-										<p><b>Segwit Address</b>: <input type="text" class="form-control addressSegWit" readonly></p>
+										<p><b>P2SH Segwit Address</b>: <input type="text" class="form-control addressSegWit" readonly></p>
 									</div>
 
 									<div class="col-md-6">
-										<p><b>Segwit Redeem Script</b>: <input type="text" class="form-control addressSegWitRedeemScript" readonly></p>
+										<p><b>P2SH Segwit Redeem Script</b>: <input type="text" class="form-control addressSegWitRedeemScript" readonly></p>
 									</div>
 								</div>
+
+								<hr>
+								<div class="row">
+									<div class="col-md-6">
+										<p><b>Bech32 Address</b>: <input type="text" class="form-control addressBech32" readonly></p>
+									</div>
+
+									<div class="col-md-6">
+										<p><b>Bech32 Redeem Script</b>: <input type="text" class="form-control addressBech32RedeemScript" readonly></p>
+									</div>
+								</div>
+
+								<br>
 							</div>
 						</div>
 
@@ -1286,7 +1303,7 @@
 
 					<div class="tab-pane tab-content" id="about">
 						<h2>About <small>open source bitcoin wallet</small></h2>
-						<p>Version 1.3</p>
+						<p>Version 1.4</p>
 						<p>Compatible with bitcoin core</p>
 						<p>Github <a href="https://github.com/OutCast3k/coinbin/">https://github.com/OutCast3k/coinbin/</a></p>
 						<p>TOR <a href="http://4zpinp6gdkjfplhk.onion">4zpinp6gdkjfplhk.onion</a></p>
@@ -1413,7 +1430,7 @@
 
 		<div id="footer">
 			<div class="container text-right">
-	        		<p class="text-muted">Version 1.3</p>
+	        		<p class="text-muted">Version 1.4</p>
 			</div>
 		</div>
 
