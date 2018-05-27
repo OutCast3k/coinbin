@@ -1296,18 +1296,6 @@
 						value = coinjs.bytesToNum(this.ins[index].script.chunks[2]);  // value found encoded in transaction (THIS IS NON STANDARD)
 					}
 					return {'type':'segwit', 'signed':signed, 'signatures': sigs, 'script': Crypto.util.bytesToHex(this.ins[index].script.chunks[0]), 'value': value};
-
-			/*	} else if((this.ins[index].script.chunks.length <= 3 && this.ins[index].script.chunks.length > 0) && (this.ins[index].script.chunks[0].length == 22 && this.ins[index].script.chunks[0][0] == 0)){
-					alert('p2sh');
-					// segwit script
-					var signed = ((this.witness[index]) && this.witness[index].length==2) ? 'true' : 'false';
-					var sigs = (signed == 'true') ? 1 : 0;
-					var value = -1; // no value found
-					if((this.ins[index].script.chunks[2]) && this.ins[index].script.chunks[2].length==8){
-						value = coinjs.bytesToNum(this.ins[index].script.chunks[2]);  // value found encoded in transaction (THIS IS NON STANDARD)
-					}
-					return {'type':'segwit', 'signed':signed, 'signatures': sigs, 'script': Crypto.util.bytesToHex(this.ins[index].script.chunks[0]), 'value': value};
-			*/
 				} else if (this.ins[index].script.chunks[0]==0 && this.ins[index].script.chunks[this.ins[index].script.chunks.length-1][this.ins[index].script.chunks[this.ins[index].script.chunks.length-1].length-1]==174) { // OP_CHECKMULTISIG
 					// multisig script, with signature(s) included
 					return {'type':'multisig', 'signed':'true', 'signatures':this.ins[index].script.chunks.length-2, 'script': Crypto.util.bytesToHex(this.ins[index].script.chunks[this.ins[index].script.chunks.length-1])};
