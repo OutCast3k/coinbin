@@ -158,7 +158,9 @@
 											<div class="hidden optionsAdvanced">
 												<label>Segregated Witness Address</label>
 												<p class="checkbox">
-													<label><input type="checkbox" id="walletSegwit" class="checkbox-inline" checked> Use a segwit address instead of a regular address. <span class="text-muted"><i>(recommended)</i></span></label></label>
+													<label><input type="checkbox" id="walletSegwit" class="checkbox-inline" checked> Use a segwit address instead of a regular address. <span class="text-muted"><i>(recommended)</i></span></label></label> <br>
+													<label><input type="radio" id="walletSegwitp2sh" class="walletSegwitType" name="walletSegWitType" value="p2sh" checked> p2sh address</label> <br>
+													<label><input type="radio" id="walletSegwitBech32" class="walletSegwitType" name="walletSegWitType" value="bech32"> bech32 address</label>
 												</p>
 
 												<label>Enable Replace by Fee (RBF)</label>
@@ -188,6 +190,7 @@
 													<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" id="walletToBtn">SegWit <span class="caret"></span></button>
 													<ul class="dropdown-menu">
 														<li><a href="javascript:;" id="walletToSegWit">SegWit</a></li>
+														<li><a href="javascript:;" id="walletToSegWitBech32">SegWit/Bech32</a></li>
 														<li><a href="javascript:;" id="walletToLegacy">Legacy</a></li>
 													</ul>
 												</div>
@@ -256,7 +259,7 @@
 													<div class="row">
 														<div class="col-xs-6">
 															<label><abbr title="the amount to pay in network miner fee">Transaction Fee</abbr>&nbsp;&nbsp;<a href="javascript:;" id="feesestwallet"><span class="glyphicon glyphicon-question-sign"></span></a></label>
-															<input type="text" class="form-control" value="0.0004" id="txFee">
+															<input type="text" class="form-control" value="0.00004000" id="txFee">
 														</div>
 														<div class="col-xs-5">
 															<label><abbr title="the amount to donate to coinb.in">Donation</abbr></label>

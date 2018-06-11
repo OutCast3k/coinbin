@@ -1033,7 +1033,6 @@
 			var self = this;
 			this.listUnspent(address, function(data){
 				var s = coinjs.script();
-				var pubkeyScript = s.pubkeyHash(address);
 				var value = 0;
 				var total = 0;
 				var x = {};
