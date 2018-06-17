@@ -1549,13 +1549,15 @@
 							if(!witness_used.includes(y)){
 								var sw = coinjs.segwitAddress(this.witness[y][1]);
 								var b32 = coinjs.bech32Address(this.witness[y][1]);
-								if((sw['redeemscript'] == Crypto.util.bytesToHex(this.ins[i].script.chunks[0])) || (b32['redeemscript'] == Crypto.util.bytesToHex(this.ins[i].script.chunks[0]))){
-									witness_order.push(this.witness[y]);
-									witness_used.push(y);
-									if(b32['redeemscript'] == Crypto.util.bytesToHex(this.ins[i].script.chunks[0])){
-										this.ins[index].script = coinjs.script();
+								if(this.ins[i].script.chunks.length>0){
+									if((sw['redeemscript'] == Crypto.util.bytesToHex(this.ins[i].script.chunks[0])) || (b32['redeemscript'] == Crypto.util.bytesToHex(this.ins[i].script.chunks[0]))){
+										witness_order.push(this.witness[y]);
+										witness_used.push(y);
+										if(b32['redeemscript'] == Crypto.util.bytesToHex(this.ins[i].script.chunks[0])){
+											this.ins[index].script = coinjs.script();
+										}
+										break;
 									}
-									break;
 								}
 							}
 						}
