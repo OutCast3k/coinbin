@@ -1549,19 +1549,28 @@
 							if(!witness_used.includes(y)){
 								var sw = coinjs.segwitAddress(this.witness[y][1]);
 								var b32 = coinjs.bech32Address(this.witness[y][1]);
-								if(this.ins[i].script.chunks.length>0){
-									if((sw['redeemscript'] == Crypto.util.bytesToHex(this.ins[i].script.chunks[0])) || (b32['redeemscript'] == Crypto.util.bytesToHex(this.ins[i].script.chunks[0]))){
-										witness_order.push(this.witness[y]);
-										witness_used.push(y);
-										if(b32['redeemscript'] == Crypto.util.bytesToHex(this.ins[i].script.chunks[0])){
-											this.ins[index].script = coinjs.script();
-										}
-										break;
+								var rs = '';
+
+								if(this.ins[i].script.chunks.length>=1){
+									rs = Crypto.util.bytesToHex(this.ins[i].script.chunks[0]);
+								} else if (this.ins[i].script.chunks.length==0){
+									rs = b32['redeemscript'];
+								}
+
+								if((sw['redeemscript'] == rs) || (b32['redeemscript'] == rs)){
+									witness_order.push(this.witness[y]);
+									witness_used.push(y);
+
+									// bech32, empty redeemscript
+									if(b32['redeemscript'] == rs){
+										this.ins[index].script = coinjs.script();
 									}
+									break;
 								}
 							}
 						}
 					}
+
 					this.witness = witness_order;
 				}
 			}
