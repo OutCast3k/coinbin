@@ -1314,7 +1314,7 @@
 		}
 
 		/* generate a signature from a transaction hash */
-		r.transactionSig = function(index, wif, sigHashType, txhash){
+		r.transactionSig = function(index, wif, sigHashType, txhash, lowR){
 
 			function serializeSig(r, s) {
 				var rBa = r.toByteArraySigned();
@@ -1342,14 +1342,22 @@
 				var curve = EllipticCurve.getSECCurveByName("secp256k1");
 				var key = coinjs.wif2privkey(wif);
 				var priv = BigInteger.fromByteArrayUnsigned(Crypto.util.hexToBytes(key['privkey']));
+				var bits255 = new BigInteger("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16);
 				var n = curve.getN();
+				var G = curve.getG();
 				var e = BigInteger.fromByteArrayUnsigned(hash);
 				var badrs = 0
 				do {
-					var k = this.deterministicK(wif, hash, badrs);
-					var G = curve.getG();
-					var Q = G.multiply(k);
-					var r = Q.getX().toBigInteger().mod(n);
+					var extraEntropy = undefined;
+					var counter = 0;
+					do {
+						if (counter === 1) extraEntropy = new Array(32).fill(0);
+						if (counter > 0) extraEntropy[0] = counter
+						var k = this.deterministicK(wif, hash, badrs, extraEntropy);
+						var Q = G.multiply(k);
+						var r = Q.getX().toBigInteger().mod(n);
+						counter++
+					} while (lowR && r.compareTo(bits255) > 0);
 					var s = k.modInverse(n).multiply(e.add(priv.multiply(r))).mod(n);
 					badrs++
 				} while (r.compareTo(BigInteger.ZERO) <= 0 || s.compareTo(BigInteger.ZERO) <= 0);
@@ -1370,7 +1378,7 @@
 		}
 
 		// https://tools.ietf.org/html/rfc6979#section-3.2
-		r.deterministicK = function(wif, hash, badrs) {
+		r.deterministicK = function(wif, hash, badrs, extraEntropy) {
 			// if r or s were invalid when this function was used in signing,
 			// we do not want to actually compute r, s here for efficiency, so,
 			// we can increment badrs. explained at end of RFC 6979 section 3.2
@@ -1381,10 +1389,12 @@
 
 			// some necessary things out of the way for clarity.
 			badrs = badrs || 0;
+			extraEntropy = extraEntropy || []
 			var key = coinjs.wif2privkey(wif);
 			var x = Crypto.util.hexToBytes(key['privkey'])
 			var curve = EllipticCurve.getSECCurveByName("secp256k1");
 			var N = curve.getN();
+			var bx = x.concat(hash).concat(extraEntropy)
 
 			// Step: a
 			// hash is a byteArray of the message digest. so h1 == hash in our case
@@ -1396,13 +1406,13 @@
 			var k = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 			// Step: d
-			k = Crypto.HMAC(Crypto.SHA256, v.concat([0]).concat(x).concat(hash), k, { asBytes: true });
+			k = Crypto.HMAC(Crypto.SHA256, v.concat([0]).concat(bx), k, { asBytes: true });
 
 			// Step: e
 			v = Crypto.HMAC(Crypto.SHA256, v, k, { asBytes: true });
 
 			// Step: f
-			k = Crypto.HMAC(Crypto.SHA256, v.concat([1]).concat(x).concat(hash), k, { asBytes: true });
+			k = Crypto.HMAC(Crypto.SHA256, v.concat([1]).concat(bx), k, { asBytes: true });
 
 			// Step: g
 			v = Crypto.HMAC(Crypto.SHA256, v, k, { asBytes: true });
@@ -1435,7 +1445,7 @@
 		r.signinput = function(index, wif, sigHashType){
 			var key = coinjs.wif2pubkey(wif);
 			var shType = sigHashType || 1;
-			var signature = this.transactionSig(index, wif, shType);
+			var signature = this.transactionSig(index, wif, shType, null, true);
 			var s = coinjs.script();
 			s.writeBytes(Crypto.util.hexToBytes(signature));
 			s.writeBytes(Crypto.util.hexToBytes(key['pubkey']));
@@ -1446,7 +1456,7 @@
 		/* signs a time locked / hodl input */
 		r.signhodl = function(index, wif, sigHashType){
 			var shType = sigHashType || 1;
-			var signature = this.transactionSig(index, wif, shType);
+			var signature = this.transactionSig(index, wif, shType, null, true);
 			var redeemScript = this.ins[index].script.buffer
 			var s = coinjs.script();
 			s.writeBytes(Crypto.util.hexToBytes(signature));
@@ -1487,7 +1497,7 @@
 
 			var shType = sigHashType || 1;
 			var sighash = Crypto.util.hexToBytes(this.transactionHash(index, shType));
-			var signature = Crypto.util.hexToBytes(this.transactionSig(index, wif, shType));
+			var signature = Crypto.util.hexToBytes(this.transactionSig(index, wif, shType, null, true));
 
 			sigsList[coinjs.countObject(sigsList)+1] = signature;
 
@@ -1524,7 +1534,7 @@
 				if(txhash.result == 1){
 
 					var segwitHash = Crypto.util.hexToBytes(txhash.hash);
-					var signature = this.transactionSig(index, wif, shType, segwitHash);
+					var signature = this.transactionSig(index, wif, shType, segwitHash, true);
 
 					// remove any non standard data we store, i.e. input value
 					var script = coinjs.script();
