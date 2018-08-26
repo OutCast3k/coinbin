@@ -876,7 +876,6 @@ $(document).ready(function() {
 
 		var host = $(this).attr('rel');
 
-
 		if(host=='chain.so_litecoin'){
 			listUnspentChainso_Litecoin(redeem);
 		} else if(host=='chain.so_dogecoin'){

@@ -846,6 +846,9 @@
 					var multi = coinjs.pubkeys2MultisigAddress(pubkeys, r.signaturesRequired);
 					r.address = multi['address'];
 					r.type = 'multisig__'; // using __ for now to differentiat from the other object .type == "multisig"
+					var rs = Crypto.util.bytesToHex(s.buffer);
+					r.redeemscript = rs;
+
 				} else if((s.chunks.length==2) && (s.buffer[0] == 0 && s.buffer[1] == 20)){ // SEGWIT
 					r = {};
 					r.type = "segwit__";
@@ -859,6 +862,8 @@
 					r.pubkey = Crypto.util.bytesToHex(s.chunks[3]);
 					r.checklocktimeverify = coinjs.bytesToNum(s.chunks[0].slice());
 					r.address = coinjs.simpleHodlAddress(r.pubkey, r.checklocktimeverify).address;
+					var rs = Crypto.util.bytesToHex(s.buffer);
+					r.redeemscript = rs;
 					r.type = "hodl__";
 				}
 			} catch(e) {
