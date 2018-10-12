@@ -1821,7 +1821,7 @@ $(document).ready(function() {
 	});
 
 	$("#recipients .addressAddTo").click(function(){
-		if($("#recipients .addressRemoveTo").length<19){
+		if($("#recipients .addressRemoveTo").length<100){
 			var clone = '<div class="row recipient"><br>'+$(this).parent().parent().html()+'</div>';
 			$("#recipients").append(clone);
 			$("#recipients .glyphicon-plus:last").removeClass('glyphicon-plus').addClass('glyphicon-minus');
@@ -2054,6 +2054,11 @@ $(document).ready(function() {
 
 	$("#signBtn").click(function(){
 		var wifkey = $("#signPrivateKey");
+		if((wifkey.val()).match(/^[a-f0-9]+$/ig)){
+			coinjs.compressed = true;
+			var coint = coinjs.newKeys(wifkey.val(), true);
+			wifkey.val(coint.wif)
+		}
 		var script = $("#signTransaction");
 
 		if(coinjs.addressDecode(wifkey.val())){
