@@ -888,8 +888,7 @@ $(document).ready(function() {
 
 		if($("#redeemFromStatus").hasClass("hidden")) {
 			// An ethical dilemma: Should we automatically set nLockTime?
-			console.log(redeem);
-			if(redeem.from == 'redeemScript' && redeem.decodescript.type == "hodl__") {
+			if(redeem.from == 'redeemScript' && redeem.type == "hodl__") {
 				$("#nLockTime").val(redeem.decodescript.checklocktimeverify);
 			} else {
 				$("#nLockTime").val(0);
