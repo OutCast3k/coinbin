@@ -854,7 +854,7 @@ $(document).ready(function() {
 	/* redeem from button code */
 
 	$("#redeemFromBtn").click(function(){
-		var redeem = redeemingFrom($("#redeemFrom").val());
+		var redeem = redeemingFrom($("#redeemFrom").val());	
 
 		$("#redeemFromStatus, #redeemFromAddress").addClass('hidden');
 
@@ -888,8 +888,9 @@ $(document).ready(function() {
 
 		if($("#redeemFromStatus").hasClass("hidden")) {
 			// An ethical dilemma: Should we automatically set nLockTime?
-			if(redeem.from == 'redeemScript' && redeem.decodedRs.type == "hodl__") {
-				$("#nLockTime").val(redeem.decodedRs.checklocktimeverify);
+			console.log(redeem);
+			if(redeem.from == 'redeemScript' && redeem.decodescript.type == "hodl__") {
+				$("#nLockTime").val(redeem.decodescript.checklocktimeverify);
 			} else {
 				$("#nLockTime").val(0);
 			}
@@ -925,7 +926,9 @@ $(document).ready(function() {
 				r.addr = decodeRs['address'];
 				r.from = 'redeemScript';
 				r.decodedRs = decodeRs.redeemscript;
+				r.type = decodeRs['type'];
 				r.redeemscript = true;
+				r.decodescript = decodeRs;
 			} else { // something else
 				r.addr = '';
 				r.from = 'other';
