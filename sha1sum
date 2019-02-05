@@ -23,6 +23,7 @@ ed29315e0ffb3f14382431f2724235bf67f44eb3  ./css/bootstrap.min.css
 fc6b4268fbd57ad95d2b41a1d4d6866f222fbdb2  ./css/bootstrap-theme.min.css
 eb54f374256b75a17f274847b4ca9985fd046f9f  ./css/style.css
 2e3217a3f3b7c2fb30562ab9a4ef9a407ae81897  ./images/btc32x.png
+58fcac826f371f0a0d543904ae84bca746b929c9  ./images/donation.png
 8ac24915d59cef71c542e7cb7d7e153f560cba1f  ./images/coinbin.gif
 f2af060f1cadbc9065c8c465c648dc01be67cc12  ./images/loader.gif
 86b6f62b7853e67d3e635f6512a5a5efc58ea3c3  ./fonts/glyphicons-halflings-regular.eot
@@ -31,4 +32,4 @@ de51a8494180a6db074af2dee2383f0a363c5b08  ./fonts/glyphicons-halflings-regular.s
 278e49a86e634da6f2a02f3b47dd9d2a8f26210f  ./fonts/glyphicons-halflings-regular.woff
 44bc1850f570972267b169ae18f1cb06b611ffa2  ./fonts/glyphicons-halflings-regular.ttf
 c024021c71cba503979a859d23cbf7a88b570d82  ./README.md
-26552aac02a06e88b419539f93032de8a25e1edd  ./index.html
+24fca88567f4c4d4c6e3a9f780b0b78146c86620  ./index.html
