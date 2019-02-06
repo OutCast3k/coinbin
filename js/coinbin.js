@@ -1181,7 +1181,7 @@ $(document).ready(function() {
 		rawSubmitDefault(this);
 	});
 
-	// broadcast transaction vai coinbin (default)
+	// broadcast transaction via coinbin (default)
 	function rawSubmitDefault(btn){ 
 		var thisbtn = btn;		
 		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
