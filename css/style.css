@@ -32,3 +32,89 @@ body {
         text-overflow: ellipsis;
         display: block;
 }
+
+#fees .txi_regular {
+	background: #d3d3d3;
+}
+
+#fees .txi_segwit {
+	background: #bae1ff;
+}
+
+#fees .txi_multisig {
+	background: #baffc9;
+}
+
+#fees .txi_hodl {
+	background: #ffdfba;
+}
+
+#fees .txi_unknown {
+	background: #ffb3ba;
+}
+
+#fees .txo_p2pkh {
+	background: #E679C8;
+}
+
+#fees .txo_p2sh {
+	background: #FAFE92;
+}
+
+#fees .txinputs {
+}
+
+#fees .txoutputs {
+}
+
+.hideOverflow {
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+}
+
+#fees .slider {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	height: 30px;
+	outline: none; 
+	opacity: 0.7;
+	-webkit-transition: .2s;
+	transition: opacity .2s;
+	border: 2px dotted #c3c3c3;
+}
+
+#fees .sliderbtn {
+	height: 30px;
+	width: 30px;
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
+}
+
+#fees .slider:hover {
+	opacity: 1;
+}
+
+#fees .slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 32px;
+	height: 32px;
+	border: 0;
+	background: url('https://coinb.in/images/btc32x.png');
+	cursor: pointer;
+}
+
+#fees .slider::-moz-range-thumb {
+	width: 32px;
+	height: 32px;
+	border: 0;
+	background: url('https://coinb.in/images/btc32x.png');
+	cursor: pointer;
+}
+
+#fees .total {
+	font-size: 100px;
+}

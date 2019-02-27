@@ -1,9 +1,9 @@
----- Version 1.3 2017.12.09 ---
+---- Version 1.4 2018.12.28 ---
 77e4519962e2f6a9fc93342137dbb31c33b76b04  ./js/aes.js
 3a09a8fc0cfe828b57fc798d668234d0490ee1a6  ./js/bootstrap-datetimepicker.min.js
 253711c6d825de55a8360552573be950da180614  ./js/bootstrap.min.js
-934f5330156c159378c370f14b46862d54ff5b35  ./js/coinbin.js
-31fbebf65d9cae8f26761cb057c4fb1b97339d08  ./js/coin.js
+cea69963334927160046abfda7ca82400b34d7fc  ./js/coinbin.js
+d7e828cea4e9af4934cc500d022cb1b6ce12cbb0  ./js/coin.js
 988565bc2cb402d63ed5c5fd7ff47c4278efc2c5  ./js/collapse.js
 9ba5ede3d7f9d4c8fd623395f196adfdcf7e970f  ./js/crypto-min.js
 f7c09f2f5a721371e7d478050119f7e2d58e3ef9  ./js/crypto-sha256-hmac.js
@@ -21,7 +21,8 @@ ad038e1f39646b68ae666324ed4c2882a8c42474  ./js/qrcode.js
 255c58c17e63eb54adb3cd02b5c06224c67fc364  ./css/bootstrap-datetimepicker.min.css
 ed29315e0ffb3f14382431f2724235bf67f44eb3  ./css/bootstrap.min.css
 fc6b4268fbd57ad95d2b41a1d4d6866f222fbdb2  ./css/bootstrap-theme.min.css
-4198ed869836ea5727ad6b80bf2df0a9c1a83244  ./css/style.css
+eb54f374256b75a17f274847b4ca9985fd046f9f  ./css/style.css
+2e3217a3f3b7c2fb30562ab9a4ef9a407ae81897  ./images/btc32x.png
 8ac24915d59cef71c542e7cb7d7e153f560cba1f  ./images/coinbin.gif
 f2af060f1cadbc9065c8c465c648dc01be67cc12  ./images/loader.gif
 86b6f62b7853e67d3e635f6512a5a5efc58ea3c3  ./fonts/glyphicons-halflings-regular.eot
@@ -29,8 +30,5 @@ ca35b697d99cae4d1b60f2d60fcd37771987eb07  ./fonts/glyphicons-halflings-regular.w
 de51a8494180a6db074af2dee2383f0a363c5b08  ./fonts/glyphicons-halflings-regular.svg
 278e49a86e634da6f2a02f3b47dd9d2a8f26210f  ./fonts/glyphicons-halflings-regular.woff
 44bc1850f570972267b169ae18f1cb06b611ffa2  ./fonts/glyphicons-halflings-regular.ttf
-d8a324a13501cd5705dc26b945fc8088f00907ae  ./README.md
-4b0ef8c0520f45540f142b562e9fbf00145f219c  ./index.html
-
-
-
+c024021c71cba503979a859d23cbf7a88b570d82  ./README.md
+26552aac02a06e88b419539f93032de8a25e1edd  ./index.html
