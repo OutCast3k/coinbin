@@ -1237,7 +1237,7 @@ $(document).ready(function() {
 			},
             success: function(res) {
 				if(res.txid){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+res.txid+'<br> Check this transaction by searching Txid on <a href="https://testnet.blockexplorer.com/">testnet.blockexplorer.com</a>');
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + res.txid + '<br> <a href="https://testnet.blockexplorer.com/tx/' + res.txid + '" target="_blank">View on Blockchain Explorer</a>');
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again. Response error text: ').res.responseText.prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 				}
