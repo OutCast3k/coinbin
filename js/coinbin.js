@@ -1806,6 +1806,14 @@ $(document).ready(function() {
 			configureBroadcast();
 			configureGetUnspentTx();
 
+            if (coinjs.pub == 0x30){   // LTC
+                explorer_addr = "https://chain.so/address/LTC/";
+                coinjs.bech32.hrp = "ltc";
+            }
+            else if (coinjs.pub == 0x1e){   // DOGE
+                explorer_addr = "https://chain.so/address/DOGE/";
+            }
+
 			$("#statusSettings").addClass("alert-success").removeClass("hidden").html("<span class=\"glyphicon glyphicon-ok\"></span> Settings updates successfully").fadeOut().fadeIn();	
 		} else {
 			$("#statusSettings").addClass("alert-danger").removeClass("hidden").html("There is an error with one or more of your settings");	
