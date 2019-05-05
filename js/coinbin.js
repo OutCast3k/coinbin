@@ -1181,7 +1181,7 @@ $(document).ready(function() {
 		rawSubmitDefault(this);
 	});
 
-	// broadcast transaction vai coinbin (default)
+	// broadcast transaction via coinbin (default)
 	function rawSubmitDefault(btn){ 
 		var thisbtn = btn;		
 		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
@@ -1196,8 +1196,7 @@ $(document).ready(function() {
                         success: function(data) {
 				$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
 				if($(data).find("result").text()==1){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger');
-					$("#rawTransactionStatus").html('txid: '+$(data).find("txid").text());
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + $(data).find("txid").text() + '<br> <a href="https://www.blockchain.com/btc/tx/' + $(data).find("txid").text() + '" target="_blank">View on Blockchain Explorer</a>');
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
 				}
@@ -1223,8 +1222,7 @@ $(document).ready(function() {
                         success: function(data) {
 				$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
 				if($(data).find("result").text()==1){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger');
-					$("#rawTransactionStatus").html('txid: '+$(data).find("txid").text());
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + $(data).find("txid").text() + '<br> <a href="https://chainz.cryptoid.info/carbon/tx.dws?' + $(data).find("txid").text() + '" target="_blank">View on Blockchain Explorer</a>');
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
 				}
@@ -1253,7 +1251,7 @@ $(document).ready(function() {
 			},
                         success: function(data) {
 				if(data.status && data.data.txid){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data.txid);
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + data.data.txid + '<br> <a href="https://chain.so/tx/BTC/' + data.data.txid + '" target="_blank">View on Blockchain Explorer</a>');
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 				}				
@@ -1281,7 +1279,7 @@ $(document).ready(function() {
 			},
                         success: function(data) {
 				if((data.tx) && data.tx.hash){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.tx.hash);
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + data.tx.hash + '<br> <a href="https://live.blockcypher.com/btc/tx/' + data.tx.hash + '" target="_blank">View on Blockchain Explorer</a>');
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 				}
@@ -1313,7 +1311,7 @@ $(document).ready(function() {
                         success: function(data) {
 			//	console.info(JSON.stringify(data, null, 4));
 				if((data.status && data.data) && data.status=='success'){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: ' + data.data.txid);
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + data.data.txid + '<br> <a href="https://chain.so/tx/DOGE/' + data.data.txid + '" target="_blank">View on Blockchain Explorer</a>');
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 				}
