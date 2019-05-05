@@ -1037,11 +1037,13 @@ $(document).ready(function() {
 					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 					for(var i in data.data.txs){
 						var o = data.data.txs[i];
-						var tx = ((o.txid).match(/.{1,2}/g).reverse()).join("")+'';
-						var n = o.output_no;
-						var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script_hex;
-						var amount = o.value;
-						addOutput(tx, n, script, amount);
+						var tx = ((""+o.txid).match(/.{1,2}/g).reverse()).join("")+'';
+						if(tx.match(/^[a-f0-9]+$/)){
+							var n = o.output_no;
+							var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script_hex;
+							var amount = o.value;
+							addOutput(tx, n, script, amount);
+						}
 					}
 				} else {
 					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
@@ -1291,6 +1293,37 @@ $(document).ready(function() {
 		});
 	}
 
+
+	// broadcast transaction via chain.so for litecoin
+	function rawSubmitchainso_litecoin(thisbtn){ 
+		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
+                $.ajax ({
+                        type: "POST",
+                        url: "https://chain.so/api/v2/send_tx/LTC",
+            			data: {"tx_hex":$("#rawTransaction").val()},
+                        dataType: "json",
+                        error: function(data) {
+				var obj = $.parseJSON(data.responseText);
+				var r = ' ';
+				r += (obj.data.tx_hex) ? ' '+obj.data.tx_hex : '';
+				r = (r!='') ? r : ' Failed to broadcast'; // build response 
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+			//	console.error(JSON.stringify(data, null, 4));
+                        },
+                        success: function(data) {
+			//	console.info(JSON.stringify(data, null, 4));
+				if((data.status && data.data) && data.status=='success'){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: ' + data.data.txid);
+				} else {
+					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+				}
+			},
+			complete: function(data, status) {
+				$("#rawTransactionStatus").fadeOut().fadeIn();
+				$(thisbtn).val('Submit').attr('disabled',false);				
+                        }
+                });
+	}
 
 	// broadcast transaction via chain.so for dogecoin
 	function rawSubmitchainso_dogecoin(thisbtn){ 
@@ -1771,6 +1804,14 @@ $(document).ready(function() {
 			configureBroadcast();
 			configureGetUnspentTx();
 
+            if (coinjs.pub == 0x30){   // LTC
+                explorer_addr = "https://chain.so/address/LTC/";
+                coinjs.bech32.hrp = "ltc";
+            }
+            else if (coinjs.pub == 0x1e){   // DOGE
+                explorer_addr = "https://chain.so/address/DOGE/";
+            }
+
 			$("#statusSettings").addClass("alert-success").removeClass("hidden").html("<span class=\"glyphicon glyphicon-ok\"></span> Settings updates successfully").fadeOut().fadeIn();	
 		} else {
 			$("#statusSettings").addClass("alert-danger").removeClass("hidden").html("There is an error with one or more of your settings");	
@@ -1820,6 +1861,10 @@ $(document).ready(function() {
 		if(host=="chain.so_bitcoinmainnet"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitChainso_BitcoinMainnet(this);
+			});
+		} else if(host=="chain.so_litecoin"){
+			$("#rawSubmitBtn").click(function(){
+				rawSubmitchainso_litecoin(this);
 			});
 		} else if(host=="chain.so_dogecoin"){
 			$("#rawSubmitBtn").click(function(){
