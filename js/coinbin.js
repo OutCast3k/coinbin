@@ -344,7 +344,22 @@ $(document).ready(function() {
 			$("#aes256passStatus").removeClass("hidden");
 		}
 		$("#newPrivKeyEnc").val(CryptoJS.AES.encrypt(coin.wif, $("#aes256pass").val())+'');
+	});
+	
+	$("#newPaperwalletBtn").click(function(){
+		if($("#newBitcoinAddress").val()==""){
+			$("#newKeysBtn").click();
+		}
 
+		var paperwallet = window.open();
+		paperwallet.document.write('<h2>BTC PaperWallet</h2><hr><div style="margin-top: 5px; margin-bottom: 5px"><div><h3 style="margin-top: 0">Address (Share)</h3></div><div style="text-align: center;"><div id="qraddress"></div><p>'+$("#newBitcoinAddress").val()+'</p></div></div><hr><div style="margin-top: 5px; margin-bottom: 5px"><div><h3 style="margin-top: 0">Public Key</h3></div><div style="text-align: center;"><div id="qrpubkey"></div><p>'+$("#newPubKey").val()+'</p></div></div><hr><div style="margin-top: 5px; margin-bottom: 5px"><div><h3 style="margin-top: 0">Private Key (KEEP SECRET!)</h3></div><div style="text-align: center;"><div id="qrprivkey"></div><p>'+$("#newPrivKey").val()+'</p></div></div>');
+		paperwallet.document.close();
+		paperwallet.focus();
+		new QRCode(paperwallet.document.getElementById("qraddress"), {text: $("#newBitcoinAddress").val(), width: 125, height: 125});
+		new QRCode(paperwallet.document.getElementById("qrpubkey"), {text: $("#newPubKey").val(), width: 125, height: 125});
+		new QRCode(paperwallet.document.getElementById("qrprivkey"), {text: $("#newPrivKey").val(), width: 125, height: 125});
+		paperwallet.print();
+		paperwallet.close();
 	});
 
 	$("#newBrainwallet").click(function(){
@@ -392,6 +407,22 @@ $(document).ready(function() {
 		coinjs.compressed = compressed;
 	});
 
+	$("#newSegwitPaperwalletBtn").click(function(){
+		if($("#newSegWitAddress").val()==""){
+			$("#newSegWitKeysBtn").click();
+		}
+
+		var paperwallet = window.open();
+		paperwallet.document.write('<h2>BTC SegWit PaperWallet</h2><hr><div style="margin-top: 5px; margin-bottom: 5px"><div><h3 style="margin-top: 0">Address (Share)</h3></div><div style="text-align: center;"><div id="qraddress"></div><p>'+$("#newSegWitAddress").val()+'</p></div></div><hr><div style="margin-top: 5px; margin-bottom: 5px"><div><h3 style="margin-top: 0">Public Key</h3></div><div style="text-align: center;"><div id="qrpubkey"></div><p>'+$("#newSegWitPubKey").val()+'</p></div></div><hr><div style="margin-top: 5px; margin-bottom: 5px"><div><h3 style="margin-top: 0">Redeem Script</h3></div><div style="text-align: center;"><div id="qrredeem"></div><p>'+$("#newSegWitRedeemScript").val()+'</p></div></div><hr><div style="margin-top: 5px; margin-bottom: 5px"><div><h3 style="margin-top: 0">Private Key (KEEP SECRET!)</h3></div><div style="text-align: center;"><div id="qrprivkey"></div><p>'+$("#newSegWitPrivKey").val()+'</p></div></div>');
+		paperwallet.document.close();
+		paperwallet.focus();
+		new QRCode(paperwallet.document.getElementById("qraddress"), {text: $("#newSegWitAddress").val(), width: 110, height: 110});
+		new QRCode(paperwallet.document.getElementById("qrpubkey"), {text: $("#newSegWitPubKey").val(), width: 110, height: 110});
+		new QRCode(paperwallet.document.getElementById("qrredeem"), {text: $("#newSegWitRedeemScript").val(), width: 110, height: 110});
+		new QRCode(paperwallet.document.getElementById("qrprivkey"), {text: $("#newSegWitPrivKey").val(), width: 110, height: 110});
+		paperwallet.print();
+		paperwallet.close();
+	});
 
 	/* new -> multisig code */
 
@@ -1037,11 +1068,13 @@ $(document).ready(function() {
 					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 					for(var i in data.data.txs){
 						var o = data.data.txs[i];
-						var tx = ((o.txid).match(/.{1,2}/g).reverse()).join("")+'';
-						var n = o.output_no;
-						var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script_hex;
-						var amount = o.value;
-						addOutput(tx, n, script, amount);
+						var tx = ((""+o.txid).match(/.{1,2}/g).reverse()).join("")+'';
+						if(tx.match(/^[a-f0-9]+$/)){
+							var n = o.output_no;
+							var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script_hex;
+							var amount = o.value;
+							addOutput(tx, n, script, amount);
+						}
 					}
 				} else {
 					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
@@ -1181,7 +1214,7 @@ $(document).ready(function() {
 		rawSubmitDefault(this);
 	});
 
-	// broadcast transaction vai coinbin (default)
+	// broadcast transaction via coinbin (default)
 	function rawSubmitDefault(btn){ 
 		var thisbtn = btn;		
 		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
@@ -1196,8 +1229,7 @@ $(document).ready(function() {
                         success: function(data) {
 				$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
 				if($(data).find("result").text()==1){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger');
-					$("#rawTransactionStatus").html('txid: '+$(data).find("txid").text());
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + $(data).find("txid").text() + '<br> <a href="https://coinb.in/tx/' + $(data).find("txid").text() + '" target="_blank">View on Blockchain</a>');
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
 				}
@@ -1223,8 +1255,7 @@ $(document).ready(function() {
                         success: function(data) {
 				$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
 				if($(data).find("result").text()==1){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger');
-					$("#rawTransactionStatus").html('txid: '+$(data).find("txid").text());
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + $(data).find("txid").text() + '<br> <a href="https://chainz.cryptoid.info/carbon/tx.dws?' + $(data).find("txid").text() + '" target="_blank">View on Blockchain Explorer</a>');
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
 				}
@@ -1253,7 +1284,7 @@ $(document).ready(function() {
 			},
                         success: function(data) {
 				if(data.status && data.data.txid){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.data.txid);
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + data.data.txid + '<br> <a href="https://chain.so/tx/BTC/' + data.data.txid + '" target="_blank">View on Blockchain Explorer</a>');
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 				}				
@@ -1281,7 +1312,7 @@ $(document).ready(function() {
 			},
                         success: function(data) {
 				if((data.tx) && data.tx.hash){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: '+data.tx.hash);
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + data.tx.hash + '<br> <a href="https://live.blockcypher.com/btc/tx/' + data.tx.hash + '" target="_blank">View on Blockchain Explorer</a>');
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 				}
@@ -1293,6 +1324,37 @@ $(document).ready(function() {
 		});
 	}
 
+
+	// broadcast transaction via chain.so for litecoin
+	function rawSubmitchainso_litecoin(thisbtn){ 
+		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
+                $.ajax ({
+                        type: "POST",
+                        url: "https://chain.so/api/v2/send_tx/LTC",
+            			data: {"tx_hex":$("#rawTransaction").val()},
+                        dataType: "json",
+                        error: function(data) {
+				var obj = $.parseJSON(data.responseText);
+				var r = ' ';
+				r += (obj.data.tx_hex) ? ' '+obj.data.tx_hex : '';
+				r = (r!='') ? r : ' Failed to broadcast'; // build response 
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+			//	console.error(JSON.stringify(data, null, 4));
+                        },
+                        success: function(data) {
+			//	console.info(JSON.stringify(data, null, 4));
+				if((data.status && data.data) && data.status=='success'){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + data.data.txid + '<br> <a href="https://chain.so/tx/LTC/' + data.data.txid + '" target="_blank">View on Blockchain Explorer</a>');
+				} else {
+					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+				}
+			},
+			complete: function(data, status) {
+				$("#rawTransactionStatus").fadeOut().fadeIn();
+				$(thisbtn).val('Submit').attr('disabled',false);				
+                        }
+                });
+	}
 
 	// broadcast transaction via chain.so for dogecoin
 	function rawSubmitchainso_dogecoin(thisbtn){ 
@@ -1313,7 +1375,7 @@ $(document).ready(function() {
                         success: function(data) {
 			//	console.info(JSON.stringify(data, null, 4));
 				if((data.status && data.data) && data.status=='success'){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' Txid: ' + data.data.txid);
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + data.data.txid + '<br> <a href="https://chain.so/tx/DOGE/' + data.data.txid + '" target="_blank">View on Blockchain Explorer</a>');
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 				}
@@ -1773,6 +1835,14 @@ $(document).ready(function() {
 			configureBroadcast();
 			configureGetUnspentTx();
 
+            if (coinjs.pub == 0x30){   // LTC
+                explorer_addr = "https://chain.so/address/LTC/";
+                coinjs.bech32.hrp = "ltc";
+            }
+            else if (coinjs.pub == 0x1e){   // DOGE
+                explorer_addr = "https://chain.so/address/DOGE/";
+            }
+
 			$("#statusSettings").addClass("alert-success").removeClass("hidden").html("<span class=\"glyphicon glyphicon-ok\"></span> Settings updates successfully").fadeOut().fadeIn();	
 		} else {
 			$("#statusSettings").addClass("alert-danger").removeClass("hidden").html("There is an error with one or more of your settings");	
@@ -1822,6 +1892,10 @@ $(document).ready(function() {
 		if(host=="chain.so_bitcoinmainnet"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitChainso_BitcoinMainnet(this);
+			});
+		} else if(host=="chain.so_litecoin"){
+			$("#rawSubmitBtn").click(function(){
+				rawSubmitchainso_litecoin(this);
 			});
 		} else if(host=="chain.so_dogecoin"){
 			$("#rawSubmitBtn").click(function(){

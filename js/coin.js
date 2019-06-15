@@ -22,7 +22,8 @@
 	coinjs.developer = '3K1oFZMks41C7qDYBsr72SYjapLqDuSYuN'; //bitcoin
 
 	/* bit(coinb.in) api vars */
-	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+'coinb.in/api/';
+	coinjs.hostname	= ((document.location.hostname.split(".")[(document.location.hostname.split(".")).length-1]) == 'onion') ? '4zpinp6gdkjfplhk.onion' : 'coinb.in';
+	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+coinjs.hostname+'/api/';
 	coinjs.uid = '1';
 	coinjs.key = '12345678901234567890123456789012';
 
