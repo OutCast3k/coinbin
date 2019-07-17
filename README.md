@@ -3,7 +3,7 @@ coinbin
 
 A Open Source Browser Based Bitcoin Wallet. Version 1.4 beta by OutCast3k
 
-Live version available at http://coinb.in/ or http://4zpinp6gdkjfplhk.onion
+Live version available at http://coinb.in/ or http://4zpinp6gdkjfplhk.onion or [ZeroNet](http://127.0.0.1:43110/14YaiaXfXyVLw17WCiyCbGWgLwKeYDTqP5/)
 
 Github URL: https://github.com/OutCast3k/coinbin/
 
