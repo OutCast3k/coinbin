@@ -913,6 +913,8 @@ $(document).ready(function() {
 			listUnspentChainso_Dogecoin(redeem);
 		} else if(host=='cryptoid.info_carboncoin'){
 			listUnspentCryptoidinfo_Carboncoin(redeem);
+		} else if(host=='chain.so_bitcointestnet'){
+			listUnspentChainso_Bitcointestnet(redeem);
 		} else {
 			listUnspentDefault(redeem);
 		}
@@ -1155,6 +1157,40 @@ $(document).ready(function() {
 		});
 	}
 
+		/* retrieve unspent data from chain.so for dogecoin */
+		function listUnspentChainso_Bitcointestnet(redeem){
+			$.ajax ({
+				type: "GET",
+				url: "https://chain.so/api/v2/get_tx_unspent/btctest/"+redeem.addr,
+				dataType: "json",
+				error: function(data) {
+					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+				},
+				success: function(data) {
+					if((data.status && data.data) && data.status=='success'){
+						$("#redeemFromAddress").removeClass('hidden').html(
+							'<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+						for(var i in data.data.txs){
+							var o = data.data.txs[i];
+							var tx = ((""+o.txid).match(/.{1,2}/g).reverse()).join("")+'';
+							if(tx.match(/^[a-f0-9]+$/)){
+								var n = o.output_no;
+								var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script_hex;
+								var amount = o.value;
+								addOutput(tx, n, script, amount);
+							}
+						}
+					} else {
+						$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+					}
+				},
+				complete: function(data, status) {
+					$("#redeemFromBtn").html("Load").attr('disabled',false);
+					totalInputAmount();
+				}
+			});
+		}
+	
 	/* math to calculate the inputs and outputs */
 
 	function totalInputAmount(){
@@ -1296,6 +1332,34 @@ $(document).ready(function() {
 		});
 	}
 
+	function rawSubmitChainso_BitcoinTestnet(thisbtn){ 
+		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
+		$.ajax ({
+			type: "POST",
+			url: "https://chain.so/api/v2/send_tx/BTCTEST/",
+			data: {"tx_hex":$("#rawTransaction").val()},
+			dataType: "json",
+			error: function(data) {
+				var obj = $.parseJSON(data.responseText);
+				var r = ' ';
+				r += (obj.data.tx_hex) ? obj.data.tx_hex : '';
+				r = (r!='') ? r : ' Failed to broadcast'; // build response 
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+			},
+                        success: function(data) {
+				if(data.status && data.data.txid){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + data.data.txid + '<br> <a href="https://chain.so/tx/BTCTEST/' + data.data.txid + '" target="_blank">View on Blockchain Explorer</a>');
+				} else {
+					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+				}				
+			},
+			complete: function(data, status) {
+				$("#rawTransactionStatus").fadeOut().fadeIn();
+				$(thisbtn).val('Submit').attr('disabled',false);				
+			}
+		});
+	}
+		
 	// broadcast transaction via blockcypher.com (mainnet)
 	function rawSubmitblockcypher_BitcoinMainnet(thisbtn){ 
 		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
@@ -1386,8 +1450,6 @@ $(document).ready(function() {
                         }
                 });
 	}
-
-
 
 
 	/* verify script code */
@@ -1842,6 +1904,9 @@ $(document).ready(function() {
             else if (coinjs.pub == 0x1e){   // DOGE
                 explorer_addr = "https://chain.so/address/DOGE/";
             }
+            else if (coinjs.pub == 0x6f){   // BTCTEST
+                explorer_addr = "https://chain.so/address/BTCTEST/";
+            }
 
 			$("#statusSettings").addClass("alert-success").removeClass("hidden").html("<span class=\"glyphicon glyphicon-ok\"></span> Settings updates successfully").fadeOut().fadeIn();	
 		} else {
@@ -1892,6 +1957,10 @@ $(document).ready(function() {
 		if(host=="chain.so_bitcoinmainnet"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitChainso_BitcoinMainnet(this);
+			});
+		} else if(host=="chain.so_bitcointestnet"){
+			$("#rawSubmitBtn").click(function(){
+				rawSubmitchainso_BitcoinTestnet(this);
 			});
 		} else if(host=="chain.so_litecoin"){
 			$("#rawSubmitBtn").click(function(){
