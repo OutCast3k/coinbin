@@ -782,9 +782,25 @@ $(document).ready(function() {
 		window.location = "#fees";
 	});
 
+	// this is when the user clicks on the '-' button on the FIRST row of inputs only
+	// there is a different function for the '-' button on other rows
 	$(".txidClear").click(function(){
-		$("#inputs .row:first input").attr('disabled',false);
-		$("#inputs .row:first input").val("");
+		var numTxIns = $('#inputs div.row').length;
+		if (numTxIns > 1) {
+			// when there are subsequent rows of data we want the
+			// second row data moved into this row, and the second row deleted
+			// github coinbin/issues/132
+			$("#inputs .txId:first").val($("#inputs .txId")[1].value);
+			$("#inputs .txIdN:first").val($("#inputs .txIdN")[1].value);
+			$("#inputs .txIdScript:first").val($("#inputs .txIdScript")[1].value);
+			$("#inputs .txIdAmount:first").val($("#inputs .txIdAmount")[1].value);
+			$(this).parent().parent().next().fadeOut().remove(); // remove the second row
+		}
+		else {
+			$("#inputs .row:first input").val("");
+			// when clearing the first row, enable it so user can enter information manually
+			$("#inputs .row:first input").attr('disabled',false);
+		}
 		totalInputAmount();
 	});
 
