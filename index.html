@@ -338,7 +338,16 @@
 
 						</div>
 
-						<input type="button" class="btn btn-primary" value="Generate" id="newKeysBtn">
+						<div class="btn-group">
+							<input type="button" class="btn btn-primary" value="Generate" id="newKeysBtn">
+							<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="caret"></span>
+								<span class="sr-only">Toggle Dropdown</span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="#" id="newPaperwalletBtn">Print</a></li>
+							</ul>							
+						</div>
 						<br>
 					</div>
 
@@ -383,7 +392,17 @@
 							<input type="text" class="form-control hidden" id="brainwalletSegWit">
 						</div>
 
-						<input type="button" class="btn btn-primary" value="Generate" id="newSegWitKeysBtn">
+						<div class="btn-group">
+							<input type="button" class="btn btn-primary" value="Generate" id="newSegWitKeysBtn">
+							<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="caret"></span>
+								<span class="sr-only">Toggle Dropdown</span>
+							</button>
+
+							<ul class="dropdown-menu">
+								<li><a href="#" id="newSegwitPaperwalletBtn">Print</a></li>
+							</ul>
+						</div>
 						<br>
 					</div>
 
