@@ -1086,7 +1086,7 @@ $(document).ready(function() {
 				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
 			},
 			success: function(data) {
-				if(data.txrefs) {
+				if (data.address) { // address field will always be present, txrefs is only present if there are UTXOs
 					$("#redeemFromAddress").removeClass('hidden').html(
 						'<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 					for(var i in data.txrefs){
