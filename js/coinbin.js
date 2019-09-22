@@ -911,7 +911,7 @@ $(document).ready(function() {
         // network name     "btc"           "bitcoin"       "BTC"
         // network name     "ltc"           "litecoin"      "LTC"
         // network name     "doge"          "dogecoin"      "DOGE"
-        debugger;
+
 		if(host=='chain.so_bitcoinmainnet'){
 			listUnspentChainso(redeem, "BTC");
         } else if(host=='chain.so_litecoin'){
