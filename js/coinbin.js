@@ -1678,6 +1678,8 @@ $(document).ready(function() {
 	$("#signBtn").click(function(){
 		var wifkey = $("#signPrivateKey");
 		var script = $("#signTransaction");
+		wifkey.val(wifkey.val().trimLeft().trimRight()); // sanitize
+		script.val(script.val().trimLeft().trimRight()); // sanitize
 
 		if(coinjs.addressDecode(wifkey.val())){
 			$(wifkey).parent().removeClass('has-error');
@@ -1696,8 +1698,17 @@ $(document).ready(function() {
 			try {
 				var tx = coinjs.transaction();
 				var t = tx.deserialize(script.val());
-
-				var signed = t.sign(wifkey.val(), $("#sighashType option:selected").val());
+				var warnings = new Array();
+				var signed = t.sign(wifkey.val(), $("#sighashType option:selected").val(), warnings);
+				if (signed == script.val()) {
+					// if signed script is identical to the input,
+					// output a warning telling user to check inputs.
+					// most likely they chose the wrong WIF key for signing
+					$("#signedDataError").removeClass('hidden');
+					if (warnings.length > 0) {
+						$("#signedDataError").html("Warning: " + warnings.toString());
+					}
+				}
 				$("#signedData textarea").val(signed);
 				$("#signedData .txSize").html(t.size());
 				$("#signedData").removeClass('hidden').fadeIn();
@@ -1705,6 +1716,7 @@ $(document).ready(function() {
 				// console.log(e);
 			}
 		} else {
+			$("#signedDataError").html("There is a problem with one or more of your inputs, please check and try again");
 			$("#signedDataError").removeClass('hidden');
 			$("#signedData").addClass('hidden');
 		}
