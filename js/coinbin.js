@@ -171,7 +171,7 @@ $(document).ready(function() {
 			script = sw.redeemscript;
 		}
 
-		var sequence = false;
+		var sequence = 0xffffffff-1;
 		if($("#walletRBF").is(":checked")){
 			sequence = 0xffffffff-2;
 		}
@@ -656,7 +656,7 @@ $(document).ready(function() {
 			}
 
 			if(!$(o).hasClass("has-error")){
-				var seq = null;
+				var seq = 0xffffffff-1;
 				if($("#txRBF").is(":checked")){
 					seq = 0xffffffff-2;
 				}
