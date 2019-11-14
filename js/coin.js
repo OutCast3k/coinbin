@@ -156,7 +156,11 @@
 		}
 
 		var s = coinjs.script();
-		s.writeBytes(coinjs.numToScriptNumBytes(checklocktimeverify));
+		if (checklocktimeverify <= 16 && checklocktimeverify >= 1) {
+			s.writeOp(0x50 + checklocktimeverify);//OP_1 to OP_16 for minimal encoding
+		} else {
+			s.writeBytes(coinjs.numToScriptNumBytes(checklocktimeverify));
+		}
 		s.writeOp(177);//OP_CHECKLOCKTIMEVERIFY
 		s.writeOp(117);//OP_DROP
 		s.writeBytes(Crypto.util.hexToBytes(pubkey));
@@ -1934,9 +1938,6 @@
 	}
 
 	coinjs.numToScriptNumBytes = function(_number) {
-		if (_number <= 16 && _number >= 1 && _number === Math.floor(_number)) {
-			return [0x50 + _number] // OP_1 to OP_16 for minimal encoding
-		}
 		var value = Math.abs(_number);
 		var size = scriptNumSize(value);
 		var result = [];
