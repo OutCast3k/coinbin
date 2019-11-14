@@ -156,7 +156,7 @@
 		}
 
 		var s = coinjs.script();
-		s.writeBytes(coinjs.numToByteArray(checklocktimeverify));
+		s.writeBytes(coinjs.numToScriptNumBytes(checklocktimeverify));
 		s.writeOp(177);//OP_CHECKLOCKTIMEVERIFY
 		s.writeOp(117);//OP_DROP
 		s.writeBytes(Crypto.util.hexToBytes(pubkey));
@@ -1924,12 +1924,34 @@
 		}
 	}
 
-	coinjs.numToByteArray = function(num) {
-		if (num <= 256) { 
-			return [num];
-		} else {
-			return [num % 256].concat(coinjs.numToByteArray(Math.floor(num / 256)));
+	function scriptNumSize(i) {
+		return i > 0x7fffffff ? 5
+			: i > 0x7fffff ? 4
+			: i > 0x7fff ? 3
+			: i > 0x7f ? 2
+			: i > 0x00 ? 1
+			: 0;
+	}
+
+	coinjs.numToScriptNumBytes = function(_number) {
+		if (_number <= 16 && _number >= 1 && _number === Math.floor(_number)) {
+			return [0x50 + _number] // OP_1 to OP_16 for minimal encoding
 		}
+		var value = Math.abs(_number);
+		var size = scriptNumSize(value);
+		var result = [];
+		for (var i = 0; i < size; ++i) {
+			result.push(0);
+		}
+		var negative = _number < 0;
+		for (i = 0; i < size; ++i) {
+			result[i] = value & 0xff;
+			value = Math.floor(value / 256);
+		}
+		if (negative) {
+			result[size - 1] |= 0x80;
+		}
+		return result;
 	}
 
 	coinjs.numToVarInt = function(num) {
