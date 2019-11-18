@@ -935,6 +935,8 @@ $(document).ready(function() {
 
 		} else if(host=='cryptoid.info_carboncoin'){
 			listUnspentCryptoidinfo_Carboncoin(redeem);
+		} else if(host=='cpuchain'){
+			listUnspentCPUchain(redeem);
 		} else {
 			listUnspentDefault(redeem);
 		}
@@ -1213,6 +1215,39 @@ $(document).ready(function() {
 		});
 	}
 
+	/* retrieve unspent data from cpuchain api */
+	function listUnspentCPUchain(redeem){
+		$.ajax ({
+			type: "GET",
+			url: "https://api.cpuchain.org/unspent/"+redeem.addr,
+			dataType: "json",
+			error: function(data) {
+				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+			},
+			success: function(data) {
+				if(data.result){
+					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+					for(var i in data.result){
+						var o = data.result[i];
+						var tx = ((""+o.txid).match(/.{1,2}/g).reverse()).join("")+'';
+						if(tx.match(/^[a-f0-9]+$/)){
+							var n = o.index;
+							var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script;
+							var amount = ((o.value.toString()*1)/100000000).toFixed(8);
+							addOutput(tx, n, script, amount);
+						}
+					}
+				} else {
+					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
+				}
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+			}
+		});
+	}
+
 
 	/* math to calculate the inputs and outputs */
 
@@ -1408,6 +1443,35 @@ $(document).ready(function() {
 				$(thisbtn).val('Submit').attr('disabled',false);				
                         }
                 });
+	}
+
+	// broadcast transaction via cpuchain api
+	function rawSubmitCPUchain(thisbtn){
+		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
+		$.ajax ({
+			type: "POST",
+			url: "https://api.cpuchain.org/broadcast",
+			data: {"raw":$("#rawTransaction").val()},
+			dataType: "json",
+			error: function(data) {
+				var obj = $.parseJSON(data.responseText);
+				var r = ' ';
+				r += (obj.data.raw) ? obj.data.raw : '';
+				r = (r!='') ? r : ' Failed to broadcast'; // build response
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+			},
+                        success: function(data) {
+				if(data.result){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + data.result + '<br> <a href="'+explorer_tx+data.result+'" target="_blank">View on Blockchain Explorer</a>');
+				} else {
+					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+				}
+			},
+			complete: function(data, status) {
+				$("#rawTransactionStatus").fadeOut().fadeIn();
+				$(thisbtn).val('Submit').attr('disabled',false);
+			}
+		});
 	}
 
 
@@ -1865,6 +1929,11 @@ $(document).ready(function() {
             else if (coinjs.pub == 0x1e){   // DOGE
                 explorer_addr = "https://chain.so/address/DOGE/";
             }
+            else if (coinjs.pub == 0x1c){   // CPU
+                explorer_addr = "https://explorer.cpuchain.org/address/";
+                explorer_tx = "https://explorer.cpuchain.org/tx/";
+                coinjs.bech32.hrp = "cpu";
+            }
 
 			$("#statusSettings").addClass("alert-success").removeClass("hidden").html("<span class=\"glyphicon glyphicon-ok\"></span> Settings updates successfully").fadeOut().fadeIn();	
 		} else {
@@ -1957,6 +2026,10 @@ $(document).ready(function() {
 		} else if(host=="cryptoid.info_carboncoin"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitcryptoid_Carboncoin(this);
+			});
+		} else if(host=="cpuchain"){
+			$("#rawSubmitBtn").click(function(){
+				rawSubmitCPUchain(this);
 			});
 		} else {
 			$("#rawSubmitBtn").click(function(){
