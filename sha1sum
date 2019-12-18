@@ -1,8 +1,8 @@
----- Version 1.4 2019.06.05 ----
+---- Version 1.4 2019.09.22 ----
 77e4519962e2f6a9fc93342137dbb31c33b76b04  ./js/aes.js
 3a09a8fc0cfe828b57fc798d668234d0490ee1a6  ./js/bootstrap-datetimepicker.min.js
 253711c6d825de55a8360552573be950da180614  ./js/bootstrap.min.js
-c151bb100bb186b58407b18055d354abca92042a  ./js/coinbin.js
+ad78fbfe50828c366100426609976c8c56085a0d  ./js/coinbin.js
 8f1286e72a6b06259ba1892e532cb35b11c88c37  ./js/coin.js
 988565bc2cb402d63ed5c5fd7ff47c4278efc2c5  ./js/collapse.js
 9ba5ede3d7f9d4c8fd623395f196adfdcf7e970f  ./js/crypto-min.js
@@ -31,4 +31,4 @@ de51a8494180a6db074af2dee2383f0a363c5b08  ./fonts/glyphicons-halflings-regular.s
 278e49a86e634da6f2a02f3b47dd9d2a8f26210f  ./fonts/glyphicons-halflings-regular.woff
 44bc1850f570972267b169ae18f1cb06b611ffa2  ./fonts/glyphicons-halflings-regular.ttf
 c024021c71cba503979a859d23cbf7a88b570d82  ./README.md
-19651268aea16cb448be120d13828f42d208f1f9  ./index.html
+4fa0db6281682d3770b35223d74829e00da9827b  ./index.html
