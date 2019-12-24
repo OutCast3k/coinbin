@@ -1,9 +1,9 @@
----- Version 1.4 2019.09.22 ----
+---- Version 1.4 2019.12.24 ----
 77e4519962e2f6a9fc93342137dbb31c33b76b04  ./js/aes.js
 3a09a8fc0cfe828b57fc798d668234d0490ee1a6  ./js/bootstrap-datetimepicker.min.js
 253711c6d825de55a8360552573be950da180614  ./js/bootstrap.min.js
 ad78fbfe50828c366100426609976c8c56085a0d  ./js/coinbin.js
-8f1286e72a6b06259ba1892e532cb35b11c88c37  ./js/coin.js
+af862d062e338c24c12a64405bd081c6a39c0f22  ./js/coin.js
 988565bc2cb402d63ed5c5fd7ff47c4278efc2c5  ./js/collapse.js
 9ba5ede3d7f9d4c8fd623395f196adfdcf7e970f  ./js/crypto-min.js
 f7c09f2f5a721371e7d478050119f7e2d58e3ef9  ./js/crypto-sha256-hmac.js
