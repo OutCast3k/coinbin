@@ -1193,18 +1193,26 @@
 							<div class="row">
 								<div class="col-md-8">
 									<b>Path</b><br>
-									<select class="form-control">
-										<option>Simple: m/i</option>
+									<select class="form-control" id="hdpathtype"">
+										<option value="simple">Simple: m/i</option>
+										<option value="custom">Custom</option>
 									</select>
+
+									<div id="hdpath" class="hidden" style="margin-top:4px">
+										<span class="input-group">
+											<input type="text" class="form-control" value="m/0/1">  <br>
+											<span class="input-group-addon"> / </span>
+										</span>
+									</div>
 								</div>
 
 								<div class="col-md-2">
-									<b>Index (Start)</b><br>
+									<b><u>I</u>ndex (Start)</b><br>
 									<input type="text" class="form-control derivation_index_start" value="0">
 								</div>
 
 								<div class="col-md-2">
-									<b>Index (End)</b><br>
+									<b><u>I</u>ndex (End)</b><br>
 									<input type="text" class="form-control derivation_index_end" value="1">
 								</div>
 
@@ -1325,7 +1333,7 @@
 
 					<div class="tab-pane tab-content" id="about">
 						<h2>About <small>open source bitcoin wallet</small></h2>
-						<p>Version 1.4</p>
+						<p>Version 1.5</p>
 						<p>Compatible with bitcoin core</p>
 						<p>Github <a href="https://github.com/OutCast3k/coinbin/">https://github.com/OutCast3k/coinbin/</a></p>
 						<p>TOR <a href="http://4zpinp6gdkjfplhk.onion">4zpinp6gdkjfplhk.onion</a></p>
@@ -1466,7 +1474,7 @@
 
 		<div id="footer">
 			<div class="container text-right">
-	        		<p class="text-muted">Version 1.4</p>
+	        		<p class="text-muted">Version 1.5</p>
 			</div>
 		</div>
 

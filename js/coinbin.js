@@ -1660,7 +1660,11 @@ $(document).ready(function() {
 		var html = '';
 		$("#verifyHDaddress .derived_data table tbody").html("");
 		for(var i=index_start;i<=index_end;i++){
-			var derived = hd.derive(i);
+			if($("#hdpathtype option:selected").val()=='simple'){
+				var derived = hd.derive(i);
+			} else {
+				var derived = hd.derive_path(($("#hdpath input").val().replace(/\/+$/, ""))+'/'+i);
+			}
 			html += '<tr>';
 			html += '<td>'+i+'</td>';
 			html += '<td><input type="text" class="form-control" value="'+derived.keys.address+'" readonly></td>';
@@ -1671,6 +1675,15 @@ $(document).ready(function() {
 		}
 		$(html).appendTo("#verifyHDaddress .derived_data table tbody");
 	}
+
+
+	$("#hdpathtype").change(function(){
+		if($(this).val()=='simple'){
+			$("#hdpath").removeClass().addClass("hidden");
+		} else {
+			$("#hdpath").removeClass();
+		}
+	});
 
 
 	/* sign code */

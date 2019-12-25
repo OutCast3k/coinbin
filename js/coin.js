@@ -638,6 +638,8 @@
 
 				coinjs.compressed = c; // reset to default
 			}
+
+			return r;
 		}
 
 		// extend prv/pub key
@@ -651,8 +653,37 @@
 				'pubkey':this.keys.pubkey});
 		}
 
+		// derive from path
+		r.derive_path = function(path) {
+
+			if( path == 'm' || path == 'M' || path == 'm\'' || path == 'M\'' ) return this;
+
+			var p = path.split('/');
+			var hdp = coinjs.clone(this);  // clone hd path
+
+			for( var i in p ) {
+
+				if((( i == 0 ) && c != 'm') || i == 'remove'){
+					continue;
+				}
+
+				var c = p[i];
+
+				var use_private = (c.length > 1) && (c[c.length-1] == '\'');
+				var child_index = parseInt(use_private ? c.slice(0, c.length - 1) : c) & 0x7fffffff;
+				if(use_private)
+					child_index += 0x80000000;
+
+				hdp = hdp.derive(child_index);
+				var key = ((hdp.keys_extended.privkey) && hdp.keys_extended.privkey!='') ? hdp.keys_extended.privkey : hdp.keys_extended.pubkey;
+				hdp = coinjs.hd(key);
+			}
+			return hdp;
+		}
+
 		// derive key from index
 		r.derive = function(i){
+
 			i = (i)?i:0;
 			var blob = (Crypto.util.hexToBytes(this.keys.pubkey)).concat(coinjs.numToBytes(i,4).reverse());
 
@@ -707,7 +738,6 @@
 
 			o.parent_fingerprint = (ripemd160(Crypto.SHA256(Crypto.util.hexToBytes(r.keys.pubkey),{asBytes:true}),{asBytes:true})).slice(0,4);
 			o.keys_extended = o.extend();
-
 			return o;
 		}
 
@@ -772,8 +802,7 @@
 			return o;
 		}
 
-		r.parse();
-		return r;
+		return r.parse();
 	}
 
 
