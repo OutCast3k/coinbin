@@ -1,0 +1,379 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<!-- =================================================================== -->
+	<head>
+		<title>TESTING COINBIN</title>
+		<link rel="stylesheet" href="css/bootstrap.min.css" media="screen">
+		<link rel="stylesheet" href="css/bootstrap-datetimepicker.min.css">
+		<link rel="stylesheet" href="css/style.css" media="screen">
+
+		<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="js/moment.min.js"></script>
+		<script type="text/javascript" src="js/transition.js"></script>
+		<script type="text/javascript" src="js/collapse.js"></script>
+
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap-datetimepicker.min.js"></script>
+
+		<script type="text/javascript" src="js/crypto-min.js"></script>
+		<script type="text/javascript" src="js/crypto-sha256.js"></script>
+		<script type="text/javascript" src="js/crypto-sha256-hmac.js"></script>
+		<script type="text/javascript" src="js/sha512.js"></script>
+		<script type="text/javascript" src="js/ripemd160.js"></script>
+		<script type="text/javascript" src="js/aes.js"></script>
+
+		<script type="text/javascript" src="js/jsbn.js"></script>
+		<script type="text/javascript" src="js/ellipticcurve.js"></script>
+
+		<script type="text/javascript" src="js/coin.js"></script>
+	</head>
+	<!-- =================================================================== -->
+
+<body>
+
+	<!-- =================================================================== -->
+
+		<div id="fwrap">
+			<!-- Fixed navbar -->
+			<div id="header" class="navbar navbar-default " role="navigation">
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a href="#home" class="navbar-brand" id="homeBtn"><img src="images/coinbin.gif" style="height:25px;margin-top:-5px"></a>
+					</div>
+				</div>
+			</div>
+
+			<div id="content" class="container">
+
+				<div class="tab-content">
+					<div class="tab-pane tab-content active" id="home">
+						<br />
+						<button id="test1Btn" class="btn btn-primary" type="submit">Run Coinbin Test Suite</button>
+						<br />
+					    <textarea rows=20 cols=86 id="testResults"></textarea>
+					</div>
+
+				</div> <!-- content -->
+			</div> <!-- wrap -->
+		</div> <!-- navbar -->
+	</div> <!-- container -->
+</body>
+
+
+<script type="text/javascript">
+
+	$(document).ready(function() {
+	}); // end of document.ready
+
+
+    $("#test1Btn").click(function(){
+    {
+        var testName = "hex private key to compressed address";
+        var testInput = "0000000000000000000000000000000000000000000000000000000000000001";
+        var testExpected = "1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH";
+        coinjs.compressed = true;
+        var pubkeyHex = coinjs.newPubkey(testInput);
+        var testOutput = coinjs.pubkey2address(pubkeyHex, coinjs.pub);
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        var testName = "hex private key to uncompressed address";
+        var testInput = "0000000000000000000000000000000000000000000000000000000000000001";
+        var testExpected = "1EHNa6Q4Jz2uvNExL497mE43ikXhwF6kZm";
+        coinjs.compressed = false;
+        var pubkeyHex = coinjs.newPubkey(testInput);
+        var testOutput = coinjs.pubkey2address(pubkeyHex, coinjs.pub);
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        var testName = "WIF uncompressed private key to address";
+        var testInput = "5J1LYLWqNxJBTwdGAmzYnpkqqSuFu48fsHv8jgojFMV2Z8exk9L";
+        var testExpected ="16SK7HnxBMRxSpLhhdf8RYcqv8MPJiSF6Q";
+        coinjs.compressed = false;
+        var testOutput = coinjs.wif2address(testInput).address;
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        var testName = "raw private key to uncompressed base58check WIF private key";
+        var testInput = "62A87AD3272B41E67108FEA10C57BA6ED609F2F7A2264A83B690CD45707090D1";
+        var testExpected = "5JZjfs5wJv1gNkJXCmYpyj6VxciqPkwmK4yHW8zMmPN1PW7Hk7F";
+        coinjs.compressed = false;
+        var testOutput = coinjs.privkey2wif(testInput);
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        var testName = "raw private key to compressed base58check WIF private key";
+        var testInput = "62A87AD3272B41E67108FEA10C57BA6ED609F2F7A2264A83B690CD45707090D1";
+        var testExpected = "KzXVLY4ni4yznz8LJwdUmNoGpUfebSxiakXRqcGAeuhihzaVe3Rz";
+        coinjs.compressed = true;
+        var testOutput = coinjs.privkey2wif(testInput);
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        var testName = "hex ripemd160 hash of public key, to base58check address";
+        var testInput = "62E907B15CBF27D5425399EBF6F0FB50EBB88F18";
+        var testExpected = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
+        var testOutput = coinjs.scripthash2address(testInput);
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        var testName = "base58check address, to hex ripemd160 hash of public key";
+        var testInput = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
+        var testExpected = "62e907b15cbf27d5425399ebf6f0fb50ebb88f18";
+        var bytes = coinjs.base58decode(testInput);
+        var front = bytes.slice(1, bytes.length-4);
+        var testOutput = Crypto.util.bytesToHex(front);
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        var testName = "convert 'Hash 160' to address";
+        var testInput = "119b098e2e980a229e139a9ed01a469e518e6f26";
+        var testExpected = "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX";
+        var testOutput = coinjs.scripthash2address(testInput);
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        var testName = "convert 'SHA256' to address";
+        var testInput = "904b8a01c68095a9e825d28082c04b75b1f56277648256985717620e8913b79b";
+        var testExpected = "1JNC98D5LZbrGHFR8shDwiqLPGfpg15BUM";
+        var r = ripemd160(Crypto.util.hexToBytes(testInput));
+        r.unshift(coinjs.pub);
+        var hash = Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
+        var checksum = hash.slice(0, 4);
+        var testOutput = coinjs.base58encode(r.concat(checksum));
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        var testName = "convert WIF private key to address bech32";
+        var testInput = "L3GzRAGwCqfSNFr6g1NQm7edn29DgAKZJ6owUBqYELpP6Kbim5kM";
+        var testExpected = "bc1qhmc0vk4xzr37ayv7tlyhns7x4dk04tyvflk8ey";
+        var pubkey = coinjs.wif2pubkey(testInput);
+        var testOutput = coinjs.bech32Address(pubkey.pubkey).address;
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        var testName = "bech32 address, to hex ripemd160 hash of public key";
+        var testInput = "bc1qhmc0vk4xzr37ayv7tlyhns7x4dk04tyvflk8ey";
+        var testExpected = "bef0f65aa610e3ee919e5fc979c3c6ab6cfaac8c";
+        var testOutput = coinjs.bech32redeemscript(testInput);
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        var testName = "prefix1 - WIF compressed private key to address (bitcoin)";
+        var testInput = "Kx4VFK8gXu4qBv73x9b1KFnWYqKekkprYyfX9QhFUMQhrTUooXKc";
+        var testExpected = "1NFeCVtA3zuCUAmYheRvfyABnSZCHfrR3j";
+        var testOutput = coinjs.wif2address(testInput).address;
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        var testName = "prefix2 - WIF compressed private key to address (bitcoin-testnet)";
+        var testInput = "92Wn1EBgiwDNT8SC7WMZfcSk2y3mQkLUPAQtwMNYZQGAzCFUTdu";
+        var testExpected = "mxToLbBqPcSNnqPCSnrYjFv172TFPLjVNf";
+        var saved = pushNetworkVars("btc-testnet");
+        var testOutput = coinjs.wif2address(testInput).address;
+        popNetworkVars(saved);
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        var testName = "prefix3 - WIF compressed private key to address (litecoin)";
+        var testInput = "6vVAeKejJRV5wgrAqtqi7eQsS4Zf79nkw8xuYntU3JwHCiexYaJ";
+        var testExpected = "LMzBLYQG2opHvMBihMQgJBboxunoj5pssC";
+        var saved = pushNetworkVars("ltc-mainnet");
+        var testOutput = coinjs.wif2address(testInput).address;
+        popNetworkVars(saved);
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        var testName = "prefix4 - WIF compressed private key to address (dogecoin)";
+        var testInput = "6KayMYAEQfFACQhZUzbBpFhvGzDWSmRtaY9NrPQGig9qVzRCzQf";
+        var testExpected = "DHEPGdnS46dHT79tkfm5DyhGAbQj4Xi8Ni";
+        var saved = pushNetworkVars("doge-mainnet");
+        var testOutput = coinjs.wif2address(testInput).address;
+        popNetworkVars(saved);
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        // this test comes from https://bitcoindev.network/guides/bitcoinjs-lib/bitcoin-script-puzzles/
+        var testName = "P2SH redeem script to address (bitcoin testnet)";
+        var testInput = "935587";
+        var testExpected = "2N7WfHK1ftrTdhWej8rnFNR7guhvhfGWwFR";
+        var saved = pushNetworkVars("btc-testnet");
+        var hash = Crypto.SHA256(Crypto.util.hexToBytes(testInput), {asBytes: true});
+        var r = ripemd160(hash);
+        r.unshift(coinjs.multisig);
+        var hash = Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
+        var checksum = hash.slice(0, 4);
+        var testOutput = coinjs.base58encode(r.concat(checksum));
+        addTestOutput(testName, testOutput, testExpected);
+        popNetworkVars(saved);
+    }
+
+    {
+        // this test comes from https://bitcoindev.network/guides/bitcoinjs-lib/bitcoin-script-puzzles/
+        var testName = "P2WSH redeem script to address (bitcoin testnet)";
+        var testInput = "935587";
+        var testExpected = "bcrt1qpt7c23c0wep9e8up4ywn070w3tqz3828ngy34aj8slsfxrh08ddq2d2pyu";
+        var hash = Crypto.SHA256(Crypto.util.hexToBytes(testInput), {asBytes: true});
+        var testOutput = coinjs.bech32_encode(/*coinjs.bech32.hrp*/"bcrt", [coinjs.bech32.version].concat(coinjs.bech32_convert(hash, 8, 5, true))); 
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+    {
+        // data from https://bitcoin.stackexchange.com/questions/3374/how-to-redeem-a-basic-tx (runeks)
+        var testName = "basic transaction building bitcoin";
+        var testExpectedUnsigned = "0100000001eccf7e3034189b851985d871f91384b8ee357cd47c3024736e5676eb2debb3f2010000001976a914010966776006953d5567439e5e39f86a0d273bee88acffffffff01605af405000000001976a914097072524438d003d23a2f23edb65aae1bb3e46988ac00000000";
+        var testExpectedSigned = "0100000001eccf7e3034189b851985d871f91384b8ee357cd47c3024736e5676eb2debb3f2010000008a4730440220299fffaf20745458111e7826e5c2cca3b78dd27c97e0a513aab807f0d724103402203247498cfb019bbbd3d629814c8703e974f177478f6fde53503a9b1088852fad01410450863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b23522cd470243453a299fa9e77237716103abc11a1df38855ed6f2ee187e9c582ba6ffffffff01605af405000000001976a914097072524438d003d23a2f23edb65aae1bb3e46988ac00000000";
+        var privKeyHex = "18E14A7B6A307F426A94F8114701E7C8E774E7F9A47E2C2035DB29A206321725";
+        var inputTx = "f2b3eb2deb76566e7324307cd47c35eeb88413f971d88519859b1834307ecfec";
+        var inputScript = "76a914010966776006953d5567439e5e39f86a0d273bee88ac";
+        var inputN = 1;
+        var address0 = "097072524438d003d23a2f23edb65aae1bb3e469";
+        var amount = 0.999;
+        coinjs.compressed = false;
+        var r = coinjs.transaction();
+        var wif = coinjs.privkey2wif(privKeyHex);
+        var address1 = coinjs.scripthash2address(address0);
+        r.addinput(inputTx, inputN, inputScript, 0xffffffff/*sequence*/);
+        r.addoutput(address1, amount);
+        var testOutputUnsigned = r.serialize();
+        debugger;
+        r.sign(wif, 1/*sighashtype*/);
+        var testOutputSigned = r.serialize();
+        addTestOutput(testName+" (unsigned)", testOutputUnsigned, testExpectedUnsigned);
+        addTestOutput(testName+" (signed)", testOutputSigned, testExpectedSigned);
+    }
+
+    {
+        // bitcoin testnet transaction https://tbtc.bitaps.com/04bbae5806d2b8fb17ed9339f42c6f6d731191a974b975d2e1df8e7601e90f6f
+        var saved = pushNetworkVars("btc-testnet");
+        var testName = "basic transaction building bitcoin-testnet";
+        var testExpectedUnsigned = "0100000001c72eabf9f208cacc908538e2609bbe665ffda680e2a6c39475941389dd5b14de000000001976a914b9e16a03bbf40ebb78cbc35e22d72a695f27624088acffffffff01703a0f00000000001976a914a447681601eef322926c0b3de5dfbb4157bbe40988ac00000000";
+        var testExpectedSigned = "0100000001c72eabf9f208cacc908538e2609bbe665ffda680e2a6c39475941389dd5b14de000000008b483045022100d909d4d3d2b540891c102d06fc8eaf1e9b914b93ea28626990666554a75b369102205a73b38071eab5b0acb8381c1454e7d998c80cd6d229645231b6bc1fb024d1d70141046fad107ba21fae3f047096152d0298291168bc0cb6b834f7cc77510dcb41839206b936649623988f7ca58c6104a22105c5b398912ded514685ebd0d8ac4011c2ffffffff01703a0f00000000001976a914a447681601eef322926c0b3de5dfbb4157bbe40988ac00000000";
+        var wif = "92Wn1EBgiwDNT8SC7WMZfcSk2y3mQkLUPAQtwMNYZQGAzCFUTdu";
+        var inputTx = "de145bdd8913947594c3a6e280a6fd5f66be9b60e2388590ccca08f2f9ab2ec7";
+        var inputScript = "76a914b9e16a03bbf40ebb78cbc35e22d72a695f27624088ac";
+        var inputN = 0;
+        var address1 = "mvVaevwNK2SdNj9kcugh29HbSLPhv7xszY";
+        var amount = 0.00998;
+
+        coinjs.compressed = true;
+        var r = coinjs.transaction();
+        r.addinput(inputTx, inputN, inputScript, 0xffffffff/*sequence*/);
+        r.addoutput(address1, amount);
+        var warnings = new Array;
+        var testOutputUnsigned = r.serialize();
+        r.sign(wif, 1/*sighashtype*/, warnings);
+        var testOutputSigned = r.serialize();
+
+        popNetworkVars(saved);
+        addTestOutput(testName+" (unsigned)", testOutputUnsigned, testExpectedUnsigned);
+        addTestOutput(testName+" (signed)", testOutputSigned, testExpectedSigned);
+    }
+
+
+    // create a lot of timelock scripts, compare them to known ones created using bitcoinjs-lib
+    // focus on edge cases like described in https://github.com/OutCast3k/coinbin/issues/201
+    // ranges 80-ff, 8000-ffff, 800000-ffffff, 80000000-ffffffff.
+    {
+        var testExpected =  "HODL_depositAddress: 2NAx7Sx9B6epdUGyPeUEAU2tJiPectEym4F HODL_redeemScript: 050000008000b175210279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798ac\n" +
+                            "HODL_depositAddress: 2N5VZkAjtGerFUrc3bKjuK3whVEyaoKQceg HODL_redeemScript: 0400000008b175210279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798ac\n" +
+                            "HODL_depositAddress: 2MyN366sJLwXTMVMsMTHxi1bSJBwZwmNsQ4 HODL_redeemScript: 0400008000b175210279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798ac\n" +
+                            "HODL_depositAddress: 2NFjqkVBLKXjFLGPDpSoBTbhVsccUrqhRLW HODL_redeemScript: 03000008b175210279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798ac\n" +
+                            "HODL_depositAddress: 2N555b2vUzCJ5t8DryLYTw6vggH87SrK14b HODL_redeemScript: 03008000b175210279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798ac\n" +
+                            "HODL_depositAddress: 2N31s67tdRuaVfQipgkozEXd9jAt4saniH5 HODL_redeemScript: 020008b175210279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798ac\n" +
+                            "HODL_depositAddress: 2N9vLAD9f1WqFiJXinC9oCxDhypz36ZzaT7 HODL_redeemScript: 028000b175210279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798ac\n" +
+                            "HODL_depositAddress: 2MxRBGmDkNK44wCw2NMNq12UKxuPmkN8Wrx HODL_redeemScript: 58b175210279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798ac\n";
+        var testOutput = "";
+        var saved = pushNetworkVars("btc-testnet");
+        var testName = "timelocks";
+        var timeLock = 0x80000000;
+        while (timeLock > 0) {
+            //var timeLock = Math.pow(2,n)-1;
+            //var timeLock = 16777215;
+            var wif = "cMahea7zqjxrtgAbB7LSGbcQUr1uX1ojuat9jZodMN87JcbXMTcA"; // TESTNET pubKey="0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", addr="mrCDrCybB6J1vRfbwM5hemdJz73FwDBC8r"
+            var pubkey = coinjs.wif2pubkey(wif);
+            var myHodl = coinjs.simpleHodlAddress(pubkey.pubkey, timeLock);
+            testOutput += 'HODL_depositAddress: ' + myHodl.address + ' ';
+            testOutput += 'HODL_redeemScript: ' + myHodl.redeemScript + '\n';
+            timeLock = (timeLock >>> 4);
+        }
+        popNetworkVars(saved);
+        addTestOutput(testName, testOutput, testExpected);
+    }
+
+
+
+
+    });
+
+    function addTestOutput(testName, testOutput, testExpected) {
+        var testResult = "Fail ❌";
+        if (testOutput == testExpected) { testResult = "Pass ✓"; }
+        document.getElementById('testResults').value += testName + " : " + testResult + "\n";
+    }
+
+
+	function popNetworkVars(saved) {
+		coinjs.pub = saved.pub;
+		coinjs.priv = saved.priv;
+		coinjs.multisig = saved.multisig;
+	}
+
+	function pushNetworkVars(network) {
+		var savedParams = {
+			'pub':coinjs.pub,
+			'priv':coinjs.priv,
+			'multisig':coinjs.multisig
+		};
+		if (network == "btc-mainnet") {
+			coinjs.pub = 0x00;
+			coinjs.priv = 0x80;
+			coinjs.multisig = 0x05;
+		}
+		if (network == "btc-testnet") {
+			coinjs.pub = 0x6f;
+			coinjs.priv = 0xef;
+			coinjs.multisig = 0xc4;
+		}
+		if (network == "ltc-mainnet") {
+			coinjs.pub = 0x30;
+			coinjs.priv = 0xb0;
+			coinjs.multisig = 0x32;
+		}
+		if (network == "ltc-testnet") {
+			coinjs.pub = 0x6f;
+			coinjs.priv = 0xef;
+			coinjs.multisig = 0x3a4;
+		}
+		if (network == "doge-mainnet") {
+			coinjs.pub = 0x1e;
+			coinjs.priv = 0x9e;
+			coinjs.multisig = 0x16;
+		}
+		return savedParams;
+	}
+
+
+</script>
+
+</html>
