@@ -307,7 +307,7 @@
 
 				return o;
 			} else {
-				return false;
+				throw "Invalid checksum";
 			}
 		} catch(e) {
 			bech32rs = coinjs.bech32redeemscript(addr);
