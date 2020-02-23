@@ -203,7 +203,7 @@
 		var decode = coinjs.bech32_decode(address);
 		if(decode){
 			decode.data.shift();
-			return Crypto.util.bytesToHex(coinjs.bech32_convert(decode.data, 5, 8, true));
+			return Crypto.util.bytesToHex(coinjs.bech32_convert(decode.data, 5, 8, false));
 		}
 		return r;
 	}
