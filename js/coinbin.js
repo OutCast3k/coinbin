@@ -65,7 +65,6 @@ $(document).ready(function() {
 					$("#openWallet").removeClass("hidden").show();
 
 					walletBalance();
-					checkBalanceLoop();
 				} else {
 					$("#openLoginStatus").html("Your passwords do not match!").removeClass("hidden").fadeOut().fadeIn();
 				}
@@ -133,7 +132,7 @@ $(document).ready(function() {
 		$("#walletSpend").removeClass("hidden").addClass("hidden");
 	});
 
-	$("#walletBalance").click(function(){
+	$("#walletBalance, #walletAddress, #walletQrCode").click(function(){
 		walletBalance();
 	});
 
@@ -297,28 +296,20 @@ $(document).ready(function() {
 	});
 
 	function walletBalance(){
-		var tx = coinjs.transaction();
-		$("#walletLoader").removeClass("hidden");
-		coinjs.addressBalance($("#walletAddress").html(),function(data){
-			if($(data).find("result").text()==1){
-				var v = $(data).find("balance").text()/100000000;
-				$("#walletBalance").html(v+" BTC").attr('rel',v).fadeOut().fadeIn();
-			} else {
+		if($("#walletLoader").hasClass("hidden")){
+			var tx = coinjs.transaction();
+			$("#walletLoader").removeClass("hidden");
+			coinjs.addressBalance($("#walletAddress").html(),function(data){
+				if($(data).find("result").text()==1){
+					var v = $(data).find("balance").text()/100000000;
+					$("#walletBalance").html(v+" BTC").attr('rel',v).fadeOut().fadeIn();
+				} else {
 				$("#walletBalance").html("0.00 BTC").attr('rel',v).fadeOut().fadeIn();
-			}
+				}
 
-			$("#walletLoader").addClass("hidden");
-		});
-	}
-
-	function checkBalanceLoop(){
-		clearTimeout(wallet_timer);
-		wallet_timer = setTimeout(function(){
-			if($("#walletLoader").hasClass("hidden")){
-				walletBalance();
-			}
-			checkBalanceLoop();
-		},45000);
+				$("#walletLoader").addClass("hidden");
+			});
+		}
 	}
 
 	/* new -> address code */
