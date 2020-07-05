@@ -1,9 +1,9 @@
----- Version 1.5 2020.06.03 ----
+---- Version 1.5 2020.07.05 ----
 77e4519962e2f6a9fc93342137dbb31c33b76b04  ./js/aes.js
 3a09a8fc0cfe828b57fc798d668234d0490ee1a6  ./js/bootstrap-datetimepicker.min.js
 253711c6d825de55a8360552573be950da180614  ./js/bootstrap.min.js
 7708a3771dd2749807f2bfc41af407b68888ae5d  ./js/coinbin.js
-101544b32de9b5637edd38ea0da462bb25bab29a  ./js/coin.js
+e8a374661d3e0636b9948d34adcd81f6d69684cc  ./js/coin.js
 988565bc2cb402d63ed5c5fd7ff47c4278efc2c5  ./js/collapse.js
 9ba5ede3d7f9d4c8fd623395f196adfdcf7e970f  ./js/crypto-min.js
 f7c09f2f5a721371e7d478050119f7e2d58e3ef9  ./js/crypto-sha256-hmac.js
