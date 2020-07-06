@@ -881,7 +881,7 @@ $(document).ready(function() {
 		$("#redeemFromStatus, #redeemFromAddress").addClass('hidden');
 
 		if(redeem.from=='multisigAddress'){
-			$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> You should use the redeem script, not the multisig address!');
+			$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> You should use the redeem script, not its address!');
 			return false;
 		}
 
@@ -973,9 +973,15 @@ $(document).ready(function() {
 				r.redeemscript = true;
 				r.decodescript = decodeRs;
 			} else { // something else
-				r.addr = '';
-				r.from = 'other';
-				r.redeemscript = false;
+				if(string.match(/^[a-f0-9]{64}$/i)){
+					r.addr = string;
+					r.from = 'txid';
+					r.redeemscript = false;
+				} else {
+					r.addr = '';
+					r.from = 'other';
+					r.redeemscript = false;
+				}
 			}
 		}
 		return r;
@@ -1042,9 +1048,61 @@ $(document).ready(function() {
 		}
 	}
 
+	/* global function to add inputs to page */
+	function addInput(address, amount) {
+		if($("#recipients .recipient:last .address:last").val() != ""){
+			$("#recipients .addressAddTo:first").click();
+		};
+
+		$("#recipients .address:last").val(address);
+		$("#recipients .amount:last").val(amount);
+	}
+
+
 	/* default function to retreive unspent outputs*/	
 	function listUnspentDefault(redeem){
+
 		var tx = coinjs.transaction();
+
+		// unspent from transaction; double spend and RBF.
+
+		if(redeem.from == 'txid'){
+			tx.getTransaction(redeem.addr, function(data){
+
+				$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Attempted to rebuild transaction id <a href="'+explorer_tx+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+
+				$.each($(data).find("inputs").children(), function(i,o){
+					var tx = $(o).find("txid").text();
+					var n = $(o).find("output_no").text();
+					var amount = (($(o).find("value").text()*1)).toFixed(8);
+
+					var script = coinjs.script();
+					var s = script.spendToScript($(o).find("address").text());
+					var scr = Crypto.util.bytesToHex(s.buffer);
+
+					addOutput(tx, n, scr, amount);
+
+				});
+
+				$("#recipients .addressRemoveTo").click();
+				$("#recipients .address").val("");
+				$("#recipients .amount").val("");
+
+				$.each($(data).find("outputs").children(), function(i,o){
+					addInput($(o).find("address").text(), $(o).find("value").text());
+				});
+
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+				validateOutputAmount();
+
+			});
+
+			return;
+		}
+
+		// unspent from address
+
 		tx.listUnspent(redeem.addr, function(data){
 			if(redeem.addr) {
 				$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
@@ -1078,10 +1136,9 @@ $(document).ready(function() {
 			},
 			success: function(data) {
 				if (data.address) { // address field will always be present, txrefs is only present if there are UTXOs
-					$("#redeemFromAddress").removeClass('hidden').html(
-						'<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 					for(var i in data.txrefs){
-                        var o = data.txrefs[i]
+						var o = data.txrefs[i];
 						var tx = ((""+o.tx_hash).match(/.{1,2}/g).reverse()).join("")+'';
 						if(tx.match(/^[a-f0-9]+$/)){
 							var n = o.tx_output_n;
