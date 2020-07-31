@@ -1076,9 +1076,7 @@ $(document).ready(function() {
 					var n = $(o).find("output_no").text();
 					var amount = (($(o).find("value").text()*1)).toFixed(8);
 
-					var script = coinjs.script();
-					var s = script.spendToScript($(o).find("address").text());
-					var scr = Crypto.util.bytesToHex(s.buffer);
+					var scr = $(o).find("script").text();
 
 					addOutput(tx, n, scr, amount);
 
