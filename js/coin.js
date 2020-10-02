@@ -1092,32 +1092,37 @@
 
 				var unspent = xmlDoc.getElementsByTagName("unspent")[0];
 
-				for(i=1;i<=unspent.childElementCount;i++){
-					var u = xmlDoc.getElementsByTagName("unspent_"+i)[0]
-					var txhash = (u.getElementsByTagName("tx_hash")[0].childNodes[0].nodeValue).match(/.{1,2}/g).reverse().join("")+'';
-					var n = u.getElementsByTagName("tx_output_n")[0].childNodes[0].nodeValue;
-					var scr = script || u.getElementsByTagName("script")[0].childNodes[0].nodeValue;
+				if(unspent){ 
+					for(i=1;i<=unspent.childElementCount;i++){
+						var u = xmlDoc.getElementsByTagName("unspent_"+i)[0]
+						var txhash = (u.getElementsByTagName("tx_hash")[0].childNodes[0].nodeValue).match(/.{1,2}/g).reverse().join("")+'';
+						var n = u.getElementsByTagName("tx_output_n")[0].childNodes[0].nodeValue;
+						var scr = script || u.getElementsByTagName("script")[0].childNodes[0].nodeValue;
 
-					if(segwit){
-						/* this is a small hack to include the value with the redeemscript to make the signing procedure smoother. 
-						It is not standard and removed during the signing procedure. */
+						if(segwit){
+							/* this is a small hack to include the value with the redeemscript to make the signing procedure smoother. 
+							It is not standard and removed during the signing procedure. */
 
-						s = coinjs.script();
-						s.writeBytes(Crypto.util.hexToBytes(script));
-						s.writeOp(0);
-						s.writeBytes(coinjs.numToBytes(u.getElementsByTagName("value")[0].childNodes[0].nodeValue*1, 8));
-						scr = Crypto.util.bytesToHex(s.buffer);
+							s = coinjs.script();
+							s.writeBytes(Crypto.util.hexToBytes(script));
+							s.writeOp(0);
+							s.writeBytes(coinjs.numToBytes(u.getElementsByTagName("value")[0].childNodes[0].nodeValue*1, 8));
+							scr = Crypto.util.bytesToHex(s.buffer);
+						}
+
+						var seq = sequence || false;
+						self.addinput(txhash, n, scr, seq);
+						value += u.getElementsByTagName("value")[0].childNodes[0].nodeValue*1;
+						total++;
 					}
-
-					var seq = sequence || false;
-					self.addinput(txhash, n, scr, seq);
-					value += u.getElementsByTagName("value")[0].childNodes[0].nodeValue*1;
-					total++;
 				}
 
-				x.unspent = $(xmlDoc).find("unspent");
+				x.result = xmlDoc.getElementsByTagName("result")[0].childNodes[0].nodeValue;
+				x.unspent = unspent;
 				x.value = value;
 				x.total = total;
+				x.response = xmlDoc.getElementsByTagName("response")[0].childNodes[0].nodeValue;
+
 				return callback(x);
 			});
 		}
