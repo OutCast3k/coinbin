@@ -1933,32 +1933,37 @@ $(document).ready(function() {
 
 	$("#coinjs_coin").change(function(){
 
-		var o = ($("option:selected",this).attr("rel")).split(";");
+		var optionSeleted = ($("option:selected",this).attr("rel")).split(";");
+
+		let cookieSelectedCoin = new Cookie("coinbin_coin");
+		cookieSelectedCoin.setCookie(optionSeleted)
+
+		console.log(cookieSelectedCoin.cookieValue);
 
 		// deal with broadcasting settings
-		if(o[5]=="false"){
+		if(optionSeleted[5]=="false"){
 			$("#coinjs_broadcast, #rawTransaction, #rawSubmitBtn, #openBtn").attr('disabled',true);
 			$("#coinjs_broadcast").val("coinb.in");			
 		} else {
-			$("#coinjs_broadcast").val(o[5]);
+			$("#coinjs_broadcast").val(optionSeleted[5]);
 			$("#coinjs_broadcast, #rawTransaction, #rawSubmitBtn, #openBtn").attr('disabled',false);
 		}
 
 		// deal with unspent output settings
-		if(o[6]=="false"){
+		if(optionSeleted[6]=="false"){
 			$("#coinjs_utxo, #redeemFrom, #redeemFromBtn, #openBtn, .qrcodeScanner").attr('disabled',true);			
 			$("#coinjs_utxo").val("coinb.in");
 		} else {
-			$("#coinjs_utxo").val(o[6]);
+			$("#coinjs_utxo").val(optionSeleted[6]);
 			$("#coinjs_utxo, #redeemFrom, #redeemFromBtn, #openBtn, .qrcodeScanner").attr('disabled',false);
 		}
 
 		// deal with the reset
-		$("#coinjs_pub").val(o[0]);
-		$("#coinjs_priv").val(o[1]);
-		$("#coinjs_multisig").val(o[2]);
-		$("#coinjs_hdpub").val(o[3]);
-		$("#coinjs_hdprv").val(o[4]);
+		$("#coinjs_pub").val(optionSeleted[0]);
+		$("#coinjs_priv").val(optionSeleted[1]);
+		$("#coinjs_multisig").val(optionSeleted[2]);
+		$("#coinjs_hdpub").val(optionSeleted[3]);
+		$("#coinjs_hdprv").val(optionSeleted[4]);
 
 		// hide/show custom screen
 		if($("option:selected",this).val()=="custom"){
