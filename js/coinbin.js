@@ -8,6 +8,8 @@ $(document).ready(function() {
 
 	var wallet_timer = false;
 
+	var LOCALSTORAGE_COIN_KEY = "coinjs_coin_option"
+
 	$("#openBtn").click(function(){
 		var email = $("#openEmail").val().toLowerCase();
 		if(email.match(/[\s\w\d]+@[\s\w\d]+/g)){
@@ -1932,33 +1934,35 @@ $(document).ready(function() {
 	});
 
 	$("#coinjs_coin").change(function(){
+		// set localStorage for use after page (re)load
+		localStorage.setItem(LOCALSTORAGE_COIN_KEY, $(this).val());
 
-		var o = ($("option:selected",this).attr("rel")).split(";");
+		optionSeleted = ($("option:selected",this).attr("rel")).split(";");
 
 		// deal with broadcasting settings
-		if(o[5]=="false"){
+		if(optionSeleted[5]=="false"){
 			$("#coinjs_broadcast, #rawTransaction, #rawSubmitBtn, #openBtn").attr('disabled',true);
 			$("#coinjs_broadcast").val("coinb.in");			
 		} else {
-			$("#coinjs_broadcast").val(o[5]);
+			$("#coinjs_broadcast").val(optionSeleted[5]);
 			$("#coinjs_broadcast, #rawTransaction, #rawSubmitBtn, #openBtn").attr('disabled',false);
 		}
 
 		// deal with unspent output settings
-		if(o[6]=="false"){
+		if(optionSeleted[6]=="false"){
 			$("#coinjs_utxo, #redeemFrom, #redeemFromBtn, #openBtn, .qrcodeScanner").attr('disabled',true);			
 			$("#coinjs_utxo").val("coinb.in");
 		} else {
-			$("#coinjs_utxo").val(o[6]);
+			$("#coinjs_utxo").val(optionSeleted[6]);
 			$("#coinjs_utxo, #redeemFrom, #redeemFromBtn, #openBtn, .qrcodeScanner").attr('disabled',false);
 		}
 
 		// deal with the reset
-		$("#coinjs_pub").val(o[0]);
-		$("#coinjs_priv").val(o[1]);
-		$("#coinjs_multisig").val(o[2]);
-		$("#coinjs_hdpub").val(o[3]);
-		$("#coinjs_hdprv").val(o[4]);
+		$("#coinjs_pub").val(optionSeleted[0]);
+		$("#coinjs_priv").val(optionSeleted[1]);
+		$("#coinjs_multisig").val(optionSeleted[2]);
+		$("#coinjs_hdpub").val(optionSeleted[3]);
+		$("#coinjs_hdprv").val(optionSeleted[4]);
 
 		// hide/show custom screen
 		if($("option:selected",this).val()=="custom"){
@@ -2284,5 +2288,17 @@ $(document).ready(function() {
 
 		return true;
 	};
+
+	/* set network from localStorage on page load */
+
+	function setNetwork () {
+		var storageItem = localStorage.getItem(LOCALSTORAGE_COIN_KEY);
+		if(storageItem)
+		{
+			$("#coinjs_coin").val(storageItem)
+			$("#coinjs_coin").trigger("change")
+		}
+	}
+	setNetwork()
 
 });
