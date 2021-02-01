@@ -1932,13 +1932,11 @@ $(document).ready(function() {
 	});
 
 	$("#coinjs_coin").change(function(){
+		// set cookie for use after page (re)load
+		let cookie = new Cookie("coinbin_coin_option");
+		cookie.setValue($(this).val());
 
-		var optionSeleted = ($("option:selected",this).attr("rel")).split(";");
-
-		let cookieSelectedCoin = new Cookie("coinbin_coin");
-		cookieSelectedCoin.setCookie(optionSeleted)
-
-		console.log(cookieSelectedCoin.cookieValue);
+		optionSeleted = ($("option:selected",this).attr("rel")).split(";");
 
 		// deal with broadcasting settings
 		if(optionSeleted[5]=="false"){
@@ -2289,5 +2287,17 @@ $(document).ready(function() {
 
 		return true;
 	};
+
+	/* set network from cookie on page load */
+
+	function setNetwork () {
+		let cookie = new Cookie("coinbin_coin_option");
+		if(val = cookie.getValue())
+		{
+			$("#coinjs_coin").val(val)
+			$("#coinjs_coin").trigger("change")
+		}
+	}
+	setNetwork()
 
 });

@@ -1,43 +1,85 @@
 class Cookie {
+    #name;
+    #value;
+
     constructor(name) {
-        this.cookieName = name;
-        
-        // read the cookies value (initializes cookieValue)
-        this.readCookie();
+        this.name = name;
+        this.value;
+
+        // read the cookies value (initializes value)
+        this.get();
     }
 
-    readCookie() {
+    get() {
         var allCookies = document.cookie;
+        var cookie;
 
-        // find the cookie that is currently being looked at.
-        allCookies.split(";").forEach((_, cookie) => {
-            var currentCookieName, currentCookieValue = cookie.split("=");
+        // find out how much cookies are set to be able to pick the right one
+        if(!allCookies)
+        {
+            // the tray is empty. leave fields as initialized
+            return;
+        }
 
-            if(currentCookieName = this.cookieName)
+        if(allCookies.indexOf(";") > 0)
+        {
+            // many cookies found, pick one
+            cookie = this.pickCookie(allCookies);
+        } else {
+            // only one cookie found. Check if its the right one
+            if(this.validateCookie(allCookies))
             {
-                // set cookieValue to the value of this cookie
-                this.cookieValue = currentCookieValue;
-                break;
+                cookie = allCookies;
+            }
+        }
+
+        // read contents of the picked cookie
+        if(cookie) {
+            this.value = this.readCookieContents(cookie);
+        } else {
+            console.log("Coudn't get cookie");
+        }
+    }
+
+    pickCookie(manyCookies) {
+        manyCookies.split(";").forEach((cookie, _) => {
+            if(this.validateCookie(cookie))
+            {
+                return cookie;
             }
         });
-
-        // default to NULL if cookie was not found
-        this.cookieValue = NULL;
     }
 
-    setCookie(cookieValue) {
+    validateCookie(cookie) {
+        if(cookie.indexOf("=") >= 0)
+        {
+            var cookieCredentials = cookie.split("=");
+            var name = cookieCredentials[0]
+            return name == this.name;
+        } else {
+            return false;
+        }
+    }
+
+    readCookieContents(cookie) {
+        var cookieCredentials = cookie.split("=");
+        var value = cookieCredentials[1];
+        return JSON.parse(value);
+    }
+
+    setValue(valueToBeSet) {
         // update internal record
-        this.cookieValue = currentCookieValue;
+        this.value = valueToBeSet;
 
         // prepare value for storing
-        cookieValueJSON = JSON.stringify(cookieValue);
+        var valueJSON = JSON.stringify(valueToBeSet);
 
         // set cookie with expiry on browser close
-        document.cookie = this.cookieName+"="+cookieValueJSON;
+        document.cookie = this.name+"="+valueJSON;
     }
 
-    getCookieValue() {
-        this.readCookie();
-        return this.cookieValue;
+    getValue() {
+        this.get();
+        return this.value;
     }
 }
