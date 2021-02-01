@@ -1,7 +1,4 @@
 class Cookie {
-    #name;
-    #value;
-
     constructor(name) {
         this.name = name;
         this.value;
