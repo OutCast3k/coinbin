@@ -8,6 +8,8 @@ $(document).ready(function() {
 
 	var wallet_timer = false;
 
+	var LOCALSTORAGE_COIN_KEY = "coinjs_coin_option"
+
 	$("#openBtn").click(function(){
 		var email = $("#openEmail").val().toLowerCase();
 		if(email.match(/[\s\w\d]+@[\s\w\d]+/g)){
@@ -1933,7 +1935,7 @@ $(document).ready(function() {
 
 	$("#coinjs_coin").change(function(){
 		// set localStorage for use after page (re)load
-		localStorage.setItem("coinbin_coin_option", $(this).val());
+		localStorage.setItem(LOCALSTORAGE_COIN_KEY, $(this).val());
 
 		optionSeleted = ($("option:selected",this).attr("rel")).split(";");
 
@@ -2287,10 +2289,10 @@ $(document).ready(function() {
 		return true;
 	};
 
-	/* set network from cookie on page load */
+	/* set network from localStorage on page load */
 
 	function setNetwork () {
-		var storageItem = localStorage.getItem("coinbin_coin_option");
+		var storageItem = localStorage.getItem(LOCALSTORAGE_COIN_KEY);
 		if(storageItem)
 		{
 			$("#coinjs_coin").val(storageItem)
