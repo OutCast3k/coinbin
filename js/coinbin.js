@@ -1932,9 +1932,8 @@ $(document).ready(function() {
 	});
 
 	$("#coinjs_coin").change(function(){
-		// set cookie for use after page (re)load
-		let cookie = new Cookie("coinbin_coin_option");
-		cookie.setValue($(this).val());
+		// set localStorage for use after page (re)load
+		localStorage.setItem("coinbin_coin_option", $(this).val());
 
 		optionSeleted = ($("option:selected",this).attr("rel")).split(";");
 
@@ -2291,10 +2290,10 @@ $(document).ready(function() {
 	/* set network from cookie on page load */
 
 	function setNetwork () {
-		let cookie = new Cookie("coinbin_coin_option");
-		if(val = cookie.getValue())
+		var storageItem = localStorage.getItem("coinbin_coin_option");
+		if(storageItem)
 		{
-			$("#coinjs_coin").val(val)
+			$("#coinjs_coin").val(storageItem)
 			$("#coinjs_coin").trigger("change")
 		}
 	}
