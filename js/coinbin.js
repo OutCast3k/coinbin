@@ -570,18 +570,20 @@ $(document).ready(function() {
 	$("#newHDKeysBtn").click(function(){
 		coinjs.compressed = true;
 		var s = ($("#newHDBrainwallet").is(":checked")) ? $("#HDBrainwallet").val() : null;
+		var siters = ($("#newHDBrainwallet").is(":checked")) ? $("#HDBrainwalletIters").val()*1 : null;
 		var hd = coinjs.hd();
-		var pair = hd.master(s);
+		var pair = hd.master(s, siters);
 		$("#newHDxpub").val(pair.pubkey);
 		$("#newHDxprv").val(pair.privkey);
+		$("#newHDseed").val(pair.seed_wif);
 
 	});
 
 	$("#newHDBrainwallet").click(function(){
 		if($(this).is(":checked")){
-			$("#HDBrainwallet").removeClass("hidden");
+			$("#HDBrainwalletInput").removeClass("hidden");
 		} else {
-			$("#HDBrainwallet").addClass("hidden");
+			$("#HDBrainwalletInput").addClass("hidden");
 		}
 	});
 
@@ -1681,6 +1683,7 @@ $(document).ready(function() {
 			if(hex == hex_cmp_prv || hex == hex_cmp_pub){
 				var hd = coinjs.hd(s);
 				$("#verifyHDaddress .hdKey").html(s);
+				$("#verifyHDaddress .seed_wif").val(hd.seed_wif);
 				$("#verifyHDaddress .chain_code").val(Crypto.util.bytesToHex(hd.chain_code));
 				$("#verifyHDaddress .depth").val(hd.depth);
 				$("#verifyHDaddress .version").val('0x'+(hd.version).toString(16));

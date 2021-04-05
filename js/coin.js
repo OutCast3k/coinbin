@@ -608,6 +608,7 @@
 				r.parent_fingerprint = bytes.slice(5, 9);
 				r.child_index = coinjs.uint(bytes.slice(9, 13), 4);
  				r.chain_code = bytes.slice(13, 45);
+				r.seed_wif = '';
 				r.key_bytes = bytes.slice(45, 78);
 
 				var c = coinjs.compressed; // get current default
@@ -742,8 +743,23 @@
 		}
 
 		// make a master hd xprv/xpub
-		r.master = function(pass) {
-			var seed = (pass) ? Crypto.SHA256(pass) : coinjs.newPrivkey();
+		r.master = function(pass, iters) {
+			if (pass) {
+				var seed_iters = (iters) ? Math.abs(iters * 1) : 0;
+				if (seed_iters == 0) {
+					var seed = Crypto.SHA256(pass);
+				} else {
+					var seed = Crypto.util.hexToBytes("0000000000000000000000000000000000000000000000000000000000000000");
+					for (var i = 0; i < seed_iters; i++) {
+						seed = Crypto.HMAC(Crypto.SHA256, seed, pass, { asBytes: true });
+					}
+					seed = Crypto.util.bytesToHex(seed);
+				}
+			} else {
+				var seed = coinjs.newPrivkey();
+			}
+
+			var seed_wif = coinjs.privkey2wif(seed);
 			var hasher = new jsSHA(seed, 'HEX');
 			var I = hasher.getHMAC("Bitcoin seed", "TEXT", "SHA-512", "HEX");
 
@@ -755,6 +771,7 @@
 				'parent_fingerprint':[0,0,0,0],
 				'child_index':0,
 				'chain_code':chain,
+				'seed_wif':seed_wif,
 				'privkey':I.slice(0, 64),
 				'pubkey':coinjs.newPubkey(I.slice(0, 64))});
 		}
@@ -799,6 +816,8 @@
 				var ret = pub.concat(checksum);
 				o.pubkey = coinjs.base58encode(ret);
 			}
+
+			o.seed_wif = data.seed_wif;
 			return o;
 		}
 
