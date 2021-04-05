@@ -1191,7 +1191,7 @@
 							<p>The path of key derivation</p>
 
 							<div class="row">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<b>Path</b><br>
 									<select class="form-control" id="hdpathtype"">
 										<option value="simple">Simple: m/i</option>
@@ -1216,6 +1216,15 @@
 									<input type="text" class="form-control derivation_index_end" value="1">
 								</div>
 
+								<div class="col-md-2">
+									<b>Address format</b><br>
+									<select class="form-control derivation_addr_format">
+										<option value="bech32">Bech32</option>
+										<option value="segwit">SegWit</option>
+										<option value="legacy">Legacy</option>
+									</select>
+								</div>
+
 							</div>
 
 							<hr>
@@ -1226,7 +1235,7 @@
 							<div class="derived_data">
 								<table class="table table-striped table-hover">
 									<thead>
-										<tr><td><b>Index</b></td><td><b>Address</b><td><b>Private Key (WIF)</b></td></td><td><b>Extended xPub</b></td><td><b>Extended xPrv</b></td></tr>
+										<tr><td><b>Index</b></td><td><b>Address</b></td><td><b>Redeem script</b></td><td><b>Private Key (WIF)</b></td><td><b>Extended xPub</b></td><td><b>Extended xPrv</b></td></tr>
 									</thead>
 									<tbody>
 									</tbody>
