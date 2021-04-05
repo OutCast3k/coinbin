@@ -18,6 +18,8 @@
 
 	coinjs.compressed = false;
 
+	coinjs.hd_derivation = "bip32_derivation";
+
 	/* other vars */
 	coinjs.developer = '33tht1bKDgZVxb39MnZsWa8oxHXHvUYE4G'; //bitcoin
 
@@ -685,7 +687,11 @@
 		r.derive = function(i){
 
 			i = (i)?i:0;
-			var blob = (Crypto.util.hexToBytes(this.keys.pubkey)).concat(coinjs.numToBytes(i,4).reverse());
+			if ((i >= 0x80000000) && (coinjs.hd_derivation == "bip32_derivation")) {
+				var blob = (Crypto.util.hexToBytes("00").concat(Crypto.util.hexToBytes(this.keys.privkey)).concat(coinjs.numToBytes(i,4).reverse()));
+			} else {
+				var blob = (Crypto.util.hexToBytes(this.keys.pubkey)).concat(coinjs.numToBytes(i,4).reverse());
+			}
 
 			var j = new jsSHA(Crypto.util.bytesToHex(blob), 'HEX');
  			var hash = j.getHMAC(Crypto.util.bytesToHex(r.chain_code), "HEX", "SHA-512", "HEX");
