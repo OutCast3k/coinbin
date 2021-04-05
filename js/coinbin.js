@@ -1714,6 +1714,7 @@ $(document).ready(function() {
 			html += '<tr>';
 			html += '<td>'+i+'</td>';
 			html += '<td><input type="text" class="form-control" value="'+derived.keys.address+'" readonly></td>';
+			html += '<td><input type="text" class="form-control" value="'+derived.keys.script+'" readonly></td>';
 			html += '<td><input type="text" class="form-control" value="'+((derived.keys.wif)?derived.keys.wif:'')+'" readonly></td>';
 			html += '<td><input type="text" class="form-control" value="'+derived.keys_extended.pubkey+'" readonly></td>';
 			html += '<td><input type="text" class="form-control" value="'+((derived.keys_extended.privkey)?derived.keys_extended.privkey:'')+'" readonly></td>';
