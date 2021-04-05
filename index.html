@@ -582,12 +582,27 @@
 							</span>
 						</div>
 
+						<label>Seed (WIF)</label>
+						<div class="input-group">
+							<input id="newHDseed" type="text" class="form-control" value="" readonly>
+							<span class="input-group-btn">
+								<button class="deriveHDbtn btn btn-default" type="button"><span title="Derive from key" class="glyphicon glyphicon-chevron-right"></span></button>
+							</span>
+						</div>
+
 						<h3>Address Options</h3>
 						<p>You can use the advanced options below to generate different kinds of master addresses.</p>
 						
 						<div class="checkbox">
 							<label><input type="checkbox" id="newHDBrainwallet" class="checkbox-inline"> Custom Seed or Brain Wallet</label>
-							<input type="text" class="form-control hidden" id="HDBrainwallet">
+							<div class="hidden" id="HDBrainwalletInput">
+								<input type="text" class="form-control" id="HDBrainwallet">
+								<span class="text-muted">
+									Number of HMAC SHA-256 iterations for seed generation, higher value mean's also longer calculation
+									(use value 0 to calculate just SHA-256, like in previous coinb.in versions):
+									<input type="text" class="form-control" id="HDBrainwalletIters" value="50000" size="10">
+								</span>
+							</div>
 						</div>
 
 						<input type="button" class="btn btn-primary" value="Generate" id="newHDKeysBtn">
