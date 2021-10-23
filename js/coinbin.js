@@ -128,8 +128,13 @@ $(document).ready(function() {
 	});
 
 	$("#walletShowKeys").click(function(){
+		$(".walletOptions").removeClass("hidden").addClass("hidden");
 		$("#walletKeys").removeClass("hidden");
-		$("#walletSpend").removeClass("hidden").addClass("hidden");
+	});
+
+	$("#walletShowBuy").click(function(){
+		$(".walletOptions").removeClass("hidden").addClass("hidden");
+		$("#walletBuy").removeClass("hidden");
 	});
 
 	$("#walletBalance, #walletAddress, #walletQrCode").click(function(){
@@ -280,8 +285,8 @@ $(document).ready(function() {
 	});
 
 	$("#walletShowSpend").click(function(){
+		$(".walletOptions").removeClass("hidden").addClass("hidden");
 		$("#walletSpend").removeClass("hidden");
-		$("#walletKeys").removeClass("hidden").addClass("hidden");
 	});
 
 	$("#walletSpendTo .addressAdd").click(function(){
@@ -842,7 +847,6 @@ $(document).ready(function() {
 		if(navigator.getUserMedia){
 			if (!!window.stream) {
 				$("video").attr('src',null);
-				window.stream.stop();
   			}
 
 			var videoSource = $("select#videoSource").val();
@@ -855,18 +859,24 @@ $(document).ready(function() {
 			navigator.getUserMedia(constraints, function(stream){
 				window.stream = stream; // make stream available to console
 				var videoElement = document.querySelector('video');
-				videoElement.src = window.URL.createObjectURL(stream);
+				try {
+					videoElement.srcObject = stream;
+				} catch {
+					videoElement.src = window.URL.createObjectURL(stream);
+				}
 				videoElement.play();
 			}, function(error){ });
 
-			QCodeDecoder().decodeFromCamera(document.getElementById('videoReader'), function(er,data){
+
+			QCodeDecoder().decodeFromVideo(document.getElementById('videoReader'), function(er,data){
 				if(!er){
-					var match = data.match(/^bitcoin\:([13][a-z0-9]{26,33})/i);
+					var match = data.match(/^bitcoin\:([1|3|bc1][a-z0-9]{25,50})/i);
 					var result = match ? match[1] : data;
 					$(""+$("#qrcode-scanner-callback-to").html()).val(result);
 					$("#qrScanClose").click();
 				}
 			});
+
 		} else {
 			$("#videoReaderError").removeClass("hidden");
 			$("#videoReader, #videoSource").addClass("hidden");
@@ -923,9 +933,6 @@ $(document).ready(function() {
 			listUnspentBlockchair(redeem, "litecoin");
 		} else if(host=='blockchair_dogecoin'){
 			listUnspentBlockchair(redeem, "dogecoin");
-
-		} else if(host=='cryptoid.info_carboncoin'){
-			listUnspentCryptoidinfo_Carboncoin(redeem);
 		} else {
 			listUnspentDefault(redeem);
 		}
@@ -1156,41 +1163,6 @@ $(document).ready(function() {
 		});
 	}
 
-
-	/* retrieve unspent data from chain.so for carboncoin */
-	function listUnspentCryptoidinfo_Carboncoin(redeem) {
-		
-		$.ajax ({
-			type: "POST",
-			url: "https://coinb.in/api/",
-			data: 'uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=carboncoin&request=listunspent&address='+redeem.addr,
-			dataType: "xml",
-			error: function() {
-				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
-			},
-                        success: function(data) {
-				if($(data).find("result").text()==1){
-					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
-					$.each($(data).find("unspent").children(), function(i,o){
-						var tx = $(o).find("tx_hash").text();
-						var n = $(o).find("tx_output_n").text();
-						var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script_hex;
-						var amount = (($(o).find("value").text()*1)/100000000).toFixed(8);
-						addOutput(tx, n, script, amount);
-					});
-				} else {
-					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
-				}
-			},
-			complete: function(data, status) {
-				$("#redeemFromBtn").html("Load").attr('disabled',false);
-				totalInputAmount();
-			}
-		});
-
-	}
-
-
 	/* retrieve unspent data from blockchair */
 	function listUnspentBlockchair(redeem,network){
 		$.ajax ({
@@ -1335,32 +1307,6 @@ $(document).ready(function() {
 				$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
 				if($(data).find("result").text()==1){
 					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + $(data).find("txid").text() + '<br> <a href="https://coinb.in/tx/' + $(data).find("txid").text() + '" target="_blank">View on Blockchain</a>');
-				} else {
-					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
-				}
-			},
-			complete: function(data, status) {
-				$("#rawTransactionStatus").fadeOut().fadeIn();
-				$(thisbtn).val('Submit').attr('disabled',false);				
-			}
-		});
-	}
-
-	// broadcast transaction via cryptoid
-	function rawSubmitcryptoid_Carboncoin(thisbtn) {
-		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
-		$.ajax ({
-			type: "POST",
-			url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=carboncoin&request=sendrawtransaction',
-			data: {'rawtx':$("#rawTransaction").val()},
-			dataType: "xml",
-			error: function(data) {
-				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(" There was an error submitting your request, please try again").prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-			},
-                        success: function(data) {
-				$("#rawTransactionStatus").html(unescape($(data).find("response").text()).replace(/\+/g,' ')).removeClass('hidden');
-				if($(data).find("result").text()==1){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + $(data).find("txid").text() + '<br> <a href="https://chainz.cryptoid.info/carbon/tx.dws?' + $(data).find("txid").text() + '" target="_blank">View on Blockchain Explorer</a>');
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span> ');
 				}
@@ -1983,11 +1929,11 @@ $(document).ready(function() {
 			});
 		} else if(host=="chain.so_litecoin"){
 			$("#rawSubmitBtn").click(function(){
-				rawSubmitchainso(this, "LTC");
+				rawSubmitChainso(this, "LTC");
 			});
 		} else if(host=="chain.so_dogecoin"){
 			$("#rawSubmitBtn").click(function(){
-				rawSubmitchainso(this, "DOGE");
+				rawSubmitChainso(this, "DOGE");
 			});
 		} else if(host=="blockcypher_bitcoinmainnet"){
 			$("#rawSubmitBtn").click(function(){
@@ -2012,10 +1958,6 @@ $(document).ready(function() {
 		} else if(host=="blockchair_dogecoin"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitblockchair(this, "dogecoin");
-			});
-		} else if(host=="cryptoid.info_carboncoin"){
-			$("#rawSubmitBtn").click(function(){
-				rawSubmitcryptoid_Carboncoin(this);
 			});
 		} else {
 			$("#rawSubmitBtn").click(function(){

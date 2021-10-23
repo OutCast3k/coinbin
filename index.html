@@ -51,7 +51,7 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a href="#home" class="navbar-brand" id="homeBtn"><img src="images/coinbin.gif" style="height:25px;margin-top:-5px"></a>
+						<a href="#home" class="navbar-brand" id="homeBtn"><img src="images/coinbin.png" style="height:49px;margin-top:-15px"></a>
 					</div>
 					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav">
@@ -71,10 +71,17 @@
 							<li><a href="#sign" data-toggle="tab"><span class="glyphicon glyphicon-pencil"></span> Sign</a></li>
 							<li><a href="#broadcast" data-toggle="tab"><span class="glyphicon glyphicon-globe"></span> Broadcast</a></li>
 							<li><a href="#wallet" data-toggle="tab"><span class="glyphicon glyphicon-briefcase"></span> Wallet</a></li>
-							<li><a href="#about" data-toggle="tab"><span class="glyphicon glyphicon-info-sign"></span> About</a></li>
 
-							<li class="hidden"><a href="#settings" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
-							<li class="hidden"><a href="#fees" data-toggle="tab"><span class="glyphicon glyphicon-tag"></span> Fees</a></li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-info-sign"></span> Help<b class="caret"></b></a>
+								<ul class="dropdown-menu">
+									<li><a href="#settings" data-toggle="tab">Settings</a></li>
+									<li><a href="#fees" data-toggle="tab">Fee Calculator</a></li>
+									<li><a href="https://status.coinb.in/" target="_blank">Service Status</a></li>
+									<li role="separator" class="divider"></li>
+									<li><a href="#about" data-toggle="tab">About</a></li>
+								</ul>
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -200,14 +207,29 @@
 												<ul class="nav nav-pills" role="tablist">
 													<li role="presentation" class="active"><a href="javascript:;" id="walletBalance">0.00 BTC</a></li>
 													<li role="presentation"><a href="javascript:;" id="walletShowSpend">Spend</a></li>
-													<li role="presentation"><a id="walletHistory" href="javascript:;" target="_blank">History</a></li>
-													<li role="presentation"><a href="https://localbitcoins.com/?ch=173j" target="_blank">Buy</a></li>
+													<li role="presentation"><a href="javascript:;" id="walletHistory" target="_blank">History</a></li>
+													<li role="presentation"><a href="javascript:;" id="walletShowBuy">Buy</a></li>
 													<li role="presentation"><a href="javascript:;" id="walletShowKeys">Keys</a></li>
 												</ul>
 
 												<br>
 
-												<div id="walletKeys" class="hidden">
+												<div id="walletBuy" class="row walletOptions hidden">
+
+													<div class="col-md-6">
+														<label>Exchanges</label>
+														<p><img src="images/hodlhodl16x.png" style="padding:2;"> <b><a href="https://hodlhodl.com/join/XD4F" target="_bank">HodlHodl</a></b><br>Multisig p2p exchange</p>
+														<p><img src="images/changelly16x.png" style="padding:2;"> <b><a href="https://changelly.com/buy?from=usd&to=btc&amount=150&ref_id=wdo6tcw9bn9yrd91" target="_blank">Changelly</a></b> <br>Instant crypto exchange</p>
+													</div>
+
+													<div class="col-md-6">
+														<label>Services</label>
+														<p><img src="images/bitrefill16x.png" style="padding:2;"> <b><a href="https://www.bitrefill.com/signup/?code=zwuxxhbo" target="_bank">Bitrefill</a></b><br>Coupons and vouchers</p>
+													</div>
+		
+												</div>
+
+												<div id="walletKeys" class="walletOptions hidden">
 													<label>Public Key</label>
 													<input class="form-control pubkey" type="text" readonly>
 
@@ -229,7 +251,7 @@
 													<input class="form-control privkeyaes" type="text" readonly>
 												</div>
 
-												<div id="walletSpend" class="hidden">
+												<div id="walletSpend" class="walletOptions hidden">
 													<div class="row">
 														<div class="form-inline output">
 															<div class="col-xs-8">
@@ -259,11 +281,11 @@
 													<div class="row">
 														<div class="col-xs-6">
 															<label><abbr title="the amount to pay in network miner fee">Transaction Fee</abbr>&nbsp;&nbsp;<a href="javascript:;" id="feesestwallet"><span class="glyphicon glyphicon-question-sign"></span></a></label>
-															<input type="text" class="form-control" value="0.00004000" id="txFee">
+															<input type="text" class="form-control" value="0.00001000" id="txFee">
 														</div>
 														<div class="col-xs-5">
 															<label><abbr title="the amount to donate to coinb.in">Donation</abbr></label>
-															<input type="text" class="form-control" value="0.003" id="developerDonation">
+															<input type="text" class="form-control" value="0.001" id="developerDonation">
 														</div>
 													</div>
 													<br>
@@ -742,7 +764,7 @@
 						<br>
 
 						<div class="row">
-							<div class="col-xs-3">
+							<div class="col-xs-6">
 								<label><abbr title="What is not spent will be used as a transaction fee, so remember to add a &quot;change address&quot;">Transaction Fee</abbr>&nbsp;&nbsp;<a href="javascript:;" id="feesestnewtx"><span class="glyphicon glyphicon-question-sign"></span></a></label>
 								<input type="text" id="transactionFee" class="form-control" value="0.0000" readonly>
 							</div>
@@ -1333,13 +1355,12 @@
 
 					<div class="tab-pane tab-content" id="about">
 						<h2>About <small>open source bitcoin wallet</small></h2>
-						<p>Version 1.6</p>
+						<p>Version 1.7</p>
 						<p>Compatible with bitcoin core</p>
 						<p>Github <a href="https://github.com/OutCast3k/coinbin/">https://github.com/OutCast3k/coinbin/</a></p>
-						<p>TOR <a href="http://4zpinp6gdkjfplhk.onion">4zpinp6gdkjfplhk.onion</a></p>
+						<p style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">TOR <a href="http://coinbin3ravkwb24f7rmxx6w3snkjw45jhs5lxbh3yfeg3vpt6janwqd.onion"><i>coinbin</i>3ravkwb24f7rmxx6w3snkjw45jhs5lxbh3yfeg3vpt6janwqd.onion</a> | <i><s><a href="http://4zpinp6gdkjfplhk.onion">4zpinp6gdkjfplhk.onion</a></s></i></p>
 						<h3>What is Bitcoin?</h3>
 						<p>Bitcoin is a type of digital currency in which encryption techniques are used to regulate the generation of units of currency and verify the transfer of funds, operating independently of a central bank. See <a href="http://www.weusecoins.com/" target="_blank">weusecoins.com</a> for more information.</p>
-						<p>If you are looking to buy some Bitcoin try <a href="https://localbitcoins.com/?ch=173j" target="_blank">LocalBitcoins.com</a>.</p>
 						<h3>Information</h3>
 						<p>Coinb.in is a free and open source project released under the MIT license, originally by <a href="https://bitcointalk.org/index.php?action=profile;u=34834" target="_blank">OutCast3k</a> in 2013. Discussion of the project can be found at <a href="https://bitcointalk.org/index.php?topic=390046" target="_blank">bitcointalk.org</a> during its early testing stages when its primary focus was to develop a proof of concept multisig solution in javascript.</p>
 						<p>Coinb.in is run and funded by the generosity of others in terms of <a href="https://github.com/OutCast3k/coinbin/graphs/contributors" target="_blank">development</a> and hosting.</p>
@@ -1364,7 +1385,6 @@
 									<option value="bitcoin_mainnet" rel="0x00;0x80;0x05;0x488b21e;0x488ade4;coinb.in;coinb.in">Bitcoin (mainnet)</option>
 									<option value="litecoin_mainnet" rel="0x30;0xb0;0x32;0x019da462;0x019d9cfe;blockcypher_litecoin;blockcypher_litecoin">Litecoin (mainnet)</option>
 									<option value="dogecoin_mainnet" rel="0x1e;0x9e;0x16;0x0827421e;0x089944e4;blockcypher_dogecoin;blockcypher_dogecoin">Dogecoin (mainnet)</option>
-									<option value="carboncoin_mainnet" rel="0x2f;0xaf;0x05;0x488b21e;0x488ade4;cryptoid.info_carboncoin;cryptoid.info_carboncoin">Carboncoin (mainnet)</option>
 									<option value="shadowcash_mainnet" rel="0x3f;0xbf;0x7d;0xee80286a;0xee8031e8;false;false">ShadowCash (mainnet)</option>
 									<option value="bitcoin_testnet" rel="0x6f;0xef;0xc4;0x043587cf;0x04358394;false;false">Bitcoin (testnet)</option>
 
@@ -1429,7 +1449,6 @@
 									<option value="chain.so_bitcoinmainnet"> Chain.so (Bitcoin mainnet)</option>
 									<option value="chain.so_litecoin"> Chain.so (Litecoin)</option>
 									<option value="chain.so_dogecoin"> Chain.so (Dogecoin)</option>
-									<option value="cryptoid.info_carboncoin"> Cryptoid.info (Carboncoin)</option>
 								</select>
 							</div>
 						</div>
@@ -1439,7 +1458,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<b>Unspent outputs</b>: <br>
-								<p class="text-muted">Select the network you wish to retreive your unspent inputs from</p>
+								<p class="text-muted">Select the network you wish to retreive your unspent outputs from</p>
 								<select class="form-control" id="coinjs_utxo">
 									<option value="coinb.in">coinb.in (Bitcoin mainnet)</option>
 									<option value="blockcypher_bitcoinmainnet"> Blockcypher.com (Bitcoin mainnet)</option>
@@ -1451,7 +1470,6 @@
 									<option value="chain.so_bitcoinmainnet"> Chain.so (Bitcoin mainnet)</option>
 									<option value="chain.so_litecoin"> Chain.so (Litecoin)</option>
 									<option value="chain.so_dogecoin"> Chain.so (Dogecoin)</option>
-									<option value="cryptoid.info_carboncoin"> Cryptoid.info (Carboncoin)</option>
 								</select>
 							</div>
 						</div>
@@ -1475,7 +1493,7 @@
 
 		<div id="footer">
 			<div class="container text-right">
-	        		<p class="text-muted">Version 1.6</p>
+	        		<p class="text-muted">Version 1.7</p>
 			</div>
 		</div>
 

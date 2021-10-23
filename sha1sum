@@ -1,9 +1,9 @@
----- Version 1.6 2020.10.02 ----
+---- Version 1.7 2021.10.23 ----
 77e4519962e2f6a9fc93342137dbb31c33b76b04  ./js/aes.js
 3a09a8fc0cfe828b57fc798d668234d0490ee1a6  ./js/bootstrap-datetimepicker.min.js
 253711c6d825de55a8360552573be950da180614  ./js/bootstrap.min.js
-cb5717166bf1c99abbd75a06013067c4a5897d5a  ./js/coinbin.js
-911fb7bdba24269029f27659e4040cd991b2307c  ./js/coin.js
+61095a685a6bb343fc5dcdd7cf3e458bfb3aa0a4  ./js/coinbin.js
+5f83da7e2fce8c55a711a768970899c2300dcd46  ./js/coin.js
 988565bc2cb402d63ed5c5fd7ff47c4278efc2c5  ./js/collapse.js
 9ba5ede3d7f9d4c8fd623395f196adfdcf7e970f  ./js/crypto-min.js
 f7c09f2f5a721371e7d478050119f7e2d58e3ef9  ./js/crypto-sha256-hmac.js
@@ -23,13 +23,17 @@ ed29315e0ffb3f14382431f2724235bf67f44eb3  ./css/bootstrap.min.css
 fc6b4268fbd57ad95d2b41a1d4d6866f222fbdb2  ./css/bootstrap-theme.min.css
 eb54f374256b75a17f274847b4ca9985fd046f9f  ./css/style.css
 2e3217a3f3b7c2fb30562ab9a4ef9a407ae81897  ./images/btc32x.png
-8ac24915d59cef71c542e7cb7d7e153f560cba1f  ./images/coinbin.gif
+2c95cc283e4d843655ea111a7e4072c16ab56b7b  ./images/bitrefill16x.png
+b6e8cb7bc6e7a9cb167e65696439891fc06ded6d  ./images/changelly16x.png
+774cf795e16b33c5d67b5ad0ae95692c3ce49fce  ./images/coinbin.png
+f4fbd6f11bf1d81b0fdba3bfb83799fda6c46c67  ./images/coinbin.svg
+7645c6b897dc845ed681fad0812b424063374494  ./images/hodlhodl16x.png
 f2af060f1cadbc9065c8c465c648dc01be67cc12  ./images/loader.gif
 86b6f62b7853e67d3e635f6512a5a5efc58ea3c3  ./fonts/glyphicons-halflings-regular.eot
 ca35b697d99cae4d1b60f2d60fcd37771987eb07  ./fonts/glyphicons-halflings-regular.woff2
 de51a8494180a6db074af2dee2383f0a363c5b08  ./fonts/glyphicons-halflings-regular.svg
 278e49a86e634da6f2a02f3b47dd9d2a8f26210f  ./fonts/glyphicons-halflings-regular.woff
 44bc1850f570972267b169ae18f1cb06b611ffa2  ./fonts/glyphicons-halflings-regular.ttf
-ee481606d8d48f402d152fa632ba9e5f9da7f169  ./README.md
-a706e95f6436ee4a31dc26b17a9ac8ab1f0d3750  ./index.html
+283e5a5aa0999fb8e84bdc7a0f2a881db249baf1  ./README.md
+76985f9ad1239f69bdd5083ce222ff33eb6c87e6  ./index.html
 7130b64e3ef4cf6f2f1550e902f081c58dc053de  ./test.html
