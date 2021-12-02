@@ -1215,14 +1215,14 @@
 							<div class="row">
 								<div class="col-md-8">
 									<b>Path</b><br>
-									<select class="form-control" id="hdpathtype"">
+									<select class="form-control" id="hdpathtype">
 										<option value="simple">Simple: m/i</option>
 										<option value="custom">Custom</option>
 									</select>
 
 									<div id="hdpath" class="hidden" style="margin-top:4px">
 										<span class="input-group">
-											<input type="text" class="form-control" value="m/0/1">  <br>
+											<input type="text" class="form-control" value="m/0/1" title="WARNING: see #settings page when using hardened paths!">  <br>
 											<span class="input-group-addon"> / </span>
 										</span>
 									</div>
@@ -1470,6 +1470,19 @@
 									<option value="chain.so_bitcoinmainnet"> Chain.so (Bitcoin mainnet)</option>
 									<option value="chain.so_litecoin"> Chain.so (Litecoin)</option>
 									<option value="chain.so_dogecoin"> Chain.so (Dogecoin)</option>
+								</select>
+							</div>
+						</div>
+
+						<hr>
+
+						<div class="row">
+							<div class="col-md-12">
+								<b>HD wallet hardened path derivation</b>: <br>
+								<p class="text-muted">The path derivation for hardened paths was calculated wrong in earlier versions of coinb.in. Please select the old path derivation to recover HD wallet keys generated with older version of coinb.in.</p>
+								<select class="form-control" id="coinjs_derivation">
+									<option value="bip32_derivation">BIP32 compliant derivation</option>
+									<option value="coinbin_broken">Old (broken) coinb.in path derivation</option>
 								</select>
 							</div>
 						</div>
