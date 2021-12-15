@@ -48,12 +48,7 @@
 		if (!cry) return '';
 		var buf = new Uint8Array(count);
 		cry.getRandomValues(buf);
-		var s = '';
-		for (var i = 0; i < buf.length; i++) {
-			var h = buf[i].toString(16);
-			s += h.length === 1 ? '0' + h : h;
-		}
-		return s;
+		return Crypto.util.bytesToHex(buf);
 	}
 
 	/* generate a new random private key */
