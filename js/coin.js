@@ -47,9 +47,9 @@
 		var cry = window.crypto || window.msCrypto;
 		if (!cry) {
 			/* Display warning message for 30 seconds */
-			$("#cryptoRandomStatus").removeClass("hidden");
+			document.getElementById('cryptoRandomStatus').classList.remove("hidden");
 			setTimeout(function(){
-				$("#cryptoRandomStatus").addClass("hidden");
+				document.getElementById('cryptoRandomStatus').classList.add("hidden");
 			}, 30000);
 
 			return '';
