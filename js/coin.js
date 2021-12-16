@@ -45,7 +45,15 @@
 	/* generate crypto secure random numbers (should exist on most browsers) */
 	coinjs.randomBytesSafe = function(count){
 		var cry = window.crypto || window.msCrypto;
-		if (!cry) return '';
+		if (!cry) {
+			/* Display warning message for 30 seconds */
+			$("#cryptoRandomStatus").removeClass("hidden");
+			setTimeout(function(){
+				$("#cryptoRandomStatus").addClass("hidden");
+			}, 30000);
+
+			return '';
+		}
 		var buf = new Uint8Array(count);
 		cry.getRandomValues(buf);
 		return Crypto.util.bytesToHex(buf);
