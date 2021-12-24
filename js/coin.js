@@ -42,9 +42,27 @@
 		};
 	}
 
+	/* generate crypto secure random numbers (should exist on most browsers) */
+	coinjs.randomBytesSafe = function(count){
+		var cry = window.crypto || window.msCrypto;
+		if (!cry) {
+			/* Display warning message for 30 seconds */
+			document.getElementById('cryptoRandomStatus').classList.remove("hidden");
+			setTimeout(function(){
+				document.getElementById('cryptoRandomStatus').classList.add("hidden");
+			}, 30000);
+
+			return '';
+		}
+		var buf = new Uint8Array(count);
+		cry.getRandomValues(buf);
+		return Crypto.util.bytesToHex(buf);
+	}
+
 	/* generate a new random private key */
 	coinjs.newPrivkey = function(){
 		var x = window.location;
+		x += coinjs.randomBytesSafe(32);
 		x += (window.screen.height * window.screen.width * window.screen.colorDepth);
 		x += coinjs.random(64);
 		x += (window.screen.availHeight * window.screen.availWidth * window.screen.pixelDepth);
