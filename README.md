@@ -7,11 +7,13 @@ Live version available at http://coinb.in/ or coinbin3ravkwb24f7rmxx6w3snkjw45jh
 
 Github URL: https://github.com/OutCast3k/coinbin/
 
-Coinb.in supports a number of key features such as: 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+Coinb.in supports a number of key features such as:
 
 - Offline Compressed & uncompressed Address creation.
 - Offline Multisignature Address creation.
-- "In browser" Key (re)generation. 
+- "In browser" Key (re)generation.
 - Send and receive payments.
 - Ability to decode transactions, redeem scripts and more offline.
 - Build custom transactions offline.
