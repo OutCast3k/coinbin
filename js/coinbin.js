@@ -779,8 +779,28 @@ $(document).ready(function() {
 	});
 
 	$(".txidClear").click(function(){
-		$("#inputs .row:first input").attr('disabled',false);
-		$("#inputs .row:first input").val("");
+		if ($("#inputs > div").length == 1)
+		{
+			$("#inputs .row:first input").attr('disabled',false);
+			$("#inputs .row:first input").val("");
+		}
+		else
+		{
+			$.each($("#inputs .row"), function(i,o){
+				if ($(o).is(':last-child'))
+				{
+					o.remove();
+					return true;
+				}
+				var next = $(o).next();
+				$(".txId",o).val($(".txId",next).val());
+				$(".txIdScript",o).val($(".txIdScript",next).val());
+				$(".txIdN",o).val($(".txIdN",next).val());
+				$(".txIdAmount",o).val($(".txIdAmount",next).val());
+				$("input",o).attr('disabled',$("input",next).prop('disabled'));
+			});
+		}
+
 		totalInputAmount();
 	});
 
@@ -901,7 +921,8 @@ $(document).ready(function() {
 		}
 
 		if($("#clearInputsOnLoad").is(":checked")){
-			$("#inputs .txidRemove, #inputs .txidClear").click();
+			$("#inputs .txidRemove").click();
+			$("#inputs .txidClear").click();
 		}
 
 		$("#redeemFromBtn").html("Please wait, loading...").attr('disabled',true);
