@@ -402,7 +402,7 @@ $(document).ready(function() {
 		$("#newSegWitAddress").val(sw.address);
 		$("#newSegWitRedeemScript").val(sw.redeemscript);
 		$("#newSegWitPubKey").val(coin.pubkey);
-		$("#newSegWitPrivKey").val(`${prefix}:${coin.wif}`);
+		$("#newSegWitPrivKey").val(prefix + ':' + coin.wif);
 		coinjs.compressed = compressed;
 	});
 

@@ -264,7 +264,7 @@
 			break;
 		}
 		}
-		return {address, 'compressed':r['compressed']};
+		return {'address': address, 'compressed':r['compressed']};
 	}
 
 	/* decode or validate an address and return the hash */
