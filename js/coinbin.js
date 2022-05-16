@@ -948,15 +948,22 @@ $(document).ready(function() {
 	});
 
 	/* function to determine what we are redeeming from */
-	function redeemingFrom(string){
+	function redeemingFrom(input){
 		var r = {};
+		var string = input;
+		var prefix;
+		// Parse electrum style wif key (Internet Explorer compatible)
+		if (['p2pkh', 'p2wpkh-p2sh', 'p2wpkh'].indexOf(input.split(':')[0]) !== -1) {
+			prefix = input.split(':')[0];
+			string = input.split(':')[1];
+		}
 		var decode = coinjs.addressDecode(string);
 		if(decode.version == coinjs.pub){ // regular address
 			r.addr = string;
 			r.from = 'address';
 			r.redeemscript = false;
 		} else if (decode.version == coinjs.priv){ // wif key
-			var a = coinjs.wif2address(string);
+			var a = coinjs.wif2address(string, prefix);
 			r.addr = a['address'];
 			r.from = 'wif';
 			r.redeemscript = false;

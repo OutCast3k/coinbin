@@ -247,9 +247,24 @@
 	}
 
 	/* convert a wif to a address */
-	coinjs.wif2address = function(wif){
+	coinjs.wif2address = function(wif, prefix){
 		var r = coinjs.wif2pubkey(wif);
-		return {'address':coinjs.pubkey2address(r['pubkey']), 'compressed':r['compressed']};
+		var address;
+		switch (prefix) {
+		case 'p2wpkh-p2sh': {
+			address = coinjs.segwitAddress(r['pubkey']).address;
+			break;
+		}
+		case 'p2wpkh': {
+			address = coinjs.bech32Address(r['pubkey']).address;
+			break;
+		}
+		default: {
+			address = coinjs.pubkey2address(r['pubkey']);
+			break;
+		}
+		}
+		return {address, 'compressed':r['compressed']};
 	}
 
 	/* decode or validate an address and return the hash */
