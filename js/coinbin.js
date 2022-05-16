@@ -389,17 +389,20 @@ $(document).ready(function() {
 
 		var s = ($("#newSegWitBrainwallet").is(":checked")) ? $("#brainwalletSegWit").val() : null;
 		var coin = coinjs.newKeys(s);
+		var prefix;
 
 		if($("#newSegWitBech32addr").is(":checked")){
+			prefix = 'p2wpkh';
 			var sw = coinjs.bech32Address(coin.pubkey);
 		} else {
+			prefix = 'p2wpkh-p2sh';
 			var sw = coinjs.segwitAddress(coin.pubkey);
 		}
 
 		$("#newSegWitAddress").val(sw.address);
 		$("#newSegWitRedeemScript").val(sw.redeemscript);
 		$("#newSegWitPubKey").val(coin.pubkey);
-		$("#newSegWitPrivKey").val(coin.wif);
+		$("#newSegWitPrivKey").val(`${prefix}:${coin.wif}`);
 		coinjs.compressed = compressed;
 	});
 
