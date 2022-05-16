@@ -864,7 +864,7 @@ $(document).ready(function() {
 				var videoElement = document.querySelector('video');
 				try {
 					videoElement.srcObject = stream;
-				} catch {
+				} catch (e) {
 					videoElement.src = window.URL.createObjectURL(stream);
 				}
 				videoElement.play();
