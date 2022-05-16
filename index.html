@@ -1440,6 +1440,10 @@
 								<p class="text-muted">Select the network you wish to broadcast the transaction via</p>
 								<select class="form-control" id="coinjs_broadcast">
 									<option value="coinb.in">coinb.in (Bitcoin mainnet)</option>
+									<option value="mempool"> mempool.space (Bitcoin mainnet)</option>
+									<option value="mempool_onion"> mempool.space (onion) (Bitcoin mainnet)</option>
+									<option value="blockstream"> Blockstream.info (Bitcoin mainnet)</option>
+									<option value="blockstream_onion"> Blockstream.info (onion) (Bitcoin mainnet)</option>
 									<option value="blockcypher_bitcoinmainnet"> Blockcypher.com (Bitcoin mainnet)</option>
 									<option value="blockcypher_litecoin"> Blockcypher.com (Litecoin)</option>
 									<option value="blockcypher_dogecoin"> Blockcypher.com (Dogecoin)</option>
@@ -1449,10 +1453,32 @@
 									<option value="chain.so_bitcoinmainnet"> Chain.so (Bitcoin mainnet)</option>
 									<option value="chain.so_litecoin"> Chain.so (Litecoin)</option>
 									<option value="chain.so_dogecoin"> Chain.so (Dogecoin)</option>
+									<option value="electrum_custom"> Custom Electrum server</option>
 								</select>
 							</div>
 						</div>
-							
+
+						<div id="customBroadcast" class="hidden">
+
+							<hr>
+
+							<div class="row">
+								<div class="col-md-6">
+									<b>Server</b>: <br>
+									<input type="text" class="form-control" placeholder="http://127.0.0.1:3000/" id="broadcast_server">
+								</div>
+								<div class="col-md-6">
+									<b>Explorer</b>: <br>
+									<input type="text" class="form-control" placeholder="https://mempool.space/" id="broadcast_explorer">
+								</div>
+							</div>
+
+							<br>
+
+							<div class="alert alert-info"> <span class="glyphicon glyphicon-info-sign"></span> This feature is only available for local Electrum instances that supports compatible HTTP API (Currently, only the limited number of Electrum server implementation supports this feature). For compatible API methods, please refer the <a href="https://github.com/Blockstream/esplora/blob/master/API.md" target="_blank">API Docs</a>.</div>
+							<div class="alert alert-info"> <span class="glyphicon glyphicon-info-sign"></span> Currently supported: <a href="https://github.com/Blockstream/electrs" target="_blank">Blockstream/electrs</a>, <a href="https://github.com/mempool/mempool" target="_blank">mempool (HTTP-TCP Proxy for ElectrumX / Electrs / Fulcrum)</a></div>
+						</div>
+
 						<hr>
 
 						<div class="row">
@@ -1461,6 +1487,10 @@
 								<p class="text-muted">Select the network you wish to retreive your unspent outputs from</p>
 								<select class="form-control" id="coinjs_utxo">
 									<option value="coinb.in">coinb.in (Bitcoin mainnet)</option>
+									<option value="mempool"> mempool.space (Bitcoin mainnet)</option>
+									<option value="mempool_onion"> mempool.space (onion) (Bitcoin mainnet)</option>
+									<option value="blockstream"> Blockstream.info (Bitcoin mainnet)</option>
+									<option value="blockstream_onion"> Blockstream.info (onion) (Bitcoin mainnet)</option>
 									<option value="blockcypher_bitcoinmainnet"> Blockcypher.com (Bitcoin mainnet)</option>
 									<option value="blockcypher_litecoin"> Blockcypher.com (Litecoin)</option>
 									<option value="blockcypher_dogecoin"> Blockcypher.com (Dogecoin)</option>
@@ -1470,8 +1500,30 @@
 									<option value="chain.so_bitcoinmainnet"> Chain.so (Bitcoin mainnet)</option>
 									<option value="chain.so_litecoin"> Chain.so (Litecoin)</option>
 									<option value="chain.so_dogecoin"> Chain.so (Dogecoin)</option>
+									<option value="electrum_custom"> Custom Electrum server</option>
 								</select>
 							</div>
+						</div>
+
+						<div id="customUtxo" class="hidden">
+
+							<hr>
+
+							<div class="row">
+								<div class="col-md-6">
+									<b>Server</b>: <br>
+									<input type="text" class="form-control" placeholder="http://127.0.0.1:3000/" id="utxo_server">
+								</div>
+								<div class="col-md-6">
+									<b>Explorer</b>: <br>
+									<input type="text" class="form-control" placeholder="https://mempool.space/" id="utxo_explorer">
+								</div>
+							</div>
+
+							<br>
+
+							<div class="alert alert-info"> <span class="glyphicon glyphicon-info-sign"></span> This feature is only available for local Electrum instances that supports compatible HTTP API (Currently, only the limited number of Electrum server implementation supports this feature). For compatible API methods, please refer the <a href="https://github.com/Blockstream/esplora/blob/master/API.md" target="_blank">API Docs</a>.</div>
+							<div class="alert alert-info"> <span class="glyphicon glyphicon-info-sign"></span> Currently supported: <a href="https://github.com/Blockstream/electrs" target="_blank">Blockstream/electrs</a>, <a href="https://github.com/mempool/mempool" target="_blank">mempool (HTTP-TCP Proxy for ElectrumX / Electrs / Fulcrum)</a></div>
 						</div>
 
 						<br>

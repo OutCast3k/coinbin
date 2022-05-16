@@ -933,6 +933,42 @@ $(document).ready(function() {
 			listUnspentBlockchair(redeem, "litecoin");
 		} else if(host=='blockchair_dogecoin'){
 			listUnspentBlockchair(redeem, "dogecoin");
+
+		} else if(host=='mempool'){
+			explorer_tx = 'https://mempool.space/tx/';
+			explorer_block = 'https://mempool.space/block/';
+			explorer_addr = 'https://mempool.space/address/';
+			listUnspentElectrum(redeem, "https://mempool.space/api/");
+		} else if(host=='mempool_onion'){
+			explorer_tx = 'http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/tx/';
+			explorer_block = 'http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/block/';
+			explorer_addr = 'http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/address/';
+			listUnspentElectrum(redeem, "http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/api/");
+		} else if(host=='blockstream'){
+			explorer_tx = 'https://blockstream.info/tx/';
+			explorer_block = 'https://blockstream.info/block/';
+			explorer_addr = 'https://blockstream.info/address/';
+			listUnspentElectrum(redeem, "https://blockstream.info/api/");
+		} else if(host=='blockstream_onion'){
+			explorer_tx = 'http://explorerzydxu5ecjrkwceayqybizmpjjznk5izmitf2modhcusuqlid.onion/tx/';
+			explorer_block = 'http://explorerzydxu5ecjrkwceayqybizmpjjznk5izmitf2modhcusuqlid.onion/block/';
+			explorer_addr = 'http://explorerzydxu5ecjrkwceayqybizmpjjznk5izmitf2modhcusuqlid.onion/address/';
+			listUnspentElectrum(redeem, "http://explorerzydxu5ecjrkwceayqybizmpjjznk5izmitf2modhcusuqlid.onion/api/");
+		} else if(host=='electrum_custom'){
+			var utxo_server = $("#utxo_server").val();
+			var utxo_explorer = $("#utxo_explorer").val();
+			if (!utxo_server) {
+				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> No electrum server input, please update your settings!');
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				return;
+			}
+			if (utxo_explorer) {
+				explorer_tx = `${utxo_explorer}tx/`;
+				explorer_block = `${utxo_explorer}block/`;
+				explorer_addr = `${utxo_explorer}address/`;
+			}
+			listUnspentElectrum(redeem, utxo_server);
+
 		} else {
 			listUnspentDefault(redeem);
 		}
@@ -1231,6 +1267,58 @@ $(document).ready(function() {
 		});
 	}
 
+	/* retrieve unspent data from electrum proxy */
+	function listUnspentElectrum(redeem, api){
+		$.ajax ({
+			type: "GET",
+			url: `${api}address/${redeem.addr}/utxo`,
+			dataType: "json",
+			async: false,
+			error: function(data) {
+				console.log(`Error from ${api}address/${redeem.addr}/utxo`);
+				console.log(data);
+				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+			},
+			success: function(data) {
+				if (data.length === 0) {
+					// Address have no UTXO
+					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+					return;
+				}
+				for (i = 0; i < data.length; ++i) {
+					$.ajax ({
+						type: "GET",
+						url: `${api}tx/${data[i].txid}`,
+						dataType: "json",
+						async: false,
+						error: function(data2) {
+							console.log(`Error from ${api}tx/${data[i].txid}`);
+							console.log(data2);
+							$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
+						},
+						success: function(data2) {
+							for(var j in data2.vout){
+								var o = data2.vout[j];
+								var n = data[i].vout;
+								if (o.scriptpubkey_address === redeem.addr) {
+									var tx = ((""+data2.txid).match(/.{1,2}/g).reverse()).join("")+'';
+									var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.scriptpubkey;
+									var amount = ((o.value.toString()*1)/100000000).toFixed(8);
+									addOutput(tx, n, script, amount);
+								}
+							}
+						}
+					});
+				}
+				$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
+			},
+			complete: function(data, status) {
+				$("#redeemFromBtn").html("Load").attr('disabled',false);
+				totalInputAmount();
+			}
+		});
+	}
+
 
 	/* math to calculate the inputs and outputs */
 
@@ -1313,7 +1401,30 @@ $(document).ready(function() {
 			},
 			complete: function(data, status) {
 				$("#rawTransactionStatus").fadeOut().fadeIn();
-				$(thisbtn).val('Submit').attr('disabled',false);				
+				$(thisbtn).val('Submit').attr('disabled',false);
+			}
+		});
+	}
+
+	// broadcast transaction via compatible electrum proxy
+	function rawSubmitElectrum(thisbtn, api){
+		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
+		$.ajax ({
+			type: "POST",
+			url: `${api}tx`,
+			data: $("#rawTransaction").val(),
+			dataType: "text",
+			error: function(data) {
+				console.log(`Error from ${api}tx`);
+				console.log(data);
+				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(" There was an error submitting your request, please try again").prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+			},
+			success: function(data) {
+				$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + data + '<br> <a href="' + explorer_tx + data + '" target="_blank">View on Blockchain Explorer</a>');
+			},
+			complete: function(data, status) {
+				$("#rawTransactionStatus").fadeOut().fadeIn();
+				$(thisbtn).val('Submit').attr('disabled',false);
 			}
 		});
 	}
@@ -1914,6 +2025,24 @@ $(document).ready(function() {
 		}
 	});
 
+	$("#coinjs_broadcast").change(function(){
+		// hide/show custom screen
+		if($("option:selected",this).val()=="electrum_custom"){
+			$("#customBroadcast").removeClass("hidden");
+		} else {
+			$("#customBroadcast").addClass("hidden");
+		}
+	});
+
+	$("#coinjs_utxo").change(function(){
+		// hide/show custom screen
+		if($("option:selected",this).val()=="electrum_custom"){
+			$("#customUtxo").removeClass("hidden");
+		} else {
+			$("#customUtxo").addClass("hidden");
+		}
+	});
+
 	function configureBroadcast(){
 		var host = $("#coinjs_broadcast option:selected").val();
 
@@ -1958,6 +2087,51 @@ $(document).ready(function() {
 		} else if(host=="blockchair_dogecoin"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitblockchair(this, "dogecoin");
+			});
+		} else if(host=='mempool'){
+			$("#rawSubmitBtn").click(function(){
+				explorer_tx = 'https://mempool.space/tx/';
+				explorer_block = 'https://mempool.space/block/';
+				explorer_addr = 'https://mempool.space/address/';
+				rawSubmitElectrum(this, "https://mempool.space/api/");
+			});
+		} else if(host=='mempool_onion'){
+			$("#rawSubmitBtn").click(function(){
+				explorer_tx = 'http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/tx/';
+				explorer_block = 'http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/block/';
+				explorer_addr = 'http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/address/';
+				rawSubmitElectrum(this, "http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/api/");
+			});
+		} else if(host=='blockstream'){
+			$("#rawSubmitBtn").click(function(){
+				explorer_tx = 'https://blockstream.info/tx/';
+				explorer_block = 'https://blockstream.info/block/';
+				explorer_addr = 'https://blockstream.info/address/';
+				rawSubmitElectrum(this, "https://blockstream.info/api/");
+			});
+		} else if(host=='blockstream_onion'){
+			$("#rawSubmitBtn").click(function(){
+				explorer_tx = 'http://explorerzydxu5ecjrkwceayqybizmpjjznk5izmitf2modhcusuqlid.onion/tx/';
+				explorer_block = 'http://explorerzydxu5ecjrkwceayqybizmpjjznk5izmitf2modhcusuqlid.onion/block/';
+				explorer_addr = 'http://explorerzydxu5ecjrkwceayqybizmpjjznk5izmitf2modhcusuqlid.onion/address/';
+				rawSubmitElectrum(this, "http://explorerzydxu5ecjrkwceayqybizmpjjznk5izmitf2modhcusuqlid.onion/api/");
+			});
+		} else if(host=='electrum_custom'){
+			$("#rawSubmitBtn").click(function(){
+				var broadcast_server = $("#broadcast_server").val();
+				var broadcast_explorer = $("#broadcast_explorer").val();
+				if (!broadcast_server) {
+					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(" No electrum server input, please update your settings").prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
+					$("#rawTransactionStatus").fadeOut().fadeIn();
+					$(thisbtn).val('Submit').attr('disabled',false);
+					return;
+				}
+				if (broadcast_explorer) {
+					explorer_tx = `${broadcast_explorer}tx/`;
+					explorer_block = `${broadcast_explorer}block/`;
+					explorer_addr = `${broadcast_explorer}address/`;
+				}
+				rawSubmitElectrum(this, broadcast_server);
 			});
 		} else {
 			$("#rawSubmitBtn").click(function(){
