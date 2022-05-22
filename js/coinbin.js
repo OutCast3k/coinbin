@@ -1799,6 +1799,10 @@ $(document).ready(function() {
 		$("input[type='password']",$(this).parent().parent()).attr('type','text');
 	});
 
+	$(".copyKey").click(function(){
+		navigator.clipboard.writeText($("input",$(this).parent().parent()).val());
+	});
+
 	$("#homeBtn").click(function(e){
 		e.preventDefault();
 		history.pushState(null, null, '#home');
