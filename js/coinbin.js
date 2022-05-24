@@ -1799,6 +1799,18 @@ $(document).ready(function() {
 		$("input[type='password']",$(this).parent().parent()).attr('type','text');
 	});
 
+	$(".copyKey").click(function(){
+		navigator.clipboard.writeText($("input",$(this).parent().parent()).val());
+	});
+
+	$(".copyGenerated").click(function(){
+		navigator.clipboard.writeText($("#generated-transaction").val());
+	});
+
+	$(".copySigned").click(function(){
+		navigator.clipboard.writeText($("#signed-transaction").val());
+	});
+
 	$("#homeBtn").click(function(e){
 		e.preventDefault();
 		history.pushState(null, null, '#home');
