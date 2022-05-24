@@ -389,17 +389,20 @@ $(document).ready(function() {
 
 		var s = ($("#newSegWitBrainwallet").is(":checked")) ? $("#brainwalletSegWit").val() : null;
 		var coin = coinjs.newKeys(s);
+		var prefix;
 
 		if($("#newSegWitBech32addr").is(":checked")){
+			prefix = 'p2wpkh';
 			var sw = coinjs.bech32Address(coin.pubkey);
 		} else {
+			prefix = 'p2wpkh-p2sh';
 			var sw = coinjs.segwitAddress(coin.pubkey);
 		}
 
 		$("#newSegWitAddress").val(sw.address);
 		$("#newSegWitRedeemScript").val(sw.redeemscript);
 		$("#newSegWitPubKey").val(coin.pubkey);
-		$("#newSegWitPrivKey").val(coin.wif);
+		$("#newSegWitPrivKey").val(prefix + ':' + coin.wif);
 		coinjs.compressed = compressed;
 	});
 
@@ -861,7 +864,7 @@ $(document).ready(function() {
 				var videoElement = document.querySelector('video');
 				try {
 					videoElement.srcObject = stream;
-				} catch {
+				} catch (e) {
 					videoElement.src = window.URL.createObjectURL(stream);
 				}
 				videoElement.play();
@@ -948,15 +951,29 @@ $(document).ready(function() {
 	});
 
 	/* function to determine what we are redeeming from */
-	function redeemingFrom(string){
+	function redeemingFrom(input){
 		var r = {};
+		var string = input;
+		var prefix;
+		// Parse electrum style wif key (Internet Explorer compatible)
+		if (['p2pkh', 'p2wpkh-p2sh', 'p2wpkh'].indexOf(input.split(':')[0]) !== -1) {
+			prefix = input.split(':')[0];
+			string = input.split(':')[1];
+		}
 		var decode = coinjs.addressDecode(string);
 		if(decode.version == coinjs.pub){ // regular address
 			r.addr = string;
 			r.from = 'address';
 			r.redeemscript = false;
+		} else if (prefix === 'p2wpkh' && decode.version == coinjs.priv){ // wif key for bech32
+			var a = coinjs.wif2address(string, prefix);
+			var decode = coinjs.addressDecode(a['address']);
+			r.addr = a['address'];
+			r.from = 'wif';
+			r.decodedRs = decode.redeemscript;
+			r.redeemscript = true;
 		} else if (decode.version == coinjs.priv){ // wif key
-			var a = coinjs.wif2address(string);
+			var a = coinjs.wif2address(string, prefix);
 			r.addr = a['address'];
 			r.from = 'wif';
 			r.redeemscript = false;
@@ -1682,9 +1699,13 @@ $(document).ready(function() {
 
 	$("#signBtn").click(function(){
 		var wifkey = $("#signPrivateKey");
+		var wifKeyParsed = wifkey.val();
+		if (['p2pkh', 'p2wpkh-p2sh', 'p2wpkh'].indexOf(wifKeyParsed.split(':')[0]) !== -1) {
+			wifKeyParsed = wifKeyParsed.split(':')[1];
+		}
 		var script = $("#signTransaction");
 
-		if(coinjs.addressDecode(wifkey.val())){
+		if(coinjs.addressDecode(wifKeyParsed)){
 			$(wifkey).parent().removeClass('has-error');
 		} else {
 			$(wifkey).parent().addClass('has-error');
@@ -1702,7 +1723,7 @@ $(document).ready(function() {
 				var tx = coinjs.transaction();
 				var t = tx.deserialize(script.val());
 
-				var signed = t.sign(wifkey.val(), $("#sighashType option:selected").val());
+				var signed = t.sign(wifKeyParsed, $("#sighashType option:selected").val());
 				$("#signedData textarea").val(signed);
 				$("#signedData .txSize").html(t.size());
 				$("#signedData").removeClass('hidden').fadeIn();
