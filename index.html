@@ -780,11 +780,12 @@
 
 						<div id="transactionCreate" class="alert alert-success hidden">
 							<label>Transaction</label>
+							<button class="copyGenerated btn btn-default" type="button" style="float:right;"><span class="glyphicon glyphicon-copy"></span></button>
 							<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode" style="float:right;"><span class="glyphicon glyphicon-qrcode"></span></button>
 
 							<p>The transaction below has been generated and encoded. It can be broadcasted once it has been signed.</p>
 							<br>
-			                                <textarea class="form-control" style="height:150px" readonly></textarea>
+			                                <textarea class="form-control" style="height:150px" id="generated-transaction" readonly></textarea>
 
 							<p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
 						</div>
@@ -1327,11 +1328,12 @@
 
 						<div class="alert alert-success hidden" id="signedData">
 							<label>Signed transaction</label>
+							<button class="copySigned btn btn-default" type="button" style="float:right;"><span class="glyphicon glyphicon-copy"></span></button>
 							<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode" style="float:right;"><span class="glyphicon glyphicon-qrcode"></span></button>
 							<p>The above transaction has been signed:</p>
 
-                        				<textarea class="form-control script" style="height:160px" readonly></textarea>
-                                    
+                        				<textarea class="form-control script" style="height:160px" id="signed-transaction" readonly></textarea>
+
 							<p class="text-muted">Size: <span class="txSize">0</span> <i>bytes</i></p>
 						</div>
 
