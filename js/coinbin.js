@@ -965,6 +965,13 @@ $(document).ready(function() {
 			r.addr = string;
 			r.from = 'address';
 			r.redeemscript = false;
+		} else if (prefix === 'p2wpkh' && decode.version == coinjs.priv){ // wif key for bech32
+			var a = coinjs.wif2address(string, prefix);
+			var decode = coinjs.addressDecode(a['address']);
+			r.addr = a['address'];
+			r.from = 'wif';
+			r.decodedRs = decode.redeemscript;
+			r.redeemscript = true;
 		} else if (decode.version == coinjs.priv){ // wif key
 			var a = coinjs.wif2address(string, prefix);
 			r.addr = a['address'];
