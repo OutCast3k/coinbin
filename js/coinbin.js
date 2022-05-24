@@ -1699,9 +1699,13 @@ $(document).ready(function() {
 
 	$("#signBtn").click(function(){
 		var wifkey = $("#signPrivateKey");
+		var wifKeyParsed = wifkey.val();
+		if (['p2pkh', 'p2wpkh-p2sh', 'p2wpkh'].indexOf(wifKeyParsed.split(':')[0]) !== -1) {
+			wifKeyParsed = wifKeyParsed.split(':')[1];
+		}
 		var script = $("#signTransaction");
 
-		if(coinjs.addressDecode(wifkey.val())){
+		if(coinjs.addressDecode(wifKeyParsed)){
 			$(wifkey).parent().removeClass('has-error');
 		} else {
 			$(wifkey).parent().addClass('has-error');
@@ -1719,7 +1723,7 @@ $(document).ready(function() {
 				var tx = coinjs.transaction();
 				var t = tx.deserialize(script.val());
 
-				var signed = t.sign(wifkey.val(), $("#sighashType option:selected").val());
+				var signed = t.sign(wifKeyParsed, $("#sighashType option:selected").val());
 				$("#signedData textarea").val(signed);
 				$("#signedData .txSize").html(t.size());
 				$("#signedData").removeClass('hidden').fadeIn();
