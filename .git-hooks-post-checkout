@@ -1,0 +1,5 @@
+#!/bin/bash
+commit=$(git cat-file commit HEAD) #
+sha1=($((printf "commit %s\0" $(echo "$commit" | wc -c); echo "$commit") | sha1sum))
+commit="var git_commit = '${sha1}';"
+sed -i "s/.*var git_commit =.*/${commit}/" js/git-commit.js
