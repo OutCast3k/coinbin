@@ -1,4 +1,15 @@
 $(document).ready(function() {
+	var default_api = 'coinb.in';
+	/* Default value */
+	var defaultConfig = false;
+	if (defaultConfig === false) {
+		$("#coinjs_broadcast").val(default_api);
+		$("#coinjs_utxo").val(default_api);
+		configureBroadcast();
+		configureGetUnspentTx();
+
+		defaultConfig = true;
+	}
 
 	/* open wallet code */
 
@@ -1283,12 +1294,6 @@ $(document).ready(function() {
 			$(".glyphcollapse",$(this).parent()).removeClass('glyphicon-collapse-up').addClass('glyphicon-collapse-down');
 			$(".optionsAdvanced",$(this).parent()).addClass("hidden");
 		}
-	});
-
-	/* broadcast a transaction */
-
-	$("#rawSubmitBtn").click(function(){
-		rawSubmitDefault(this);
 	});
 
 	// broadcast transaction via coinbin (default)
