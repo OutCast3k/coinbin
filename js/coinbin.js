@@ -55,7 +55,7 @@ $(document).ready(function() {
 
 					$("#walletQrCode").html("");
 					var qrcode = new QRCode("walletQrCode");
-					qrcode.makeCode("bitcoin:"+address);
+					qrcode.makeCode("avian:"+address);
 
 					$("#walletKeys .privkey").val(wif);
 					$("#walletKeys .pubkey").val(pubkey);
@@ -91,7 +91,7 @@ $(document).ready(function() {
 
 		$("#walletQrCode").html("");
 		var qrcode = new QRCode("walletQrCode");
-		qrcode.makeCode("bitcoin:");
+		qrcode.makeCode("avian:");
 
 		$("#walletKeys .privkey").val("");
 		$("#walletKeys .pubkey").val("");
@@ -326,7 +326,7 @@ $(document).ready(function() {
 		}
 		var s = ($("#newBrainwallet").is(":checked")) ? $("#brainwallet").val() : null;
 		var coin = coinjs.newKeys(s);
-		$("#newBitcoinAddress").val(coin.address);
+		$("#newAvianAddress").val(coin.address);
 		$("#newPubKey").val(coin.pubkey);
 		$("#newPrivKey").val(coin.wif);
 
@@ -343,15 +343,15 @@ $(document).ready(function() {
 	});
 	
 	$("#newPaperwalletBtn").click(function(){
-		if($("#newBitcoinAddress").val()==""){
+		if($("#newAvianAddress").val()==""){
 			$("#newKeysBtn").click();
 		}
 
 		var paperwallet = window.open();
-		paperwallet.document.write('<h2>BTC PaperWallet</h2><hr><div style="margin-top: 5px; margin-bottom: 5px"><div><h3 style="margin-top: 0">Address (Share)</h3></div><div style="text-align: center;"><div id="qraddress"></div><p>'+$("#newBitcoinAddress").val()+'</p></div></div><hr><div style="margin-top: 5px; margin-bottom: 5px"><div><h3 style="margin-top: 0">Public Key</h3></div><div style="text-align: center;"><div id="qrpubkey"></div><p>'+$("#newPubKey").val()+'</p></div></div><hr><div style="margin-top: 5px; margin-bottom: 5px"><div><h3 style="margin-top: 0">Private Key (KEEP SECRET!)</h3></div><div style="text-align: center;"><div id="qrprivkey"></div><p>'+$("#newPrivKey").val()+'</p></div></div>');
+		paperwallet.document.write('<h2>BTC PaperWallet</h2><hr><div style="margin-top: 5px; margin-bottom: 5px"><div><h3 style="margin-top: 0">Address (Share)</h3></div><div style="text-align: center;"><div id="qraddress"></div><p>'+$("#newAvianAddress").val()+'</p></div></div><hr><div style="margin-top: 5px; margin-bottom: 5px"><div><h3 style="margin-top: 0">Public Key</h3></div><div style="text-align: center;"><div id="qrpubkey"></div><p>'+$("#newPubKey").val()+'</p></div></div><hr><div style="margin-top: 5px; margin-bottom: 5px"><div><h3 style="margin-top: 0">Private Key (KEEP SECRET!)</h3></div><div style="text-align: center;"><div id="qrprivkey"></div><p>'+$("#newPrivKey").val()+'</p></div></div>');
 		paperwallet.document.close();
 		paperwallet.focus();
-		new QRCode(paperwallet.document.getElementById("qraddress"), {text: $("#newBitcoinAddress").val(), width: 125, height: 125});
+		new QRCode(paperwallet.document.getElementById("qraddress"), {text: $("#newAvianAddress").val(), width: 125, height: 125});
 		new QRCode(paperwallet.document.getElementById("qrpubkey"), {text: $("#newPubKey").val(), width: 125, height: 125});
 		new QRCode(paperwallet.document.getElementById("qrprivkey"), {text: $("#newPrivKey").val(), width: 125, height: 125});
 		paperwallet.print();
@@ -870,7 +870,7 @@ $(document).ready(function() {
 
 			QCodeDecoder().decodeFromVideo(document.getElementById('videoReader'), function(er,data){
 				if(!er){
-					var match = data.match(/^bitcoin\:([1|3|bc1][a-z0-9]{25,50})/i);
+					var match = data.match(/^avian\:([1|3|bc1][a-z0-9]{25,50})/i);
 					var result = match ? match[1] : data;
 					$(""+$("#qrcode-scanner-callback-to").html()).val(result);
 					$("#qrScanClose").click();
@@ -909,26 +909,26 @@ $(document).ready(function() {
 		var host = $(this).attr('rel');
 
         // api:             blockcypher     blockchair      chain.so
-        // network name     "btc"           "bitcoin"       "BTC"
+        // network name     "btc"           "avian"       "BTC"
         // network name     "ltc"           "litecoin"      "LTC"
         // network name     "doge"          "dogecoin"      "DOGE"
 
-		if(host=='chain.so_bitcoinmainnet'){
+		if(host=='chain.so_avianmainnet'){
 			listUnspentChainso(redeem, "BTC");
         } else if(host=='chain.so_litecoin'){
 			listUnspentChainso(redeem, "LTC");
 		} else if(host=='chain.so_dogecoin'){
 			listUnspentChainso(redeem, "DOGE");
 
-		} else if(host=='blockcypher_bitcoinmainnet'){
+		} else if(host=='blockcypher_avianmainnet'){
 			listUnspentBlockcypher(redeem, "btc");
         } else if(host=='blockcypher_litecoin'){
 			listUnspentBlockcypher(redeem, "ltc");
 		} else if(host=='blockcypher_dogecoin'){
 			listUnspentBlockcypher(redeem, "doge");
 
-		} else if(host=='blockchair_bitcoinmainnet'){
-			listUnspentBlockchair(redeem, "bitcoin");
+		} else if(host=='blockchair_avianmainnet'){
+			listUnspentBlockchair(redeem, "avian");
         } else if(host=='blockchair_litecoin'){
 			listUnspentBlockchair(redeem, "litecoin");
 		} else if(host=='blockchair_dogecoin'){
@@ -1297,7 +1297,7 @@ $(document).ready(function() {
 		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
 		$.ajax ({
 			type: "POST",
-			url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction',
+			url: coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=avian&request=sendrawtransaction',
 			data: {'rawtx':$("#rawTransaction").val()},
 			dataType: "xml",
 			error: function(data) {
@@ -1781,7 +1781,7 @@ $(document).ready(function() {
 			}
 		} else {
 			var qrcode = new QRCode("qrcode");
-			qrstr = "bitcoin:"+$('.address',thisbtn).val();
+			qrstr = "avian:"+$('.address',thisbtn).val();
 		}
 
 		if(qrstr){
@@ -1918,12 +1918,12 @@ $(document).ready(function() {
 		var host = $("#coinjs_broadcast option:selected").val();
 
         // api:             blockcypher     blockchair      chain.so
-        // network name     "btc"           "bitcoin"       "BTC"
+        // network name     "btc"           "avian"       "BTC"
         // network name     "ltc"           "litecoin"      "LTC"
         // network name     "doge"          "dogecoin"      "DOGE"
 
 		$("#rawSubmitBtn").unbind("");
-		if(host=="chain.so_bitcoinmainnet"){
+		if(host=="chain.so_avianmainnet"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitChainso(this, "BTC");
 			});
@@ -1935,7 +1935,7 @@ $(document).ready(function() {
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitChainso(this, "DOGE");
 			});
-		} else if(host=="blockcypher_bitcoinmainnet"){
+		} else if(host=="blockcypher_avianmainnet"){
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitblockcypher(this, "btc");
 			});
@@ -1947,9 +1947,9 @@ $(document).ready(function() {
 			$("#rawSubmitBtn").click(function(){
 				rawSubmitblockcypher(this, "doge");
 			});
-		} else if(host=="blockchair_bitcoinmainnet"){
+		} else if(host=="blockchair_avianmainnet"){
 			$("#rawSubmitBtn").click(function(){
-				rawSubmitblockchair(this, "bitcoin");
+				rawSubmitblockchair(this, "avian");
 			});
 		} else if(host=="blockchair_litecoin"){
 			$("#rawSubmitBtn").click(function(){

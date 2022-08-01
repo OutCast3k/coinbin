@@ -2,11 +2,11 @@
 <html lang="en">
 	<head>
 
-		<title>Bitcoin Wallet by Coinb.in</title>
+		<title>Avian Wallet by Coinb.in</title>
 
 		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-		<meta name="keywords" content="bitcoin, wallet, multisig, multisignature, address, browser, segwit, javascript, js, broadcast, transaction, verify, decode" />
-		<meta name="description" content="A Bitcoin Wallet written in Javascript. Supports Multisig, SegWit, Custom Transactions, nLockTime and more!" />
+		<meta name="keywords" content="avian, wallet, multisig, multisignature, address, browser, segwit, javascript, js, broadcast, transaction, verify, decode" />
+		<meta name="description" content="A Avian Wallet written in Javascript. Supports Multisig, SegWit, Custom Transactions, nLockTime and more!" />
 
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -100,8 +100,8 @@
 						</div>
 
 						<div class="jumbotron">
-							<h1>Bitcoin. It's your money!</h1>
-							<p>Be your own bank, take control of your own money and start using Bitcoin today!</p>
+							<h1>Avian. It's your money!</h1>
+							<p>Be your own bank, take control of your own money and start using Avian today!</p>
 							<p><a class="btn btn-primary btn-lg" href="#about" role="button">Learn more &raquo;</a></p>
 						</div>
 
@@ -115,11 +115,11 @@
 
 							<div class="col-md-4">
 								<h3><span class="glyphicon glyphicon-fullscreen"></span> MultiSig</h3>
-								<p>We offer a fully transparent <a href="#newMultiSig">multisig</a> solution which works seamlessly offline and with other bitcoin clients.</p>
+								<p>We offer a fully transparent <a href="#newMultiSig">multisig</a> solution which works seamlessly offline and with other avian clients.</p>
 							</div>
 
 							<div class="col-md-4">
-								<h3><span class="glyphicon glyphicon-bitcoin"></span> Raw Transactions</h3>
+								<h3><span class="glyphicon glyphicon-avian"></span> Raw Transactions</h3>
 								<p><a href="#newTransaction">Create</a>, <a href="#verify">verify</a>, <a href="#sign">sign</a> and <a href="#broadcast">broadcast</a> custom raw transactions online with advanced features and minimal effort!</p>
 							</div>
 						</div>
@@ -145,7 +145,7 @@
 					<div class="tab-pane tab-content" id="wallet">
 						<div class="row">
 							<div class="col-md-12">
-								<h2>Open Wallet <small> browser based bitcoin wallet</small></h2>
+								<h2>Open Wallet <small> browser based avian wallet</small></h2>
 								<div id="openLogin">
 									<form class="form-signin" role="form" action="javascript:;">
 
@@ -305,11 +305,11 @@
 
 					<div class="tab-pane tab-content" id="newAddress">
 						<h2>New Address <small>create a new address</small></h2>
-						<p>Any keys used you will need to manually store safely as they will be needed later to redeem the bitcoins.</p>
+						<p>Any keys used you will need to manually store safely as they will be needed later to redeem the avians.</p>
 						<label>Address (Share)</label>
 
 						<div class="input-group">
-							<input id="newBitcoinAddress" type="text" class="form-control address" value="" readonly>
+							<input id="newAvianAddress" type="text" class="form-control address" value="" readonly>
 							<span class="input-group-btn">
 								<button class="qrcodeBtn btn btn-default" type="button" data-toggle="modal" data-target="#modalQrcode"><span class="glyphicon glyphicon-qrcode"></span></button>
 							</span>
@@ -376,7 +376,7 @@
 					<div class="tab-pane tab-content" id="newSegWit">
 						<h2>New SegWit Address <small> Smaller &amp; Faster Transactions</small></h2>
 
-						<p>Any keys used you will need to manually store safely as they will be needed later to redeem the bitcoins.</p>
+						<p>Any keys used you will need to manually store safely as they will be needed later to redeem the avians.</p>
 
 						<label>SegWit Address (Share)</label>
 
@@ -406,7 +406,7 @@
 						<p>You can use the advanced options below to generate different kind of keys and addresses.</p>
 
 						<div class="checkbox">
-							<label><input type="checkbox" id="newSegWitBech32addr" class="checkbox-inline" checked> Enable <a href="https://en.bitcoin.it/wiki/Bech32" target="_blank">Bech32</a>?</label>
+							<label><input type="checkbox" id="newSegWitBech32addr" class="checkbox-inline" checked> Enable <a href="https://en.avian.it/wiki/Bech32" target="_blank">Bech32</a>?</label>
 						</div>
 
 						<div class="checkbox">
@@ -434,8 +434,8 @@
 						<div class="row">
 
 							<div class="col-md-8">
-								<p>Public keys can be <a href="#newAddress">generated in your browser</a> or from your bitcoin client</a>.</p>
-								<p>Enter the public keys of all the participants, to create a <a href="https://en.bitcoin.it/wiki/Address#Multi-signature_addresses" target="_blank">multi signature address</a>. Maximum of 15 allowed. Compressed and uncompressed public keys are accepted.</p>
+								<p>Public keys can be <a href="#newAddress">generated in your browser</a> or from your avian client</a>.</p>
+								<p>Enter the public keys of all the participants, to create a <a href="https://en.avian.it/wiki/Address#Multi-signature_addresses" target="_blank">multi signature address</a>. Maximum of 15 allowed. Compressed and uncompressed public keys are accepted.</p>
 							</div>
 
 							<div class="col-md-3">
@@ -497,7 +497,7 @@
 								</div>
 							</div>
 							<label>Redeem Script</label>
-							<p>This script should be <i>saved and should be shared with all the participants before a payment is made</i>, so they may validate the authenticity of the address, it will also be used later to release the bitcoins.</p>
+							<p>This script should be <i>saved and should be shared with all the participants before a payment is made</i>, so they may validate the authenticity of the address, it will also be used later to release the avians.</p>
 							<textarea class="form-control script" style="height:160px" readonly></textarea>
 							<label>Shareable URL</label>
 							<input type="text" class="scriptUrl form-control" readonly>
@@ -514,7 +514,7 @@
 
                             <div class="col-md-11">
 				<p>Use <i><a href="https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki" target="_blank">OP_CHECKLOCKTIMEVERIFY</a></i> (OP_HODL) to create a time locked address where the funds are unspendable until a set date and time has passed.</p>
-                                <p>Public keys can be <a href="#newAddress">generated in your browser</a> or from your bitcoin client</a>.</p>
+                                <p>Public keys can be <a href="#newAddress">generated in your browser</a> or from your avian client</a>.</p>
                                 <p>Enter the public key that will be able to unlock the funds after the a certain date.
                             </div>
 
@@ -574,7 +574,7 @@
                                 </div>
                             </div>
                             <label>Redeem Script</label>
-                            <p>This script should be <i>saved and should be shared with all the participants before a payment is made</i>, so they may validate the authenticity of the address, it will also be used later to release the bitcoins.</p>
+                            <p>This script should be <i>saved and should be shared with all the participants before a payment is made</i>, so they may validate the authenticity of the address, it will also be used later to release the avians.</p>
                             <textarea class="form-control script" style="height:160px" readonly></textarea>
                             <label>Shareable URL</label>
                             <input type="text" class="scriptUrl form-control" readonly>
@@ -650,14 +650,14 @@
 
 								<label>Null Data</label> <span class="text-muted text-normal">(80 byte limit, <i>40 bytes recommended</i>)</span>
 								<p class="checkbox">
-									<label><input type="checkbox" id="opReturn" class="checkbox-inline"> Allow data to be sent within the transaction and stored in the blockchain by using <a href="https://bitcoin.org/en/developer-guide#null-data" target="_blank">OP_RETURN</a>.</label>
+									<label><input type="checkbox" id="opReturn" class="checkbox-inline"> Allow data to be sent within the transaction and stored in the blockchain by using <a href="https://avian.org/en/developer-guide#null-data" target="_blank">OP_RETURN</a>.</label>
 									<div class="text-muted">When using this option you may enter a hex string or address into the address field on the output tab.</div>
 								</p>
 
 								<hr>
 
 								<label>Lock Time</label>
-								<p>The <a href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number">locktime</a> indicates the earliest time a transaction can be added to the block chain.</p>
+								<p>The <a href="https://avian.org/en/developer-guide#locktime-and-sequence-number">locktime</a> indicates the earliest time a transaction can be added to the block chain.</p>
 								<input type="text" class="form-control" value="0" id="nLockTime">
 
 								<hr>
@@ -665,7 +665,7 @@
 
 								<label>Replace By Fee (RBF)</label>
 								<p class="checkbox">
-									<label><input type="checkbox" id="txRBF" class="checkbox-inline" checked> Make this a <a href="https://en.bitcoin.it/wiki/Transaction_replacement" target="_blank">RBF transaction</a>.</label>
+									<label><input type="checkbox" id="txRBF" class="checkbox-inline" checked> Make this a <a href="https://en.avian.it/wiki/Transaction_replacement" target="_blank">RBF transaction</a>.</label>
 								</p>
 
 								<hr>
@@ -792,7 +792,7 @@
 
 
 					<div class="tab-pane tab-content" id="fees">
-						<h2>Bitcoin Fee Calculator</h2>
+						<h2>Avian Fee Calculator</h2>
 						<p>This page will give you a guide on the lowest fee to use to get your transaction included within the next few blocks. It works by predicting the size of a transaction and comparing it to another transaction in a recent block to determine an appropriate fee.</p>	
 
 						<div align="center" class="alert alert-info">
@@ -1091,7 +1091,7 @@
 							<div><b>Transaction Size</b>: <span class="transactionSize"></span></div>
 							<div><b>Lock time</b>: <span class="transactionLockTime"></span></div>
 							<div class="transactionSegWit"><b>SegWit</b>: True</div>
-							<div class="transactionRBF"><b>RBF</b>: This is a <a href="https://en.bitcoin.it/wiki/Transaction_replacement">replace by fee</a> transaction!</div>
+							<div class="transactionRBF"><b>RBF</b>: This is a <a href="https://en.avian.it/wiki/Transaction_replacement">replace by fee</a> transaction!</div>
 
 							<hr>
 
@@ -1336,9 +1336,9 @@
 					</div>
 
 					<div class="tab-pane tab-content" id="broadcast">
-						<h2>Broadcast Transaction <small>into the bitcoin network</small></h2>
+						<h2>Broadcast Transaction <small>into the avian network</small></h2>
 						<a href="#settings" style="float:right;"><span class="glyphicon glyphicon-cog"></span></a>
-						<p>Enter your hex encoded bitcoin transaction</p>
+						<p>Enter your hex encoded avian transaction</p>
 						<textarea class="form-control" style="height:125px" id="rawTransaction"></textarea>
 						<br>
 						<div id="rawTransactionStatus" class="alert hidden">
@@ -1354,23 +1354,23 @@
 					</div>
 
 					<div class="tab-pane tab-content" id="about">
-						<h2>About <small>open source bitcoin wallet</small></h2>
+						<h2>About <small>open source avian wallet</small></h2>
 						<p>Version 1.7</p>
-						<p>Compatible with bitcoin core</p>
+						<p>Compatible with avian core</p>
 						<p>Github <a href="https://github.com/OutCast3k/coinbin/">https://github.com/OutCast3k/coinbin/</a></p>
 						<p style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">TOR <a href="http://coinbin3ravkwb24f7rmxx6w3snkjw45jhs5lxbh3yfeg3vpt6janwqd.onion"><i>coinbin</i>3ravkwb24f7rmxx6w3snkjw45jhs5lxbh3yfeg3vpt6janwqd.onion</a> | <i><s><a href="http://4zpinp6gdkjfplhk.onion">4zpinp6gdkjfplhk.onion</a></s></i></p>
-						<h3>What is Bitcoin?</h3>
-						<p>Bitcoin is a type of digital currency in which encryption techniques are used to regulate the generation of units of currency and verify the transfer of funds, operating independently of a central bank. See <a href="http://www.weusecoins.com/" target="_blank">weusecoins.com</a> for more information.</p>
+						<h3>What is Avian?</h3>
+						<p>Avian is a type of digital currency in which encryption techniques are used to regulate the generation of units of currency and verify the transfer of funds, operating independently of a central bank. See <a href="http://www.weusecoins.com/" target="_blank">weusecoins.com</a> for more information.</p>
 						<h3>Information</h3>
-						<p>Coinb.in is a free and open source project released under the MIT license, originally by <a href="https://bitcointalk.org/index.php?action=profile;u=34834" target="_blank">OutCast3k</a> in 2013. Discussion of the project can be found at <a href="https://bitcointalk.org/index.php?topic=390046" target="_blank">bitcointalk.org</a> during its early testing stages when its primary focus was to develop a proof of concept multisig solution in javascript.</p>
+						<p>Coinb.in is a free and open source project released under the MIT license, originally by <a href="https://aviantalk.org/index.php?action=profile;u=34834" target="_blank">OutCast3k</a> in 2013. Discussion of the project can be found at <a href="https://aviantalk.org/index.php?topic=390046" target="_blank">aviantalk.org</a> during its early testing stages when its primary focus was to develop a proof of concept multisig solution in javascript.</p>
 						<p>Coinb.in is run and funded by the generosity of others in terms of <a href="https://github.com/OutCast3k/coinbin/graphs/contributors" target="_blank">development</a> and hosting.</p>
 						<p>Coinb.in is kindly hosted by <a href="https://www.bitvps.com/" target="_blank">BitVPS.com</a>.</p>
 						<h3>Privacy</h3>
-						<p>Coinb.in believes strongly in privacy, not only do we support the use of TOR, the site does not collect and store IP or transaction data via our servers nor do we store your bitcoins private key. We do route traffic via cloudflare using an SSL certificate.</p>
+						<p>Coinb.in believes strongly in privacy, not only do we support the use of TOR, the site does not collect and store IP or transaction data via our servers nor do we store your avians private key. We do route traffic via cloudflare using an SSL certificate.</p>
 						<h3>Support</h3>
 						<p>We recommend that you first check our <a href="https://status.coinb.in/" target="_blank">service status</a> page and then <a href="https://blog.coinb.in/" target="_blank">blog</a> page which has multiple <a href="https://blog.coinb.in/guides" target="_blank">guides</a>. However if the problem persists you can contact us by emailing support{at}coinb.in.</p>
 						<h3>Donate</h3>
-						<p>Please donate to <a href="bitcoin:33tht1bKDgZVxb39MnZsWa8oxHXHvUYE4G">33tht1bKDgZVxb39MnZsWa8oxHXHvUYE4G</a> if you found this project useful or want to see more features!</p>
+						<p>Please donate to <a href="avian:33tht1bKDgZVxb39MnZsWa8oxHXHvUYE4G">33tht1bKDgZVxb39MnZsWa8oxHXHvUYE4G</a> if you found this project useful or want to see more features!</p>
 					</div>
 
 					<div class="tab-pane tab-content" id="settings">
@@ -1382,11 +1382,11 @@
 								<b>Network</b>: <br>
 								<p class="text-muted">Select which network you'd like to use for key pair generation.</p>
 								<select class="form-control" id="coinjs_coin">
-									<option value="bitcoin_mainnet" rel="0x00;0x80;0x05;0x488b21e;0x488ade4;coinb.in;coinb.in">Bitcoin (mainnet)</option>
+									<option value="avian_mainnet" rel="0x00;0x80;0x05;0x488b21e;0x488ade4;coinb.in;coinb.in">Avian (mainnet)</option>
 									<option value="litecoin_mainnet" rel="0x30;0xb0;0x32;0x019da462;0x019d9cfe;blockcypher_litecoin;blockcypher_litecoin">Litecoin (mainnet)</option>
 									<option value="dogecoin_mainnet" rel="0x1e;0x9e;0x16;0x0827421e;0x089944e4;blockcypher_dogecoin;blockcypher_dogecoin">Dogecoin (mainnet)</option>
 									<option value="shadowcash_mainnet" rel="0x3f;0xbf;0x7d;0xee80286a;0xee8031e8;false;false">ShadowCash (mainnet)</option>
-									<option value="bitcoin_testnet" rel="0x6f;0xef;0xc4;0x043587cf;0x04358394;false;false">Bitcoin (testnet)</option>
+									<option value="avian_testnet" rel="0x6f;0xef;0xc4;0x043587cf;0x04358394;false;false">Avian (testnet)</option>
 
 									<option value="custom" rel="0x00;0x80;0x05;0x488b21e;0x488ade4;false;false">Custom</option>
 								</select>
@@ -1439,14 +1439,14 @@
 								<b>Broadcast</b>: <br>
 								<p class="text-muted">Select the network you wish to broadcast the transaction via</p>
 								<select class="form-control" id="coinjs_broadcast">
-									<option value="coinb.in">coinb.in (Bitcoin mainnet)</option>
-									<option value="blockcypher_bitcoinmainnet"> Blockcypher.com (Bitcoin mainnet)</option>
+									<option value="coinb.in">coinb.in (Avian mainnet)</option>
+									<option value="blockcypher_avianmainnet"> Blockcypher.com (Avian mainnet)</option>
 									<option value="blockcypher_litecoin"> Blockcypher.com (Litecoin)</option>
 									<option value="blockcypher_dogecoin"> Blockcypher.com (Dogecoin)</option>
-									<option value="blockchair_bitcoinmainnet"> Blockchair.com (Bitcoin mainnet)</option>
+									<option value="blockchair_avianmainnet"> Blockchair.com (Avian mainnet)</option>
 									<option value="blockchair_litecoin"> Blockchair.com (Litecoin)</option>
 									<option value="blockchair_dogecoin"> Blockchair.com (Dogecoin)</option>
-									<option value="chain.so_bitcoinmainnet"> Chain.so (Bitcoin mainnet)</option>
+									<option value="chain.so_avianmainnet"> Chain.so (Avian mainnet)</option>
 									<option value="chain.so_litecoin"> Chain.so (Litecoin)</option>
 									<option value="chain.so_dogecoin"> Chain.so (Dogecoin)</option>
 								</select>
@@ -1460,14 +1460,14 @@
 								<b>Unspent outputs</b>: <br>
 								<p class="text-muted">Select the network you wish to retreive your unspent outputs from</p>
 								<select class="form-control" id="coinjs_utxo">
-									<option value="coinb.in">coinb.in (Bitcoin mainnet)</option>
-									<option value="blockcypher_bitcoinmainnet"> Blockcypher.com (Bitcoin mainnet)</option>
+									<option value="coinb.in">coinb.in (Avian mainnet)</option>
+									<option value="blockcypher_avianmainnet"> Blockcypher.com (Avian mainnet)</option>
 									<option value="blockcypher_litecoin"> Blockcypher.com (Litecoin)</option>
 									<option value="blockcypher_dogecoin"> Blockcypher.com (Dogecoin)</option>
-									<option value="blockchair_bitcoinmainnet"> Blockchair.com (Bitcoin mainnet)</option>
+									<option value="blockchair_avianmainnet"> Blockchair.com (Avian mainnet)</option>
 									<option value="blockchair_litecoin"> Blockchair.com (Litecoin)</option>
 									<option value="blockchair_dogecoin"> Blockchair.com (Dogecoin)</option>
-									<option value="chain.so_bitcoinmainnet"> Chain.so (Bitcoin mainnet)</option>
+									<option value="chain.so_avianmainnet"> Chain.so (Avian mainnet)</option>
 									<option value="chain.so_litecoin"> Chain.so (Litecoin)</option>
 									<option value="chain.so_dogecoin"> Chain.so (Dogecoin)</option>
 								</select>

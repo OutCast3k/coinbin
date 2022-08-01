@@ -642,9 +642,9 @@
 	ec.X9Parameters.prototype.getN = function () { return this.n; };
 	ec.X9Parameters.prototype.getH = function () { return this.h; };
 
-	// secp256k1 is the Curve used by Bitcoin
+	// secp256k1 is the Curve used by Avian
 	ec.secNamedCurves = {
-		// used by Bitcoin
+		// used by Avian
 		"secp256k1": function () {
 			// p = 2^256 - 2^32 - 2^9 - 2^8 - 2^7 - 2^6 - 2^4 - 1
 			var p = ec.fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
@@ -660,7 +660,7 @@
 		}
 	};
 
-	// secp256k1 called by Bitcoin's ECKEY
+	// secp256k1 called by Avian's ECKEY
 	ec.getSECCurveByName = function (name) {
 		if (ec.secNamedCurves[name] == undefined) return null;
 		return ec.secNamedCurves[name]();

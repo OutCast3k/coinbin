@@ -1,6 +1,6 @@
 /*
  Coinjs 0.01 beta by OutCast3k{at}gmail.com
- A bitcoin framework.
+ A bitcoin/avian framework.
 
  http://github.com/OutCast3k/coinjs or http://coinb.in/coinjs
 */
@@ -19,7 +19,7 @@
 	coinjs.compressed = false;
 
 	/* other vars */
-	coinjs.developer = '33tht1bKDgZVxb39MnZsWa8oxHXHvUYE4G'; //bitcoin
+	coinjs.developer = '33tht1bKDgZVxb39MnZsWa8oxHXHvUYE4G'; // Bitcoin
 
 	/* bit(coinb.in) api vars */
 	coinjs.hostname	= ((document.location.hostname.split(".")[(document.location.hostname.split(".")).length-1]) == 'onion') ? 'coinbin3ravkwb24f7rmxx6w3snkjw45jhs5lxbh3yfeg3vpt6janwqd.onion' : 'coinb.in';
@@ -745,7 +745,7 @@
 		r.master = function(pass) {
 			var seed = (pass) ? Crypto.SHA256(pass) : coinjs.newPrivkey();
 			var hasher = new jsSHA(seed, 'HEX');
-			var I = hasher.getHMAC("Bitcoin seed", "TEXT", "SHA-512", "HEX");
+			var I = hasher.getHMAC("Avian seed", "TEXT", "SHA-512", "HEX");
 
 			var privkey = Crypto.util.hexToBytes(I.slice(0, 64));
 			var chain = Crypto.util.hexToBytes(I.slice(64, 128));
@@ -1069,7 +1069,7 @@
 
 		/* list transaction data */
 		r.getTransaction = function(txid, callback) {
-			coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=gettransaction&txid='+txid+'&r='+Math.random(), callback, "GET");
+			coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=avian&request=gettransaction&txid='+txid+'&r='+Math.random(), callback, "GET");
 		}
 
 		/* add unspent to transaction */
@@ -1140,7 +1140,7 @@
 		/* broadcast a transaction */
 		r.broadcast = function(callback, txhex){
 			var tx = txhex || this.serialize();
-			coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=bitcoin&request=sendrawtransaction', callback, "POST", ["rawtx="+tx]);
+			coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=avian&request=sendrawtransaction', callback, "POST", ["rawtx="+tx]);
 		}
 
 		/* generate the transaction hash to sign from a transaction input */

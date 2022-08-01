@@ -213,8 +213,8 @@
     }
 
     {
-        // this test comes from https://bitcoindev.network/guides/bitcoinjs-lib/bitcoin-script-puzzles/
-        var testName = "P2SH redeem script to address (bitcoin testnet)";
+        // this test comes from https://aviandev.network/guides/avianjs-lib/avian-script-puzzles/
+        var testName = "P2SH redeem script to address (avian testnet)";
         var testInput = "935587";
         var testExpected = "2N7WfHK1ftrTdhWej8rnFNR7guhvhfGWwFR";
         var saved = pushNetworkVars("btc-testnet");
@@ -229,8 +229,8 @@
     }
 
     {
-        // this test comes from https://bitcoindev.network/guides/bitcoinjs-lib/bitcoin-script-puzzles/
-        var testName = "P2WSH redeem script to address (bitcoin testnet)";
+        // this test comes from https://aviandev.network/guides/avianjs-lib/avian-script-puzzles/
+        var testName = "P2WSH redeem script to address (avian testnet)";
         var testInput = "935587";
         var testExpected = "bcrt1qpt7c23c0wep9e8up4ywn070w3tqz3828ngy34aj8slsfxrh08ddq2d2pyu";
         var hash = Crypto.SHA256(Crypto.util.hexToBytes(testInput), {asBytes: true});
@@ -239,8 +239,8 @@
     }
 
     {
-        // data from https://bitcoin.stackexchange.com/questions/3374/how-to-redeem-a-basic-tx (runeks)
-        var testName = "basic transaction building bitcoin";
+        // data from https://avian.stackexchange.com/questions/3374/how-to-redeem-a-basic-tx (runeks)
+        var testName = "basic transaction building avian";
         var testExpectedUnsigned = "0100000001eccf7e3034189b851985d871f91384b8ee357cd47c3024736e5676eb2debb3f2010000001976a914010966776006953d5567439e5e39f86a0d273bee88acffffffff01605af405000000001976a914097072524438d003d23a2f23edb65aae1bb3e46988ac00000000";
         var testExpectedSigned = "0100000001eccf7e3034189b851985d871f91384b8ee357cd47c3024736e5676eb2debb3f2010000008a4730440220299fffaf20745458111e7826e5c2cca3b78dd27c97e0a513aab807f0d724103402203247498cfb019bbbd3d629814c8703e974f177478f6fde53503a9b1088852fad01410450863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b23522cd470243453a299fa9e77237716103abc11a1df38855ed6f2ee187e9c582ba6ffffffff01605af405000000001976a914097072524438d003d23a2f23edb65aae1bb3e46988ac00000000";
         var privKeyHex = "18E14A7B6A307F426A94F8114701E7C8E774E7F9A47E2C2035DB29A206321725";
@@ -264,9 +264,9 @@
     }
 
     {
-        // bitcoin testnet transaction https://tbtc.bitaps.com/04bbae5806d2b8fb17ed9339f42c6f6d731191a974b975d2e1df8e7601e90f6f
+        // avian testnet transaction https://tbtc.bitaps.com/04bbae5806d2b8fb17ed9339f42c6f6d731191a974b975d2e1df8e7601e90f6f
         var saved = pushNetworkVars("btc-testnet");
-        var testName = "basic transaction building bitcoin-testnet";
+        var testName = "basic transaction building avian-testnet";
         var testExpectedUnsigned = "0100000001c72eabf9f208cacc908538e2609bbe665ffda680e2a6c39475941389dd5b14de000000001976a914b9e16a03bbf40ebb78cbc35e22d72a695f27624088acffffffff01703a0f00000000001976a914a447681601eef322926c0b3de5dfbb4157bbe40988ac00000000";
         var testExpectedSigned = "0100000001c72eabf9f208cacc908538e2609bbe665ffda680e2a6c39475941389dd5b14de000000008b483045022100d909d4d3d2b540891c102d06fc8eaf1e9b914b93ea28626990666554a75b369102205a73b38071eab5b0acb8381c1454e7d998c80cd6d229645231b6bc1fb024d1d70141046fad107ba21fae3f047096152d0298291168bc0cb6b834f7cc77510dcb41839206b936649623988f7ca58c6104a22105c5b398912ded514685ebd0d8ac4011c2ffffffff01703a0f00000000001976a914a447681601eef322926c0b3de5dfbb4157bbe40988ac00000000";
         var wif = "92Wn1EBgiwDNT8SC7WMZfcSk2y3mQkLUPAQtwMNYZQGAzCFUTdu";
@@ -291,7 +291,7 @@
     }
 
 
-    // create a lot of timelock scripts, compare them to known ones created using bitcoinjs-lib
+    // create a lot of timelock scripts, compare them to known ones created using avianjs-lib
     // focus on edge cases like described in https://github.com/OutCast3k/coinbin/issues/201
     // ranges 80-ff, 8000-ffff, 800000-ffffff, 80000000-ffffffff.
     {
