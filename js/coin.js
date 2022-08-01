@@ -9,12 +9,12 @@
 
 	var coinjs = window.coinjs = function () { };
 
-	/* public vars */
-	coinjs.pub = 0x00;
+	/* public vars for avian */
+	coinjs.pub = 0x3c;
 	coinjs.priv = 0x80;
-	coinjs.multisig = 0x05;
-	coinjs.hdkey = {'prv':0x0488ade4, 'pub':0x0488b21e};
-	coinjs.bech32 = {'charset':'qpzry9x8gf2tvdw0s3jn54khce6mua7l', 'version':0, 'hrp':'bc'};
+	coinjs.multisig = 0x7a;
+	coinjs.hdkey = {'prv':0x0488b21e, 'pub':0x0488ade4};
+	coinjs.bech32 = {'charset':'qpzry9x8gf2tvdw0s3jn54khce6mua7l', 'version':0, 'hrp':'avian'}; // avian does not use this
 
 	coinjs.compressed = false;
 

@@ -908,31 +908,9 @@ $(document).ready(function() {
 
 		var host = $(this).attr('rel');
 
-        // api:             blockcypher     blockchair      chain.so
-        // network name     "btc"           "avian"       "BTC"
-        // network name     "ltc"           "litecoin"      "LTC"
-        // network name     "doge"          "dogecoin"      "DOGE"
-
+		// Avian (api.avn.network)
 		if(host=='chain.so_avianmainnet'){
-			listUnspentChainso(redeem, "BTC");
-        } else if(host=='chain.so_litecoin'){
-			listUnspentChainso(redeem, "LTC");
-		} else if(host=='chain.so_dogecoin'){
-			listUnspentChainso(redeem, "DOGE");
-
-		} else if(host=='blockcypher_avianmainnet'){
-			listUnspentBlockcypher(redeem, "btc");
-        } else if(host=='blockcypher_litecoin'){
-			listUnspentBlockcypher(redeem, "ltc");
-		} else if(host=='blockcypher_dogecoin'){
-			listUnspentBlockcypher(redeem, "doge");
-
-		} else if(host=='blockchair_avianmainnet'){
-			listUnspentBlockchair(redeem, "avian");
-        } else if(host=='blockchair_litecoin'){
-			listUnspentBlockchair(redeem, "litecoin");
-		} else if(host=='blockchair_dogecoin'){
-			listUnspentBlockchair(redeem, "dogecoin");
+			listUnspentAvianAPI(redeem, "BTC");
 		} else {
 			listUnspentDefault(redeem);
 		}
@@ -1129,77 +1107,8 @@ $(document).ready(function() {
 		});
 	}
 
-
-	/* retrieve unspent data from blockcypher */
-	function listUnspentBlockcypher(redeem,network){
-		$.ajax ({
-			type: "GET",
-			url: "https://api.blockcypher.com/v1/"+network+"/main/addrs/"+redeem.addr+"?includeScript=true&unspentOnly=true",
-			dataType: "json",
-			error: function(data) {
-				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
-			},
-			success: function(data) {
-				if (data.address) { // address field will always be present, txrefs is only present if there are UTXOs
-					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
-					for(var i in data.txrefs){
-						var o = data.txrefs[i];
-						var tx = ((""+o.tx_hash).match(/.{1,2}/g).reverse()).join("")+'';
-						if(tx.match(/^[a-f0-9]+$/)){
-							var n = o.tx_output_n;
-							var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script;
-							var amount = ((o.value.toString()*1)/100000000).toFixed(8);
-							addOutput(tx, n, script, amount);
-						}
-					}
-				} else {
-					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
-				}
-			},
-			complete: function(data, status) {
-				$("#redeemFromBtn").html("Load").attr('disabled',false);
-				totalInputAmount();
-			}
-		});
-	}
-
-	/* retrieve unspent data from blockchair */
-	function listUnspentBlockchair(redeem,network){
-		$.ajax ({
-			type: "GET",
-			url: "https://api.blockchair.com/"+network+"/dashboards/address/"+redeem.addr,
-			dataType: "json",
-			error: function(data) {
-				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
-			},
-			success: function(data) {
-				if((data.context && data.data) && data.context.code =='200'){
-					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
-					var all_info = data.data[redeem.addr];
-					for(var i in all_info.utxo){
-						var o = all_info.utxo[i];
-						var tx = ((""+o.transaction_hash).match(/.{1,2}/g).reverse()).join("")+'';
-						if(tx.match(/^[a-f0-9]+$/)){
-							var n = o.index;
-							var script = (redeem.redeemscript==true) ? redeem.decodedRs : all_info.address.script_hex;
-							var amount = ((o.value.toString()*1)/100000000).toFixed(8);
-							addOutput(tx, n, script, amount);
-						}
-					}
-				} else {
-					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
-				}
-			},
-			complete: function(data, status) {
-				$("#redeemFromBtn").html("Load").attr('disabled',false);
-				totalInputAmount();
-			}
-		});
-	}
-
-
-	/* retrieve unspent data from chainso */
-	function listUnspentChainso(redeem, network){
+	/* retrieve unspent data from avian api */
+	function listUnspentAvianAPI(redeem, network){
 		$.ajax ({
 			type: "GET",
 			url: "https://chain.so/api/v2/get_tx_unspent/"+network+"/"+redeem.addr,
@@ -1318,8 +1227,8 @@ $(document).ready(function() {
 		});
 	}
 
-	// broadcast transaction via chain.so (mainnet)
-	function rawSubmitChainso(thisbtn, network){ 
+	// broadcast transaction via avian api (mainnet)
+	function rawSubmitAvianAPI(thisbtn, network){ 
 		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
 		$.ajax ({
 			type: "POST",
@@ -1346,64 +1255,6 @@ $(document).ready(function() {
 			}
 		});
 	}
-
-	// broadcast transaction via blockcypher.com (mainnet)
-	function rawSubmitblockcypher(thisbtn, network){ 
-		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
-		$.ajax ({
-			type: "POST",
-			url: "https://api.blockcypher.com/v1/"+network+"/main/txs/push",
-			data: JSON.stringify({"tx":$("#rawTransaction").val()}),
-			error: function(data) {
-				var r = 'Failed to broadcast: error code=' + data.status.toString() + ' ' + data.statusText;
-				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-			},
-                        success: function(data) {
-				if((data.tx) && data.tx.hash){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden")
-                    .html(' TXID: ' + data.tx.hash + '<br> <a href="https://live.blockcypher.com/'+network+'/tx/' + data.tx.hash + '" target="_blank">View on Blockchain Explorer</a>');
-				} else {
-					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-				}
-			},
-			complete: function(data, status) {
-				$("#rawTransactionStatus").fadeOut().fadeIn();
-				$(thisbtn).val('Submit').attr('disabled',false);				
-			}
-		});
-	}
-
-	// broadcast transaction via blockchair
-	function rawSubmitblockchair(thisbtn, network){
-		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
-                $.ajax ({
-                        type: "POST",
-                        url: "https://api.blockchair.com/"+network+"/push/transaction",
-                        data: {"data":$("#rawTransaction").val()},
-                        dataType: "json",
-                        error: function(data) {
-				var r = 'Failed to broadcast: error code=' + data.status.toString() + ' ' + data.statusText;
-				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-			//	console.error(JSON.stringify(data, null, 4));
-                        },
-                        success: function(data) {
-			//	console.info(JSON.stringify(data, null, 4));
-				if((data.context && data.data) && data.context.code=='200'){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden")
-                    .html(' TXID: ' + data.data.transaction_hash + '<br> <a href="https://blockchair.com/'+network+'/transaction/' + data.data.transaction_hash + '" target="_blank">View on Blockchain Explorer</a>');
-				} else {
-					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
-				}
-			},
-			complete: function(data, status) {
-				$("#rawTransactionStatus").fadeOut().fadeIn();
-				$(thisbtn).val('Submit').attr('disabled',false);				
-                        }
-                });
-	}
-
-
-
 
 	/* verify script code */
 
@@ -1917,47 +1768,11 @@ $(document).ready(function() {
 	function configureBroadcast(){
 		var host = $("#coinjs_broadcast option:selected").val();
 
-        // api:             blockcypher     blockchair      chain.so
-        // network name     "btc"           "avian"       "BTC"
-        // network name     "ltc"           "litecoin"      "LTC"
-        // network name     "doge"          "dogecoin"      "DOGE"
-
+		// Avian (api.avn.network)
 		$("#rawSubmitBtn").unbind("");
-		if(host=="chain.so_avianmainnet"){
+		if(host=="api.avn.network"){
 			$("#rawSubmitBtn").click(function(){
-				rawSubmitChainso(this, "BTC");
-			});
-		} else if(host=="chain.so_litecoin"){
-			$("#rawSubmitBtn").click(function(){
-				rawSubmitChainso(this, "LTC");
-			});
-		} else if(host=="chain.so_dogecoin"){
-			$("#rawSubmitBtn").click(function(){
-				rawSubmitChainso(this, "DOGE");
-			});
-		} else if(host=="blockcypher_avianmainnet"){
-			$("#rawSubmitBtn").click(function(){
-				rawSubmitblockcypher(this, "btc");
-			});
-		} else if(host=="blockcypher_litecoin"){
-			$("#rawSubmitBtn").click(function(){
-				rawSubmitblockcypher(this, "ltc");
-			});
-		} else if(host=="blockcypher_dogecoin"){
-			$("#rawSubmitBtn").click(function(){
-				rawSubmitblockcypher(this, "doge");
-			});
-		} else if(host=="blockchair_avianmainnet"){
-			$("#rawSubmitBtn").click(function(){
-				rawSubmitblockchair(this, "avian");
-			});
-		} else if(host=="blockchair_litecoin"){
-			$("#rawSubmitBtn").click(function(){
-				rawSubmitblockchair(this, "litecoin");
-			});
-		} else if(host=="blockchair_dogecoin"){
-			$("#rawSubmitBtn").click(function(){
-				rawSubmitblockchair(this, "dogecoin");
+				rawSubmitAvianAPI(this, "AVN");
 			});
 		} else {
 			$("#rawSubmitBtn").click(function(){
