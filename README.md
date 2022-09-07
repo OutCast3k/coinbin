@@ -1,13 +1,11 @@
-coinbin
+Coinbin for Avian
 =======
 
 A Open Source Browser Based Avian Wallet. Version 1.7 beta by OutCast3k
 
-Live version available at http://coinb.in/ or coinbin3ravkwb24f7rmxx6w3snkjw45jhs5lxbh3yfeg3vpt6janwqd.onion
+Live version available at https://aviannetwork.github.io/coinbin/
 
-Github URL: https://github.com/OutCast3k/coinbin/
-
-Coinb.in supports a number of key features such as: 
+Coinb for Avian supports a number of key features such as: 
 
 - Offline Compressed & uncompressed Address creation.
 - Offline Multisignature Address creation.
@@ -30,7 +28,7 @@ Coinb.in supports a number of key features such as:
 - Replace by fee (RBF) Support.
 - Segwit Support.
 - Bech32 address support.
-- Fee calculator - https://coinb.in/#fees
+- Fee calculator - https://aviannetwork.github.io/coinbin/#fees
 - Transaction rebuild support for RBF and double spending.
 
-Donate to 33tht1bKDgZVxb39MnZsWa8oxHXHvUYE4G to see more development!
+Donate to RXp2d4fLYsjqXRSkVDjcQXbvyFXFS4jFir to see more development!
