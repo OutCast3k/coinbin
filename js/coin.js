@@ -1490,7 +1490,7 @@
 		/* sign a "standard" input */
 		r.signinput = function(index, wif, sigHashType){
 			var key = coinjs.wif2pubkey(wif);
-			var shType = sigHashType || 1;
+			var shType = sigHashType+64 || 1;
 			var signature = this.transactionSig(index, wif, shType);
 			var s = coinjs.script();
 			s.writeBytes(Crypto.util.hexToBytes(signature));
@@ -1501,7 +1501,7 @@
 
 		/* signs a time locked / hodl input */
 		r.signhodl = function(index, wif, sigHashType){
-			var shType = sigHashType || 1;
+			var shType = sigHashType+64 || 1;
 			var signature = this.transactionSig(index, wif, shType);
 			var redeemScript = this.ins[index].script.buffer
 			var s = coinjs.script();
@@ -1541,7 +1541,7 @@
 			var pubkeyList = scriptListPubkey(coinjs.script(redeemScript));
 			var sigsList = scriptListSigs(this.ins[index].script);
 
-			var shType = sigHashType || 1;
+			var shType = sigHashType+64 || 1;
 			var sighash = Crypto.util.hexToBytes(this.transactionHash(index, shType));
 			var signature = Crypto.util.hexToBytes(this.transactionSig(index, wif, shType));
 
