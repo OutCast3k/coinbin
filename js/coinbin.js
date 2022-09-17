@@ -4,7 +4,7 @@ $(document).ready(function() {
 
 	var explorer_tx = "https://explorer.avn.network/tx/"
 	var explorer_addr = "https://explorer.avn.network/addr/"
-	var explorer_block = "https:/explorer.avn.network/block/"
+	var explorer_block = "https://explorer.avn.network/block/"
 
 	var wallet_timer = false;
 
@@ -1083,9 +1083,10 @@ $(document).ready(function() {
 			if(redeem.addr) {
 				$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 
-				$.each($(data).find("unspent").children(), function(i,o){
-					var tx = $(o).find("tx_hash").text();
-					var n = $(o).find("tx_output_n").text();
+				let results = JSON.parse(data);
+				$.each($(data.result).find().children(), function(i,o){
+					var tx = $(o).find("txid").text();
+					var n = $(o).find("index").text();
 					var script = (redeem.redeemscript==true) ? redeem.decodedRs : $(o).find("script").text();
 					var amount = (($(o).find("value").text()*1)/100000000).toFixed(8);
 
@@ -1112,9 +1113,16 @@ $(document).ready(function() {
 			success: function(data) {
 				if(data.result && data.error == null){
 					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
-					data.result.forEach(i => {
-						addOutput(i.txid, i.index+1, i.script, (i.value/100000000));
-					});
+					for(var i in data.result){
+						var o = data.result[i];
+						var tx = ((""+o.txid).match(/.{1,2}/g).reverse()).join("")+'';
+						if(tx.match(/^[a-f0-9]+$/)){
+							var n = o.index;
+							var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script;
+							var amount = o.value;
+							addOutput(tx, n, script, amount);
+						}
+					}
 				} else {
 					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
 				}
@@ -1168,6 +1176,7 @@ $(document).ready(function() {
 	function totalFee(){
 		var fee = (($("#totalInput").html()*1) - ($("#totalOutput").html()*1)).toFixed(8);
 		$("#transactionFee").val((fee>0)?fee:'0.00');
+		$("#transactionFee").val('0.001');
 	}
 
 	$(".optionsCollapse").click(function(){
