@@ -2,9 +2,9 @@ $(document).ready(function() {
 
 	/* open wallet code */
 
-	var explorer_tx = "https://coinb.in/tx/"
-	var explorer_addr = "https://coinb.in/addr/"
-	var explorer_block = "https://coinb.in/block/"
+	var explorer_tx = "https://explorer.avn.network/tx/"
+	var explorer_addr = "https://explorer.avn.network/addr/"
+	var explorer_block = "https://explorer.avn.network/block/"
 
 	var wallet_timer = false;
 
@@ -909,11 +909,7 @@ $(document).ready(function() {
 		var host = $(this).attr('rel');
 
 		// Avian (api.avn.network)
-		if(host=='chain.so_avianmainnet'){
-			listUnspentAvianAPI(redeem, "BTC");
-		} else {
-			listUnspentDefault(redeem);
-		}
+		listUnspentAvianAPI(redeem, "AVN");
 
 		if($("#redeemFromStatus").hasClass("hidden")) {
 			// An ethical dilemma: Should we automatically set nLockTime?
@@ -1090,9 +1086,10 @@ $(document).ready(function() {
 			if(redeem.addr) {
 				$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 
-				$.each($(data).find("unspent").children(), function(i,o){
-					var tx = $(o).find("tx_hash").text();
-					var n = $(o).find("tx_output_n").text();
+				let results = JSON.parse(data);
+				$.each($(data.result).find().children(), function(i,o){
+					var tx = $(o).find("txid").text();
+					var n = $(o).find("index").text();
 					var script = (redeem.redeemscript==true) ? redeem.decodedRs : $(o).find("script").text();
 					var amount = (($(o).find("value").text()*1)/100000000).toFixed(8);
 
@@ -1111,20 +1108,20 @@ $(document).ready(function() {
 	function listUnspentAvianAPI(redeem, network){
 		$.ajax ({
 			type: "GET",
-			url: "https://chain.so/api/v2/get_tx_unspent/"+network+"/"+redeem.addr,
+			url: "https://api.avn.network/unspent/"+redeem.addr,
 			dataType: "json",
 			error: function(data) {
 				$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs!');
 			},
 			success: function(data) {
-				if((data.status && data.data) && data.status=='success'){
+				if(data.result && data.error == null){
 					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
-					for(var i in data.data.txs){
-						var o = data.data.txs[i];
+					for(var i in data.result){
+						var o = data.result[i];
 						var tx = ((""+o.txid).match(/.{1,2}/g).reverse()).join("")+'';
 						if(tx.match(/^[a-f0-9]+$/)){
-							var n = o.output_no;
-							var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script_hex;
+							var n = o.index;
+							var script = (redeem.redeemscript==true) ? redeem.decodedRs : o.script;
 							var amount = o.value;
 							addOutput(tx, n, script, amount);
 						}
@@ -1182,6 +1179,7 @@ $(document).ready(function() {
 	function totalFee(){
 		var fee = (($("#totalInput").html()*1) - ($("#totalOutput").html()*1)).toFixed(8);
 		$("#transactionFee").val((fee>0)?fee:'0.00');
+		$("#transactionFee").val('0.001');
 	}
 
 	$(".optionsCollapse").click(function(){
@@ -1197,7 +1195,7 @@ $(document).ready(function() {
 	/* broadcast a transaction */
 
 	$("#rawSubmitBtn").click(function(){
-		rawSubmitDefault(this);
+		rawSubmitAvianAPI(this, "AVN");
 	});
 
 	// broadcast transaction via coinbin (default)
@@ -1232,19 +1230,16 @@ $(document).ready(function() {
 		$(thisbtn).val('Please wait, loading...').attr('disabled',true);
 		$.ajax ({
 			type: "POST",
-			url: "https://chain.so/api/v2/send_tx/"+network+"/",
-			data: {"tx_hex":$("#rawTransaction").val()},
+			url: "https://api.avn.network/broadcast",
+			data: {"raw":$("#rawTransaction").val()},
 			dataType: "json",
 			error: function(data) {
-				var obj = $.parseJSON(data.responseText);
-				var r = ' ';
-				r += (obj.data.tx_hex) ? obj.data.tx_hex : '';
-				r = (r!='') ? r : ' Failed to broadcast'; // build response 
+				r = "Failed to broadcast: " + data.error.message;
 				$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(r).prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 			},
-                        success: function(data) {
-				if(data.status && data.data.txid){
-					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + data.data.txid + '<br> <a href="https://chain.so/tx/'+network+'/' + data.data.txid + '" target="_blank">View on Blockchain Explorer</a>');
+            success: function(data) {
+				if(data.result && data.error == null){
+					$("#rawTransactionStatus").addClass('alert-success').removeClass('alert-danger').removeClass("hidden").html(' TXID: ' + data.result.txid + '<br> <a href="https:/explorer.avn.network/tx/'+network+'/' + data.result.txid + '" target="_blank">View on Blockchain Explorer</a>');
 				} else {
 					$("#rawTransactionStatus").addClass('alert-danger').removeClass('alert-success').removeClass("hidden").html(' Unexpected error, please try again').prepend('<span class="glyphicon glyphicon-exclamation-sign"></span>');
 				}				
@@ -1770,15 +1765,9 @@ $(document).ready(function() {
 
 		// Avian (api.avn.network)
 		$("#rawSubmitBtn").unbind("");
-		if(host=="api.avn.network"){
-			$("#rawSubmitBtn").click(function(){
-				rawSubmitAvianAPI(this, "AVN");
-			});
-		} else {
-			$("#rawSubmitBtn").click(function(){
-				rawSubmitDefault(this); // revert to default
-			});
-		}
+		$("#rawSubmitBtn").click(function(){
+			rawSubmitAvianAPI(this, "AVN");
+		});
 	}
 
 	function configureGetUnspentTx(){

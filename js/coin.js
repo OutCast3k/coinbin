@@ -22,10 +22,8 @@
 	coinjs.developer = '33tht1bKDgZVxb39MnZsWa8oxHXHvUYE4G'; // Bitcoin
 
 	/* bit(coinb.in) api vars */
-	coinjs.hostname	= ((document.location.hostname.split(".")[(document.location.hostname.split(".")).length-1]) == 'onion') ? 'coinbin3ravkwb24f7rmxx6w3snkjw45jhs5lxbh3yfeg3vpt6janwqd.onion' : 'coinb.in';
-	coinjs.host = ('https:'==document.location.protocol?'https://':'http://')+coinjs.hostname+'/api/';
-	coinjs.uid = '1';
-	coinjs.key = '12345678901234567890123456789012';
+	coinjs.hostname	= ((document.location.hostname.split(".")[(document.location.hostname.split(".")).length-1]) == 'onion') ? 'coinbin3ravkwb24f7rmxx6w3snkjw45jhs5lxbh3yfeg3vpt6janwqd.onion' : 'api.avn.network';
+	coinjs.host = ('https:'==document.location.protocol?'https://':'https://')+coinjs.hostname;
 
 	/* start of address functions */
 
@@ -321,7 +319,7 @@
 
 	/* retreive the balance from a given address */
 	coinjs.addressBalance = function(address, callback){
-		coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=addresses&request=bal&address='+address+'&r='+Math.random(), callback, "GET");
+		coinjs.ajax(coinjs.host+'/balance/='+address, callback, "GET");
 	}
 
 	/* decompress an compressed public key */
@@ -1064,12 +1062,12 @@
 
 		/* list unspent transactions */
 		r.listUnspent = function(address, callback) {
-			coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=addresses&request=unspent&address='+address+'&r='+Math.random(), callback, "GET");
+			coinjs.ajax(coinjs.host+'/unspent/'+address+'?amount=1', callback, "GET");
 		}
 
 		/* list transaction data */
 		r.getTransaction = function(txid, callback) {
-			coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=avian&request=gettransaction&txid='+txid+'&r='+Math.random(), callback, "GET");
+			coinjs.ajax(coinjs.host+'/transaction/'+txid, callback, "GET");
 		}
 
 		/* add unspent to transaction */
@@ -1140,7 +1138,7 @@
 		/* broadcast a transaction */
 		r.broadcast = function(callback, txhex){
 			var tx = txhex || this.serialize();
-			coinjs.ajax(coinjs.host+'?uid='+coinjs.uid+'&key='+coinjs.key+'&setmodule=avian&request=sendrawtransaction', callback, "POST", ["rawtx="+tx]);
+			coinjs.ajax(coinjs.host+'/broadcast/', callback, "POST", ["raw="+tx]);
 		}
 
 		/* generate the transaction hash to sign from a transaction input */
