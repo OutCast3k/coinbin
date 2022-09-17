@@ -176,9 +176,6 @@ $(document).ready(function() {
 		}
 
 		var sequence = 0xffffffff-1;
-		if($("#walletRBF").is(":checked")){
-			sequence = 0xffffffff-2;
-		}
 
 		tx.addUnspent($("#walletAddress").html(), function(data){
 
@@ -1011,7 +1008,7 @@ $(document).ready(function() {
 
 			$("#inputs .row:last input").attr('disabled',true);
 
-			var txid = ((tx).match(/.{1,2}/g).reverse()).join("")+'';
+			var txid = tx;
 
 			$("#inputs .txId:last").val(txid);
 			$("#inputs .txIdN:last").val(n);
@@ -1116,7 +1113,7 @@ $(document).ready(function() {
 				if(data.result && data.error == null){
 					$("#redeemFromAddress").removeClass('hidden').html('<span class="glyphicon glyphicon-info-sign"></span> Retrieved unspent inputs from address <a href="'+explorer_addr+redeem.addr+'" target="_blank">'+redeem.addr+'</a>');
 					data.result.forEach(i => {
-						addOutput(i.txid, i.index, i.script, (i.value/100000000));
+						addOutput(i.txid, i.index+1, i.script, (i.value/100000000));
 					});
 				} else {
 					$("#redeemFromStatus").removeClass('hidden').html('<span class="glyphicon glyphicon-exclamation-sign"></span> Unexpected error, unable to retrieve unspent outputs.');
@@ -1539,7 +1536,7 @@ $(document).ready(function() {
 				var tx = coinjs.transaction();
 				var t = tx.deserialize(script.val());
 
-				var signed = t.sign(wifkey.val(), $("#sighashType option:selected").val());
+				var signed = t.sign(wifkey.val(), $("#sighashType option:selected").val()+64);
 				$("#signedData textarea").val(signed);
 				$("#signedData .txSize").html(t.size());
 				$("#signedData").removeClass('hidden').fadeIn();
