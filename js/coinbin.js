@@ -3,7 +3,7 @@ $(document).ready(function() {
 	/* open wallet code */
 
 	var explorer_tx = "https://explorer.avn.network/tx/"
-	var explorer_addr = "https://explorer.avn.network/addr/"
+	var explorer_addr = "https://explorer.avn.network/addrress/"
 	var explorer_block = "https://explorer.avn.network/block/"
 
 	var wallet_timer = false;
