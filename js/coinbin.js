@@ -176,9 +176,6 @@ $(document).ready(function() {
 		}
 
 		var sequence = 0xffffffff-1;
-		if($("#walletRBF").is(":checked")){
-			sequence = 0xffffffff-2;
-		}
 
 		tx.addUnspent($("#walletAddress").html(), function(data){
 
@@ -1011,7 +1008,7 @@ $(document).ready(function() {
 
 			$("#inputs .row:last input").attr('disabled',true);
 
-			var txid = ((tx).match(/.{1,2}/g).reverse()).join("")+'';
+			var txid = tx;
 
 			$("#inputs .txId:last").val(txid);
 			$("#inputs .txIdN:last").val(n);
@@ -1548,7 +1545,7 @@ $(document).ready(function() {
 				var tx = coinjs.transaction();
 				var t = tx.deserialize(script.val());
 
-				var signed = t.sign(wifkey.val(), $("#sighashType option:selected").val());
+				var signed = t.sign(wifkey.val(), $("#sighashType option:selected").val()+64);
 				$("#signedData textarea").val(signed);
 				$("#signedData .txSize").html(t.size());
 				$("#signedData").removeClass('hidden').fadeIn();
