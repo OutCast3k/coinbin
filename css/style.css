@@ -1,14 +1,89 @@
-html, body {
+html,
+body {
 	height: 100%;
+	font-family: konnect;
+}
+
+@font-face {
+	font-family: 'konnect';
+	src: url('../fonts/KonnectSemiBold.otf') format('opentype');
 }
 
 body {
-	background-image: url("../images/background.jpg");
-	background-color:#ffffff;
+	background-image: url("../images/background2.png");
+	background-color: linear-gradient(to right bottom, #17a7b6, #00bbc0, #00cec7, #00e2c8, #34f5c6);
+	background-repeat: no-repeat;
+	background-size: cover;
 }
 
+#whitecontent {
+	font-weight: bold;
+	color: black;
+}
+
+#whitecontent a {
+	color: #fff;
+}
+
+#jsalert {
+	color: #fff;
+}
+
+#jsalert a {
+	color: black;
+}
+
+#wallet small,
+i {
+	color: #fff;
+}
+
+#newAddress small,
+i {
+	color: #fff;
+}
+
+#newSegWit small,
+i {
+	color: #fff;
+}
+
+#newSegWit a {
+	color: black;
+}
+
+#newMultiSig small,
+i {
+	color: #fff;
+}
+
+#newMultiSig a {
+	color: black;
+	font-weight: 1000;
+}
+
+#newTimeLocked small,
+a {
+	color: #fff;
+}
+
+#newHDaddress small,
+i {
+	color: #fff;
+}
+
+#newTransaction small {
+	color: #fff;
+}
+
+#newTransaction a {
+	color: black;
+}
+
+
+
 .displaynone {
-	display:none;
+	display: none;
 }
 
 #wrap {
@@ -27,11 +102,11 @@ body {
 }
 
 .alert {
-        overflow: hidden;
-        -ms-text-overflow: ellipsis;
-        -o-text-overflow: ellipsis;
-        text-overflow: ellipsis;
-        display: block;
+	overflow: hidden;
+	-ms-text-overflow: ellipsis;
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+	display: block;
 }
 
 #fees .txi_regular {
@@ -62,16 +137,14 @@ body {
 	background: #FAFE92;
 }
 
-#fees .txinputs {
-}
+#fees .txinputs {}
 
-#fees .txoutputs {
-}
+#fees .txoutputs {}
 
 .hideOverflow {
-	overflow:hidden;
-	white-space:nowrap;
-	text-overflow:ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 #fees .slider {
@@ -79,7 +152,7 @@ body {
 	appearance: none;
 	width: 100%;
 	height: 30px;
-	outline: none; 
+	outline: none;
 	opacity: 0.7;
 	-webkit-transition: .2s;
 	transition: opacity .2s;
@@ -118,4 +191,16 @@ body {
 
 #fees .total {
 	font-size: 100px;
+}
+
+#discord,
+#twitter {
+	margin-left: 50px;
+	color: black;
+	font-size: 30px;
+}
+
+#web {
+	color: black;
+	font-size: 30px;
 }
